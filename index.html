@@ -27,9 +27,13 @@
                 <div class="step-number">3</div>
                 <span>Courses & Dates</span>
             </div>
-            <div class="progress-step" data-tab="seating-visualization">
+            <!-- <div class="progress-step" data-tab="seating-visualization">
                 <div class="step-number">4</div>
                 <span>Seating</span>
+            </div> -->
+            <div class="progress-step" data-tab="recommendations">
+                <div class="step-number">4</div>
+                <span>Recommendations</span>
             </div>
             <div class="progress-step" data-tab="analytics">
                 <div class="step-number">5</div>
@@ -211,41 +215,54 @@
                                 </div>
                             </div>
                             
-                            <div class="selection-summary">
-                                <h3>Exam Schedule</h3>
-                                <div class="form-group">
-                                    <label class="form-label" for="exam-date">Exam Date</label>
-                                    <input type="date" id="exam-date" class="form-control">
-                                </div>
-                                
-                                <div class="selected-courses" id="selected-courses">
-                                    <h4>Selected Courses</h4>
-                                    <div class="course-summary" id="course-summary">
-                                        <p class="text-secondary">No courses selected</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="capacity-analysis">
-                                    <div class="stat-card">
-                                        <div class="stat-number" id="total-students">0</div>
-                                        <div class="stat-label">Total Students</div>
-                                    </div>
-                                    <div class="stat-card">
-                                        <div class="stat-number" id="total-capacity">610</div>
-                                        <div class="stat-label">Room Capacity</div>
-                                    </div>
-                                    <div class="stat-card">
-                                        <div class="stat-number" id="rooms-needed">0</div>
-                                        <div class="stat-label">Rooms Required</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                                            <div class="selection-summary">
+                                                            <h3>Exam Schedule</h3>
+                                                            <div class="form-group">
+                                                                <label class="form-label" for="exam-start-date">Exam Start Date</label>
+                                                                <input type="date" id="exam-start-date" class="form-control">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="form-label" for="exam-end-date">Exam End Date</label>
+                                                                <input type="date" id="exam-end-date" class="form-control">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="form-label" for="exam-slots">Slots per Day</label>
+                                                                <input type="number" id="exam-slots" class="form-control" value="2">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="form-label" for="slot-duration">Slot Duration (hours)</label>
+                                                                <input type="number" id="slot-duration" class="form-control" value="2">
+                                                            </div>
+                                                            
+                                                            <div class="selected-courses" id="selected-courses">
+                                                                <h4>Selected Courses</h4>
+                                                                <div class="course-summary" id="course-summary">
+                                                                    <p class="text-secondary">No courses selected</p>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div id="exam-schedule" class="exam-schedule"></div>
+                            
+                                                            <div class="capacity-analysis">
+                                                                <div class="stat-card">
+                                                                    <div class="stat-number" id="total-students">0</div>
+                                                                    <div class="stat-label">Total Students</div>
+                                                                </div>
+                                                                <div class="stat-card">
+                                                                    <div class="stat-number" id="total-capacity">610</div>
+                                                                    <div class="stat-label">Room Capacity</div>
+                                                                </div>
+                                                                <div class="stat-card">
+                                                                    <div class="stat-number" id="rooms-needed">0</div>
+                                                                    <div class="stat-label">Rooms Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                        </div>
                         
                         <div class="action-buttons">
                             <button class="btn btn--outline" id="back-to-algorithm">Back to Algorithm</button>
-                            <button class="btn btn--primary" id="generate-seating" disabled>
-                                Generate Seating Arrangement
+                            <button class="btn btn--primary" id="generate-recommendations" disabled>
+                                Generate Recommendations
                             </button>
                         </div>
                     </div>
@@ -253,58 +270,18 @@
             </section>
 
             <!-- Seating Visualization Tab -->
-            <section id="seating-visualization" class="tab-panel">
+            <!-- <section id="seating-visualization" class="tab-panel">
+                ...
+            </section> -->
+
+            <section id="recommendations" class="tab-panel">
                 <div class="card">
                     <div class="card__header">
-                        <h2>Seating Arrangement Visualization</h2>
-                        <p class="text-secondary">Interactive room layouts with student assignments</p>
+                        <h2>Exam Schedule & Room Recommendations</h2>
+                        <p class="text-secondary">Intelligent suggestions for your exam schedule</p>
                     </div>
-                    <div class="card__body">
-                        <div class="seating-controls">
-                            <select class="form-control" id="room-selector">
-                                <option value="">Select Room</option>
-                            </select>
-                            <div class="legend">
-                                <h4>Course Legend</h4>
-                                <div id="course-legend" class="legend-items"></div>
-                            </div>
-                        </div>
+                    <div class="card__body" id="recommendations-content">
                         
-                        <div class="room-visualization">
-                            <div id="room-layout" class="room-layout"></div>
-                            <div class="room-info" id="room-info">
-                                <h3>Room Details</h3>
-                                <div class="room-stats">
-                                    <div class="stat">
-                                        <span class="stat-label">Capacity:</span>
-                                        <span class="stat-value" id="room-capacity">0</span>
-                                    </div>
-                                    <div class="stat">
-                                        <span class="stat-label">Occupied:</span>
-                                        <span class="stat-value" id="room-occupied">0</span>
-                                    </div>
-                                    <div class="stat">
-                                        <span class="stat-label">Utilization:</span>
-                                        <span class="stat-value" id="room-utilization">0%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="student-tooltip hidden" id="student-tooltip">
-                            <div class="tooltip-content">
-                                <div class="student-name"></div>
-                                <div class="student-roll"></div>
-                                <div class="student-course"></div>
-                                <div class="seat-position"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="action-buttons">
-                            <button class="btn btn--outline" id="back-to-courses">Back to Course Selection</button>
-                            <button class="btn btn--secondary" id="export-seating">Export Seating Charts</button>
-                            <button class="btn btn--primary" id="view-analytics">View Analytics</button>
-                        </div>
                     </div>
                 </div>
             </section>

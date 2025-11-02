@@ -1592,3 +1592,25 @@ select.form-control {
 .course-color-8 { background-color: #964325; }
 .course-color-9 { background-color: #944454; }
 .course-color-10 { background-color: #13343B; }
+
+#recommendations-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--space-20);
+}
+
+#recommendations-content th,
+#recommendations-content td {
+    border: 1px solid var(--color-border);
+    padding: var(--space-12);
+    text-align: left;
+}
+
+#recommendations-content th {
+    background-color: var(--color-bg-2);
+    font-weight: var(--font-weight-semibold);
+}
+
+#recommendations-content tr:nth-child(even) {
+    background-color: var(--color-bg-1);
+}

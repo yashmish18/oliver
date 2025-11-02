@@ -1,0 +1,6 @@
+room_id,room_name,capacity,layout,rows,cols_per_row,building
+LT-001,Large Theater 1,120,theater,12,"[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",Academic Block A
+AUD-001,Main Auditorium,200,auditorium,15,"[8, 10, 12, 14, 14, 16, 16, 16, 16, 14, 14, 12, 10, 8, 6]",Central Building
+CR-101,Classroom 101,60,grid,6,"[10, 10, 10, 10, 10, 10]",Academic Block B
+LAB-201,Computer Lab 201,80,island,8,"[10, 10, 10, 10, 10, 10, 10, 10]",IT Building
+HALL-001,Examination Hall 1,150,grid,10,"[15, 15, 15, 15, 15, 15, 15, 15, 15, 15]",Exam Block

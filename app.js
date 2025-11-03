@@ -574,9 +574,12 @@ class ExamSchedulingSystem {
         this.showProcessingModal();
 
         try {
-            const conflictGraph = this.createCourseConflictGraph();
-            const schedule = this.greedyGraphColoring(conflictGraph);
-            this.recommendations = this.assignRoomsAndGenerateRecommendations(schedule);
+			const conflictGraph = this.createCourseConflictGraph();
+			// Use DSATUR graph coloring for smarter slot assignment
+			const schedule = this.dsaturGraphColoring(conflictGraph);
+			// Use bin-packing (FFD) + capacity clusters to assign rooms
+			this.recommendations = this.assignRoomsAndGenerateRecommendations(schedule);
+			// Optional: apply simulated annealing to improve seating anti-cheat/layout later during visualization
             this.displayRecommendations(this.recommendations);
             this.switchTab('recommendations');
         } catch (error) {
@@ -656,51 +659,203 @@ class ExamSchedulingSystem {
         return schedule;
     }
 
-    assignRoomsAndGenerateRecommendations(schedule) {
-        const recommendations = [];
-        const sortedRooms = [...this.roomsData].sort((a, b) => a.capacity - b.capacity);
+	// DSATUR heuristic for graph coloring with calendar mapping
+	dsaturGraphColoring(graph) {
+		// Prepare DSATUR state
+		const courses = Array.from(graph.keys());
+		const colorOf = new Map();
+		const neighborColors = new Map();
+		courses.forEach(c => neighborColors.set(c, new Set()));
 
-        Object.keys(schedule).forEach(slot => {
-            const coursesInSlot = schedule[slot];
-            coursesInSlot.forEach(item => {
-                const studentCount = item.course.students;
-                let bestRoom = null;
-                let overflowRooms = [];
-                let justification = '';
+		const startDate = new Date(document.getElementById('exam-start-date').value);
+		const slotsPerDay = parseInt(document.getElementById('exam-slots').value);
 
-                for (const room of sortedRooms) {
-                    if (room.capacity >= studentCount) {
-                        bestRoom = room;
-                        justification = 'Best fit for capacity';
-                        break;
-                    }
-                }
+		// Helper to select next vertex: highest saturation degree, tie-break by degree
+		const pickNext = () => {
+			let best = null;
+			let bestKey = null;
+			for (const c of courses) {
+				if (colorOf.has(c)) continue;
+				const sat = neighborColors.get(c).size;
+				const deg = graph.get(c).size;
+				const key = `${String(sat).padStart(3,'0')}-${String(deg).padStart(3,'0')}`;
+				if (bestKey === null || key > bestKey) {
+					bestKey = key;
+					best = c;
+				}
+			}
+			return best;
+		};
 
-                if (!bestRoom) {
-                    let remainingStudents = studentCount;
-                    const assignedRooms = [];
-                    for (const room of sortedRooms.slice().reverse()) {
-                        if (remainingStudents > 0) {
-                            assignedRooms.push(room);
-                            remainingStudents -= room.capacity;
-                        }
-                    }
-                    bestRoom = assignedRooms.shift();
-                    overflowRooms = assignedRooms;
-                    justification = 'Overflow handled with multiple rooms';
-                }
+		let maxColor = 0;
+		while (colorOf.size < courses.length) {
+			const v = pickNext();
+			if (!v) break;
+			// Smallest available color not used by neighbors
+			const used = new Set();
+			graph.get(v).forEach(n => { if (colorOf.has(n)) used.add(colorOf.get(n)); });
+			let c = 1;
+			while (used.has(c)) c++;
+			colorOf.set(v, c);
+			if (c > maxColor) maxColor = c;
+			// Update neighbor saturation
+			graph.get(v).forEach(n => {
+				if (neighborColors.has(n)) neighborColors.get(n).add(c);
+			});
+		}
 
-                recommendations.push({
-                    ...item,
-                    room: bestRoom,
-                    overflowRooms,
-                    justification
-                });
-            });
-        });
+		// Map colors to dates/time slots deterministically (will be checked against end-date later)
+		const slots = {};
+		const colorToDateSlot = new Map();
+		for (let color = 1; color <= maxColor; color++) {
+			const dayOffset = Math.floor((color - 1) / slotsPerDay);
+			const timeSlot = (color - 1) % slotsPerDay;
+			const date = new Date(startDate);
+			date.setDate(startDate.getDate() + dayOffset);
+			colorToDateSlot.set(color, { slot: color, date, timeSlot });
+		}
 
-        return recommendations;
-    }
+		// Build schedule object {slot: [{course, date, timeSlot}]}
+		courses.forEach(courseCode => {
+			const color = colorOf.get(courseCode);
+			const info = colorToDateSlot.get(color);
+			if (!slots[color]) slots[color] = [];
+			slots[color].push({ course: this.selectedCourseData.get(courseCode), ...info });
+		});
+
+		return slots;
+	}
+
+	assignRoomsAndGenerateRecommendations(schedule) {
+		const recommendations = [];
+		// Simple ML: cluster rooms by capacity using 1D k-means (k=3) to guide selection
+		const roomCaps = this.roomsData.map(r => r.capacity).sort((a,b)=>a-b);
+		const k = Math.min(3, roomCaps.length);
+		let centroids = roomCaps.length ? [roomCaps[0], roomCaps[Math.floor(roomCaps.length/2)], roomCaps[roomCaps.length-1]].slice(0,k) : [];
+		for (let iter=0; iter<5 && centroids.length>0; iter++) {
+			const buckets = centroids.map(()=>[]);
+			roomCaps.forEach(v => {
+				let bi = 0, bd = Infinity;
+				centroids.forEach((c,i)=>{ const d = Math.abs(v-c); if (d<bd) { bd=d; bi=i; } });
+				buckets[bi].push(v);
+			});
+			centroids = buckets.map(b => b.length? b.reduce((s,x)=>s+x,0)/b.length : 0);
+		}
+		const sortedRooms = [...this.roomsData].sort((a, b) => a.capacity - b.capacity);
+
+		// Helper to compute date/time for any slot number
+		const mapDateTime = (slotNum) => this.getDateTimeForSlot(slotNum);
+		// Effective capacity per room considering spacing and selected algorithm efficiency
+		const efficiency = parseInt(this.selectedAlgorithm?.efficiency || '90') / 100;
+		const effectiveCapacity = (room) => Math.floor((room.max_with_spacing || room.capacity) * efficiency);
+
+		let maxSlot = Math.max(...Object.keys(schedule).map(n => parseInt(n) || 0), 0);
+		Object.keys(schedule).forEach(slotKey => {
+			const slot = parseInt(slotKey);
+			const coursesInSlot = schedule[slotKey].slice().sort((a,b)=>b.course.students-a.course.students);
+			// Track room usage within the slot to avoid double booking
+			const usedRoomIds = new Set();
+			coursesInSlot.forEach(item => {
+				const studentCount = item.course.students;
+				let bestRoom = null;
+				let overflowRooms = [];
+				let justification = '';
+
+				// Choose cluster closest to demand to bias room choice
+				let targetCentroid = null;
+				if (centroids.length) {
+					targetCentroid = centroids.reduce((best, c) => best===null || Math.abs(c - studentCount) < Math.abs(best - studentCount) ? c : best, null);
+				}
+
+				// First Fit Decreasing bin-packing over rooms for this course, avoiding double-booking
+				let remaining = studentCount;
+				// Only consider rooms not already used in this slot
+				let candidateRooms = sortedRooms.filter(r => !usedRoomIds.has(r.room_id)).slice().sort((a,b)=>b.capacity-a.capacity);
+				if (targetCentroid !== null) {
+					candidateRooms.sort((a,b)=>Math.abs(a.capacity-targetCentroid)-Math.abs(b.capacity-targetCentroid));
+				}
+				const assignedRooms = [];
+				for (const room of candidateRooms) {
+					if (remaining <= 0) break;
+					const cap = effectiveCapacity(room);
+					if (cap <= 0) continue;
+					assignedRooms.push(room);
+					usedRoomIds.add(room.room_id);
+					remaining -= cap;
+				}
+
+				// Collect alternative suggestions (not used in this slot), top 3 by closeness to demand
+				const alternativeRooms = sortedRooms
+					.filter(r => !usedRoomIds.has(r.room_id) && !assignedRooms.includes(r))
+					.sort((a,b)=>Math.abs(effectiveCapacity(a)-studentCount)-Math.abs(effectiveCapacity(b)-studentCount))
+					.slice(0, 3);
+
+				if (assignedRooms.length > 0) {
+					bestRoom = assignedRooms.shift();
+					overflowRooms = assignedRooms;
+					justification = overflowRooms.length ? 'Bin-packed across multiple rooms without double-booking' : 'Cluster-guided best fit';
+				}
+
+				// If still remaining students after exhausting rooms in this slot, create overflow slots
+				if (remaining > 0) {
+					while (remaining > 0) {
+						maxSlot += 1;
+						// allocate next slot with rooms again
+						const nextUsed = new Set();
+						let roomsLeft = sortedRooms.slice().sort((a,b)=>b.capacity-a.capacity);
+						if (targetCentroid !== null) {
+							roomsLeft.sort((a,b)=>Math.abs(a.capacity-targetCentroid)-Math.abs(b.capacity-targetCentroid));
+						}
+						const overflowAssigned = [];
+						for (const room of roomsLeft) {
+							if (remaining <= 0) break;
+							if (nextUsed.has(room.room_id)) continue;
+							const cap = effectiveCapacity(room);
+							if (cap <= 0) continue;
+							overflowAssigned.push(room);
+							nextUsed.add(room.room_id);
+							remaining -= cap;
+						}
+						const dt = mapDateTime(maxSlot);
+						const first = overflowAssigned.shift() || null;
+						recommendations.push({
+							course: item.course,
+							date: dt.date,
+							timeSlot: dt.timeSlot,
+							slot: dt.slot,
+							room: first,
+							overflowRooms: overflowAssigned,
+							alternativeRooms: alternativeRooms,
+							justification: dt.outsideWindow ? 'Outside selected date window; auto-overflow to extra slot' : 'Auto-overflow to additional slot due to insufficient capacity'
+						});
+					}
+				} else {
+					// push the main assignment for this slot
+					recommendations.push({
+						...item,
+						room: bestRoom,
+						overflowRooms,
+						alternativeRooms,
+						justification
+					});
+				}
+			});
+		});
+
+		return recommendations;
+	}
+
+	getDateTimeForSlot(slotNum) {
+		const startDate = new Date(document.getElementById('exam-start-date').value);
+		const endDate = new Date(document.getElementById('exam-end-date').value);
+		const slotsPerDay = parseInt(document.getElementById('exam-slots').value);
+		const dayOffset = Math.floor((slotNum - 1) / slotsPerDay);
+		const timeSlot = (slotNum - 1) % slotsPerDay;
+		const date = new Date(startDate);
+		date.setDate(startDate.getDate() + dayOffset);
+		const outsideWindow = isNaN(endDate.getTime()) ? false : date > endDate;
+		return { slot: slotNum, date, timeSlot, outsideWindow };
+	}
 
     displayRecommendations(recommendations) {
         const recommendationsContainer = document.getElementById('recommendations-content');
@@ -712,8 +867,11 @@ class ExamSchedulingSystem {
             return;
         }
 
-        html += '<table><thead><tr><th>Course</th><th>Students</th><th>Date</th><th>Time Slot</th><th>Recommended Room</th><th>Capacity</th><th>Overflow</th><th>Justification</th></tr></thead><tbody>';
+		html += '<table><thead><tr><th>Course</th><th>Students</th><th>Date</th><th>Time Slot</th><th>Recommended Room</th><th>Capacity</th><th>Overflow</th><th>Justification</th></tr></thead><tbody>';
         recommendations.forEach(rec => {
+			const effCap = rec.room ? Math.floor((rec.room.max_with_spacing || rec.room.capacity) * (parseInt(this.selectedAlgorithm?.efficiency || '90') / 100)) : 'N/A';
+			const overflowText = rec.overflowRooms.map(r => r.room_name).join(', ');
+			const altText = rec.alternativeRooms && rec.alternativeRooms.length ? ` | Alternatives: ${rec.alternativeRooms.map(r=>r.room_name).join(', ')}` : '';
             html += `
                 <tr>
                     <td>${rec.course.name}</td>
@@ -721,15 +879,89 @@ class ExamSchedulingSystem {
                     <td>${rec.date.toLocaleDateString()}</td>
                     <td>${rec.timeSlot + 1}</td>
                     <td>${rec.room ? rec.room.room_name : 'N/A'}</td>
-                    <td>${rec.room ? rec.room.capacity : 'N/A'}</td>
-                    <td>${rec.overflowRooms.map(r => r.room_name).join(', ') || 'None'}</td>
-                    <td>${rec.justification}</td>
+					<td>${effCap}</td>
+					<td>${overflowText || 'None'}${altText}</td>
+					<td>${rec.justification}</td>
                 </tr>
             `;
         });
         html += '</tbody></table>';
         recommendationsContainer.innerHTML = html;
+
+		// Compute and render analytics within recommendations tab
+		this.calculateAnalytics();
+		this.renderRecommendationsAnalytics();
     }
+
+	// Render analytics UI inside the recommendations tab
+	renderRecommendationsAnalytics() {
+		const container = document.getElementById('recommendations-analytics');
+		if (!container) return;
+		const stats = this.analytics || { totalExams: 0, totalRoomsUsed: 0, overallEfficiency: 0, roomBreakdown: [] };
+		container.innerHTML = `
+			<div class="analytics-dashboard">
+				<h3>Analytics</h3>
+				<div class="stats-grid" style="margin-top: 12px;">
+					<div class="stat-item"><div class="stat-number">${stats.totalExams}</div><div class="stat-label">Exams</div></div>
+					<div class="stat-item"><div class="stat-number">${stats.totalRoomsUsed}</div><div class="stat-label">Rooms Used</div></div>
+					<div class="stat-item"><div class="stat-number">${stats.overallEfficiency}%</div><div class="stat-label">Space Efficiency</div></div>
+					<div class="stat-item"><div class="stat-number">${this.selectedCourses.size}</div><div class="stat-label">Courses Scheduled</div></div>
+				</div>
+				<div class="analytics-grid" style="margin-top: 16px;">
+					<div class="analytics-card">
+						<h3>Room Utilization</h3>
+						<div class="chart-container" style="position: relative; height: 260px;">
+							<canvas id="reco-utilization-chart"></canvas>
+						</div>
+					</div>
+					<div class="analytics-card">
+						<h3>Slot Distribution</h3>
+						<div class="chart-container" style="position: relative; height: 260px;">
+							<canvas id="reco-distribution-chart"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+		`;
+
+		// Draw charts
+		const utilCanvas = document.getElementById('reco-utilization-chart');
+		if (utilCanvas) {
+			const ctx = utilCanvas.getContext('2d');
+			const roomData = (this.analytics.roomBreakdown || []).filter(b => b.room);
+			new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: roomData.map(r => r.room.room_name),
+					datasets: [{
+						label: 'Utilization (%)',
+						data: roomData.map(r => r.utilization),
+						backgroundColor: '#1FB8CD',
+						borderColor: '#1FB8CD',
+						borderWidth: 1
+					}]
+				},
+				options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } }
+			});
+		}
+
+		const distCanvas = document.getElementById('reco-distribution-chart');
+		if (distCanvas) {
+			const ctx = distCanvas.getContext('2d');
+			const courseDistribution = {};
+			(this.recommendations || []).forEach(rec => {
+				const slot = rec.slot;
+				courseDistribution[slot] = (courseDistribution[slot] || 0) + 1;
+			});
+			const labels = Object.keys(courseDistribution).map(s => `Slot ${s}`);
+			const data = Object.values(courseDistribution);
+			new Chart(ctx, {
+				type: 'doughnut',
+				data: { labels, datasets: [{ data, backgroundColor: this.courseColors, borderColor: this.courseColors, borderWidth: 2 }] },
+				options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+			});
+		}
+	}
 
     showProcessingModal() {
         const modal = document.getElementById('processing-modal');
@@ -799,7 +1031,7 @@ class ExamSchedulingSystem {
             const rooms = [item.room, ...item.overflowRooms];
             let studentIndex = 0;
 
-            rooms.forEach(room => {
+		rooms.forEach(room => {
                 if (studentIndex >= students.length) return;
 
                 const roomAssignment = {
@@ -810,7 +1042,7 @@ class ExamSchedulingSystem {
 
                 const seatsToFill = Math.min(room.capacity, students.length - studentIndex);
 
-                for (let i = 0; i < seatsToFill; i++) {
+				for (let i = 0; i < seatsToFill; i++) {
                     const student = students[studentIndex + i];
                     let seat = this.findOptimalSeat(roomAssignment.seats, student["Subject Code"], new Set(roomAssignment.seats.filter(s => s.occupied).map(s => s.id)));
                     if (seat) {
@@ -820,6 +1052,9 @@ class ExamSchedulingSystem {
                         roomAssignment.students.push(student);
                     }
                 }
+
+				// Apply a quick simulated annealing pass to reduce adjacent same-course neighbors
+				this.improveSeatingWithSimulatedAnnealing(roomAssignment.seats, 200);
                 studentIndex += seatsToFill;
                 this.seatingAssignments.push(roomAssignment);
             });
@@ -827,6 +1062,44 @@ class ExamSchedulingSystem {
         
         console.log('Generated seating assignments:', this.seatingAssignments.length);
     }
+
+	// Simulated annealing to minimize adjacent same-course pairs
+	improveSeatingWithSimulatedAnnealing(seats, iterations) {
+		const occupied = seats.filter(s => s.occupied);
+		if (occupied.length < 2) return;
+		const score = () => {
+			let conflicts = 0;
+			for (const s of occupied) {
+				const adj = this.getAdjacentSeats(seats, s);
+				conflicts += adj.filter(a => a.occupied && a.courseCode === s.courseCode).length;
+			}
+			return conflicts;
+		};
+		let currentScore = score();
+		let temperature = 1.0;
+		for (let it = 0; it < iterations; it++) {
+			temperature *= 0.98;
+			const i = Math.floor(Math.random() * occupied.length);
+			const j = Math.floor(Math.random() * occupied.length);
+			if (i === j) continue;
+			const a = occupied[i];
+			const b = occupied[j];
+			// swap students
+			const tmpStudent = a.student, tmpCode = a.courseCode;
+			a.student = b.student; a.courseCode = b.courseCode;
+			b.student = tmpStudent; b.courseCode = tmpCode;
+			const newScore = score();
+			const delta = newScore - currentScore;
+			if (delta <= 0 || Math.random() < Math.exp(-delta / Math.max(0.001, temperature))) {
+				currentScore = newScore;
+			} else {
+				// revert
+				const tmpStudent2 = a.student, tmpCode2 = a.courseCode;
+				a.student = b.student; a.courseCode = b.courseCode;
+				b.student = tmpStudent2; b.courseCode = tmpCode2;
+			}
+		}
+	}
 
     generateRoomSeats(room) {
         const seats = [];

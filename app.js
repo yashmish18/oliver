@@ -37,14 +37,31 @@ class ExamSchedulingSystem {
             });
         });
 
-        // Data import events
+		// Data import events
         document.getElementById('load-sample-data').addEventListener('click', () => {
             this.loadSampleData();
         });
         
-        document.getElementById('load-sample-rooms').addEventListener('click', () => {
+		document.getElementById('load-sample-rooms').addEventListener('click', () => {
             this.loadSampleRooms();
         });
+
+		// File uploads
+		const enrollmentInput = document.getElementById('enrollment-file');
+		if (enrollmentInput) {
+			enrollmentInput.addEventListener('change', (e) => {
+				const file = e.target.files && e.target.files[0];
+				if (file) this.handleEnrollmentUpload(file);
+			});
+		}
+
+		const roomsInput = document.getElementById('rooms-file');
+		if (roomsInput) {
+			roomsInput.addEventListener('change', (e) => {
+				const file = e.target.files && e.target.files[0];
+				if (file) this.handleRoomsUpload(file);
+			});
+		}
         
         document.getElementById('proceed-to-algorithm').addEventListener('click', () => {
             this.switchTab('algorithm-selection');
@@ -724,6 +741,85 @@ class ExamSchedulingSystem {
 		});
 
 		return slots;
+	}
+
+	// Parse CSV text into array of objects using first row as headers
+	parseCSV(text) {
+		const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.trim().length > 0);
+		if (lines.length === 0) return [];
+		const headers = lines[0].split(',').map(h => h.trim());
+		const rows = [];
+		for (let i = 1; i < lines.length; i++) {
+			const cols = [];
+			let current = '';
+			let inQuotes = false;
+			for (let j = 0; j < lines[i].length; j++) {
+				const ch = lines[i][j];
+				if (ch === '"') {
+					// handle escaped quotes
+					if (inQuotes && lines[i][j + 1] === '"') { current += '"'; j++; }
+					else { inQuotes = !inQuotes; }
+				} else if (ch === ',' && !inQuotes) {
+					cols.push(current);
+					current = '';
+				} else {
+					current += ch;
+				}
+			}
+			cols.push(current);
+			const obj = {};
+			headers.forEach((h, idx) => { obj[h] = (cols[idx] || '').trim(); });
+			rows.push(obj);
+		}
+		return rows;
+	}
+
+	// File upload handlers
+	handleEnrollmentUpload(file) {
+		const reader = new FileReader();
+		reader.onload = () => {
+			const raw = String(reader.result || '');
+			const rows = this.parseCSV(raw);
+			// Expect headers: Student Session, Student Roll Number, Student Name, Subject Code, Subject Name
+			this.enrollmentData = rows.map(r => ({
+				"Student Session": r['Student Session'] || r['semester'] || r['Semester'] || '',
+				"Student Roll Number": r['Student Roll Number'] || r['Roll Number'] || r['roll'] || '',
+				"Student Name": r['Student Name'] || r['Name'] || '',
+				"Subject Code": r['Subject Code'] || r['Course Code'] || r['code'] || '',
+				"Subject Name": r['Subject Name'] || r['Course Name'] || r['name'] || ''
+			})).filter(r => r["Subject Code"]);
+			this.displayDataPreview(this.enrollmentData, 'enrollment-preview');
+			this.validateData();
+		};
+		reader.onerror = () => { console.error('Failed to read enrollment file'); };
+		reader.readAsText(file);
+	}
+
+	handleRoomsUpload(file) {
+		const reader = new FileReader();
+		reader.onload = () => {
+			const raw = String(reader.result || '');
+			const rows = this.parseCSV(raw);
+			// Map common room CSV headers into expected structure
+			this.roomsData = rows.map(r => {
+				const capacity = parseInt(r['capacity'] || r['Capacity'] || r['cap'] || '0') || 0;
+				const maxWithSpacing = parseInt(r['max_with_spacing'] || r['Max With Spacing'] || r['effective_capacity'] || r['effective'] || '0') || Math.floor(capacity * 0.33) || 0;
+				return {
+					room_id: r['room_id'] || r['Room ID'] || r['id'] || r['Room'] || '',
+					room_name: r['room_name'] || r['Room Name'] || r['name'] || r['Room'] || '',
+					capacity: capacity,
+					layout: r['layout'] || r['Layout'] || 'grid',
+					rows: parseInt(r['rows'] || r['Rows'] || '0') || 0,
+					cols_per_row: [],
+					building: r['building'] || r['Building'] || '',
+					max_with_spacing: maxWithSpacing
+				};
+			}).filter(r => r.room_id || r.room_name);
+			this.displayDataPreview(this.roomsData, 'rooms-preview');
+			this.validateData();
+		};
+		reader.onerror = () => { console.error('Failed to read rooms file'); };
+		reader.readAsText(file);
 	}
 
 	assignRoomsAndGenerateRecommendations(schedule) {

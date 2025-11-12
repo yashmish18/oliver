@@ -1,0 +1,15 @@
+﻿room_id,room_name,capacity,layout,rows,cols_per_row,building
+EB1-Amphi,Amphi,59,None,None,None,EB1
+EB1-101,101,41,None,None,None,EB1
+EB1-102,102,41,None,None,None,EB1
+EB1-103,103,41,None,None,None,EB1
+EB1-104,104,41,None,None,None,EB1
+EB2-104,104,45,None,None,None,EB2
+EB2-105,105,45,None,None,None,EB2
+EB2-106,106,45,None,None,None,EB2
+EB2-202,202,45,None,None,None,EB2
+EB2-204,204,45,None,None,None,EB2
+EB2-205,205,45,None,None,None,EB2
+EB2-206,206,45,None,None,None,EB2
+IM-Amphi,Amphi,59,None,None,None,IM
+IM-105,105,35,None,None,None,IM

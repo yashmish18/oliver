@@ -452,16 +452,21 @@ class ExamSchedulingSystem {
         console.log('Initializing course selection...');
         
         const coursesBySemester = this.groupCoursesBySemester();
+        this.cleanupDynamicSemesterSections();
         
         Object.entries(coursesBySemester).forEach(([semester, courses]) => {
-            const containerId = `${semester.toLowerCase().replace(' ', '-')}-courses`;
-            const container = document.getElementById(containerId);
+            const slug = this.generateSemesterSlug(semester);
+            const container = this.ensureSemesterSection(semester, courses, slug);
             
             if (container && courses.length > 0) {
                 container.innerHTML = '';
                 courses.forEach((course, index) => {
                     const courseItem = document.createElement('div');
                     courseItem.className = 'course-item';
+                    courseItem.dataset.code = course.code;
+                    courseItem.dataset.name = course.name;
+                    courseItem.dataset.students = String(course.students);
+                    courseItem.dataset.semester = semester;
                     courseItem.innerHTML = `
                         <input type="checkbox" id="${course.code}-checkbox" class="course-checkbox" value="${course.code}">
                         <div class="course-info">
@@ -472,8 +477,14 @@ class ExamSchedulingSystem {
                     `;
                     
                     const checkbox = courseItem.querySelector('.course-checkbox');
+                    checkbox.addEventListener('click', (e) => { e.stopPropagation(); });
                     checkbox.addEventListener('change', () => {
-                        this.toggleCourseSelection(course.code, course.name, course.students);
+                        this.toggleCourseSelection(course.code, course.name, course.students, course.semester || semester);
+                    });
+                    courseItem.addEventListener('click', (e) => {
+                        if (e.target && e.target.classList.contains('course-checkbox')) return;
+                        checkbox.checked = !checkbox.checked;
+                        this.toggleCourseSelection(course.code, course.name, course.students, course.semester || semester);
                     });
                     
                     container.appendChild(courseItem);
@@ -482,13 +493,36 @@ class ExamSchedulingSystem {
         });
         
         this.updateSelectionSummary();
+        // Wire up "Select all" buttons if present
+        document.querySelectorAll('[data-select-all]').forEach(btn => {
+            if (btn.dataset.bound === 'true') return;
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-select-all');
+                const list = document.getElementById(targetId);
+                if (!list) return;
+                const items = Array.from(list.querySelectorAll('.course-item'));
+                items.forEach(item => {
+                    const cb = item.querySelector('.course-checkbox');
+                    if (!cb || cb.checked) return;
+                    const code = item.dataset.code || '';
+                    const name = item.dataset.name || '';
+                    const students = parseInt(item.dataset.students || '0', 10) || 0;
+                    const sem = item.dataset.semester || '';
+                    cb.checked = true;
+                    this.toggleCourseSelection(code, name, students, sem);
+                });
+                this.updateSelectionSummary();
+            });
+            btn.dataset.bound = 'true';
+        });
     }
 
     groupCoursesBySemester() {
         const grouped = {};
         
         this.enrollmentData.forEach(student => {
-            const semester = student["Student Session"];
+            const rawSemester = student["Student Session"] || '';
+            const semester = this.normalizeSemester(rawSemester);
             const courseCode = student["Subject Code"];
             const courseName = student["Subject Name"];
             
@@ -500,10 +534,11 @@ class ExamSchedulingSystem {
                 grouped[semester][courseCode] = {
                     code: courseCode,
                     name: courseName,
+                    semester: semester,
                     students: 0
                 };
             }
-            
+
             grouped[semester][courseCode].students++;
         });
         
@@ -515,10 +550,81 @@ class ExamSchedulingSystem {
         return grouped;
     }
 
-    toggleCourseSelection(courseCode, courseName, studentCount) {
-        console.log('Toggling course selection:', courseCode, studentCount);
-        
-        const courseData = { code: courseCode, name: courseName, students: studentCount };
+    generateSemesterSlug(semester) {
+        return semester.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || `semester-${Math.random().toString(36).slice(2, 7)}`;
+    }
+
+    formatSemesterLabel(semester) {
+        const trimmed = semester.trim();
+        if (!trimmed) return 'Semester';
+        return trimmed.replace(/\bsem(ester)?\b/gi, (match) => match.charAt(0).toUpperCase() + match.slice(1).toLowerCase());
+    }
+
+    cleanupDynamicSemesterSections() {
+        const sectionsWrapper = document.querySelector('.semester-sections');
+        if (!sectionsWrapper) return;
+        sectionsWrapper.querySelectorAll('[data-dynamic-semester="true"]').forEach(node => node.remove());
+    }
+
+    ensureSemesterSection(semester, courses, slug) {
+        const sectionsWrapper = document.querySelector('.semester-sections');
+        if (!sectionsWrapper) return null;
+        const listId = `${slug}-courses`;
+        const totalStudents = courses.reduce((sum, course) => sum + (course.students || 0), 0);
+        let list = document.getElementById(listId);
+
+        if (!list) {
+            const section = document.createElement('div');
+            section.className = 'semester-section';
+            section.dataset.dynamicSemester = 'true';
+
+            const heading = document.createElement('h3');
+            heading.innerHTML = `${this.formatSemesterLabel(semester)} <span class="student-count" id="${slug}-count">(${totalStudents} students)</span>`;
+
+            const controls = document.createElement('div');
+            controls.className = 'action-buttons';
+            controls.style.margin = '8px 0 12px 0';
+
+            const btn = document.createElement('button');
+            btn.className = 'btn btn--outline';
+            btn.setAttribute('data-select-all', listId);
+            btn.textContent = 'Select all';
+            controls.appendChild(btn);
+
+            list = document.createElement('div');
+            list.className = 'course-list';
+            list.id = listId;
+
+            section.appendChild(heading);
+            section.appendChild(controls);
+            section.appendChild(list);
+            sectionsWrapper.appendChild(section);
+        } else {
+            const section = list.closest('.semester-section');
+            const countEl = section ? section.querySelector('.student-count') : null;
+            if (countEl) {
+                countEl.textContent = `(${totalStudents} students)`;
+            }
+        }
+
+        return list;
+    }
+
+    normalizeSemester(value) {
+        if (!value) return '';
+        if (value.includes('-')) {
+            const parts = value.split('-');
+            const last = parts[parts.length - 1].trim();
+            if (last.length > 0) return last.toUpperCase();
+        }
+        return value.toUpperCase();
+    }
+
+    toggleCourseSelection(courseCode, courseName, studentCount, semester = '') {
+        const normalizedSemester = this.normalizeSemester(semester);
+        console.log('Toggling course selection:', courseCode, studentCount, normalizedSemester);
+
+        const courseData = { code: courseCode, name: courseName, students: studentCount, semester: normalizedSemester };
         
         if (this.selectedCourses.has(courseCode)) {
             this.selectedCourses.delete(courseCode);
@@ -587,20 +693,24 @@ class ExamSchedulingSystem {
     }
 
     async generateRecommendations() {
-        console.log('Generating recommendations...');
+        console.log('Generating recommendations with intelligent scheduler...');
         this.showProcessingModal();
 
         try {
-			const conflictGraph = this.createCourseConflictGraph();
-			// Use DSATUR graph coloring for smarter slot assignment
-			const schedule = this.dsaturGraphColoring(conflictGraph);
-			// Use bin-packing (FFD) + capacity clusters to assign rooms
-			this.recommendations = this.assignRoomsAndGenerateRecommendations(schedule);
-			// Optional: apply simulated annealing to improve seating anti-cheat/layout later during visualization
-            this.displayRecommendations(this.recommendations);
+            const schedulingInputs = this.getSchedulingInputs();
+            const conflictGraph = this.createCourseConflictGraph();
+            const slots = this.buildExamSlots(schedulingInputs);
+            const slotAllocation = this.allocateCoursesToSlots(conflictGraph, slots, schedulingInputs);
+            const recommendations = this.buildRecommendations(slotAllocation, slots, schedulingInputs);
+
+            this.recommendations = recommendations;
+            this.lastSchedulingInputs = schedulingInputs;
+            this.lastGeneratedSlots = slots.slice();
             this.switchTab('recommendations');
+            this.displayRecommendations(this.recommendations, slots, schedulingInputs);
         } catch (error) {
             console.error('Error generating recommendations:', error);
+            alert(`Unable to generate schedule: ${error.message || error}`);
         } finally {
             this.hideProcessingModal();
         }
@@ -637,111 +747,426 @@ class ExamSchedulingSystem {
         return conflictGraph;
     }
 
-    greedyGraphColoring(graph) {
-        const slots = new Map();
-        const courseOrder = Array.from(graph.keys()).sort((a, b) => graph.get(b).size - graph.get(a).size);
-
-        const startDate = new Date(document.getElementById('exam-start-date').value);
-        const endDate = new Date(document.getElementById('exam-end-date').value);
-        const slotsPerDay = parseInt(document.getElementById('exam-slots').value);
-
-        let currentDate = startDate;
-        let slotOfDay = 0;
-
-        courseOrder.forEach(course => {
-            let slot = 1;
-            while (true) {
-                const conflictingCoursesInSlot = Array.from(graph.get(course)).filter(neighbor => slots.get(neighbor) && slots.get(neighbor).slot === slot);
-                if (conflictingCoursesInSlot.length === 0) {
-                    if (slotOfDay >= slotsPerDay) {
-                        currentDate.setDate(currentDate.getDate() + 1);
-                        slotOfDay = 0;
-                    }
-                    slots.set(course, { slot, date: new Date(currentDate), timeSlot: slotOfDay });
-                    slotOfDay++;
-                    break;
-                }
-                slot++;
+    getSchedulingInputs() {
+        const parseDate = (inputId, fallback = null) => {
+            const input = document.getElementById(inputId);
+            if (!input || !input.value) {
+                return fallback ? new Date(fallback) : null;
             }
-        });
+            const dt = new Date(input.value);
+            return isNaN(dt.getTime()) ? (fallback ? new Date(fallback) : null) : dt;
+        };
 
-        const schedule = {};
-        slots.forEach((slotInfo, course) => {
-            if (!schedule[slotInfo.slot]) {
-                schedule[slotInfo.slot] = [];
-            }
-            schedule[slotInfo.slot].push({ course: this.selectedCourseData.get(course), ...slotInfo });
-        });
+        const startDate = parseDate('exam-start-date', new Date());
+        let endDate = parseDate('exam-end-date', null);
 
-        return schedule;
+        if (endDate && endDate < startDate) {
+            endDate = new Date(startDate);
+        }
+
+        const slotsInput = document.getElementById('exam-slots');
+        let slotsPerDay = parseInt(slotsInput ? slotsInput.value : '2', 10);
+        if (!Number.isFinite(slotsPerDay) || slotsPerDay <= 0) {
+            slotsPerDay = 2;
+        }
+
+        const slotDurationInput = document.getElementById('slot-duration');
+        let slotDurationHours = parseFloat(slotDurationInput ? slotDurationInput.value : '2');
+        if (!Number.isFinite(slotDurationHours) || slotDurationHours <= 0) {
+            slotDurationHours = 2;
+        }
+
+        const efficiency = Math.max(0.5, Math.min(1, parseInt(this.selectedAlgorithm?.efficiency || '90', 10) / 100));
+        const totalEffectiveCapacity = this.roomsData.reduce((sum, room) => sum + this.getEffectiveRoomCapacity(room, efficiency), 0);
+
+        return {
+            startDate,
+            endDate,
+            slotsPerDay,
+            slotDurationHours,
+            algorithmEfficiency: efficiency,
+            totalEffectiveCapacity: Math.max(1, totalEffectiveCapacity)
+        };
     }
 
-	// DSATUR heuristic for graph coloring with calendar mapping
-	dsaturGraphColoring(graph) {
-		// Prepare DSATUR state
-		const courses = Array.from(graph.keys());
-		const colorOf = new Map();
-		const neighborColors = new Map();
-		courses.forEach(c => neighborColors.set(c, new Set()));
+    buildExamSlots(inputs) {
+        const slots = [];
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const { startDate, endDate, slotsPerDay } = inputs;
 
-		const startDate = new Date(document.getElementById('exam-start-date').value);
-		const slotsPerDay = parseInt(document.getElementById('exam-slots').value);
+        let totalSlots = slotsPerDay;
+        if (endDate && !isNaN(endDate.getTime())) {
+            const days = Math.max(0, Math.round((endDate.getTime() - startDate.getTime()) / msPerDay)) + 1;
+            totalSlots = Math.max(slotsPerDay, days * slotsPerDay);
+        }
 
-		// Helper to select next vertex: highest saturation degree, tie-break by degree
-		const pickNext = () => {
-			let best = null;
-			let bestKey = null;
-			for (const c of courses) {
-				if (colorOf.has(c)) continue;
-				const sat = neighborColors.get(c).size;
-				const deg = graph.get(c).size;
-				const key = `${String(sat).padStart(3,'0')}-${String(deg).padStart(3,'0')}`;
-				if (bestKey === null || key > bestKey) {
-					bestKey = key;
-					best = c;
-				}
-			}
-			return best;
-		};
+        for (let sequence = 1; sequence <= totalSlots; sequence++) {
+            slots.push(this.createSlotFromSequence(sequence, inputs));
+        }
 
-		let maxColor = 0;
-		while (colorOf.size < courses.length) {
-			const v = pickNext();
-			if (!v) break;
-			// Smallest available color not used by neighbors
-			const used = new Set();
-			graph.get(v).forEach(n => { if (colorOf.has(n)) used.add(colorOf.get(n)); });
-			let c = 1;
-			while (used.has(c)) c++;
-			colorOf.set(v, c);
-			if (c > maxColor) maxColor = c;
-			// Update neighbor saturation
-			graph.get(v).forEach(n => {
-				if (neighborColors.has(n)) neighborColors.get(n).add(c);
-			});
-		}
+        return slots;
+    }
 
-		// Map colors to dates/time slots deterministically (will be checked against end-date later)
-		const slots = {};
-		const colorToDateSlot = new Map();
-		for (let color = 1; color <= maxColor; color++) {
-			const dayOffset = Math.floor((color - 1) / slotsPerDay);
-			const timeSlot = (color - 1) % slotsPerDay;
-			const date = new Date(startDate);
-			date.setDate(startDate.getDate() + dayOffset);
-			colorToDateSlot.set(color, { slot: color, date, timeSlot });
-		}
+    createSlotFromSequence(sequence, inputs) {
+        const { startDate, slotsPerDay, endDate } = inputs;
+        const slotIndex = (sequence - 1) % slotsPerDay;
+        const dayOffset = Math.floor((sequence - 1) / slotsPerDay);
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + dayOffset);
+        const outsideWindow = endDate ? date > endDate : false;
 
-		// Build schedule object {slot: [{course, date, timeSlot}]}
-		courses.forEach(courseCode => {
-			const color = colorOf.get(courseCode);
-			const info = colorToDateSlot.get(color);
-			if (!slots[color]) slots[color] = [];
-			slots[color].push({ course: this.selectedCourseData.get(courseCode), ...info });
-		});
+        return {
+            id: `slot-${sequence}`,
+            sequence,
+            date,
+            slotIndex,
+            outsideWindow
+        };
+    }
 
-		return slots;
-	}
+    createOverflowSlot(existingSlots, inputs) {
+        const sequence = existingSlots.length > 0 ? existingSlots[existingSlots.length - 1].sequence + 1 : 1;
+        const slot = this.createSlotFromSequence(sequence, inputs);
+        existingSlots.push(slot);
+        return slot;
+    }
+
+    allocateCoursesToSlots(conflictGraph, slots, inputs) {
+        const courseEntries = Array.from(this.selectedCourseData.values());
+        if (courseEntries.length === 0) {
+            throw new Error('No courses selected for scheduling.');
+        }
+
+        const slotUsage = new Map();
+        const slotById = new Map(slots.map(slot => [slot.id, slot]));
+        const assignments = new Map();
+        const semesterLastSequence = new Map();
+
+        const orderedCourses = courseEntries.sort((a, b) => {
+            const degreeA = (conflictGraph.get(a.code) || new Set()).size;
+            const degreeB = (conflictGraph.get(b.code) || new Set()).size;
+            if (degreeA !== degreeB) return degreeB - degreeA;
+            if (a.students !== b.students) return b.students - a.students;
+            return a.code.localeCompare(b.code);
+        });
+
+        orderedCourses.forEach(course => {
+            const conflicts = conflictGraph.get(course.code) || new Set();
+            const blockedSlots = new Set();
+            const blockedDayIndices = new Set();
+            conflicts.forEach(conflictCourse => {
+                const assigned = assignments.get(conflictCourse);
+                if (assigned) {
+                    blockedSlots.add(assigned.slotId);
+                    const assignedSlot = slotById.get(assigned.slotId);
+                    if (assignedSlot) {
+                        const dayIndex = Math.floor((assignedSlot.sequence - 1) / inputs.slotsPerDay);
+                        blockedDayIndices.add(dayIndex);
+                    }
+                }
+            });
+
+            let candidateSlots = slots.filter(slot => {
+                if (blockedSlots.has(slot.id)) return false;
+                const dayIndex = Math.floor((slot.sequence - 1) / inputs.slotsPerDay);
+                if (blockedDayIndices.has(dayIndex)) return false;
+                return true;
+            });
+            if (candidateSlots.length === 0) {
+                const overflowSlot = this.createOverflowSlot(slots, inputs);
+                slotById.set(overflowSlot.id, overflowSlot);
+                candidateSlots = [overflowSlot];
+            }
+
+            candidateSlots.sort((a, b) => {
+                const scoreA = this.evaluateSlotScore(a, course, slotUsage, semesterLastSequence, inputs);
+                const scoreB = this.evaluateSlotScore(b, course, slotUsage, semesterLastSequence, inputs);
+                return scoreA - scoreB;
+            });
+
+            const chosenSlot = candidateSlots[0];
+            assignments.set(course.code, { slotId: chosenSlot.id });
+
+            if (!slotUsage.has(chosenSlot.id)) {
+                slotUsage.set(chosenSlot.id, {
+                    totalStudents: 0,
+                    courses: new Set(),
+                    semesterLoad: new Map()
+                });
+            }
+
+            const usage = slotUsage.get(chosenSlot.id);
+            usage.totalStudents += course.students;
+            usage.courses.add(course.code);
+            const semesterKey = course.semester || 'UNKNOWN';
+            usage.semesterLoad.set(
+                semesterKey,
+                (usage.semesterLoad.get(semesterKey) || 0) + 1
+            );
+
+            semesterLastSequence.set(semesterKey, chosenSlot.sequence);
+        });
+
+        return {
+            assignments,
+            slotUsage,
+            slotById
+        };
+    }
+
+    evaluateSlotScore(slot, course, slotUsage, semesterLastSequence, inputs) {
+        const usage = slotUsage.get(slot.id);
+        const loadRatio = usage ? usage.totalStudents / inputs.totalEffectiveCapacity : 0;
+        const semesterKey = course.semester || 'UNKNOWN';
+        const sameSemesterCount = usage ? (usage.semesterLoad.get(semesterKey) || 0) : 0;
+
+        const lastSequence = semesterLastSequence.get(semesterKey);
+        const spacingPenalty = lastSequence ? Math.max(0, 3 - (slot.sequence - lastSequence)) : 0;
+        const outsidePenalty = slot.outsideWindow ? 5 : 0;
+        const daySpreadPenalty = slot.sequence * 0.02;
+
+        return (loadRatio * 4) + (sameSemesterCount * 2) + spacingPenalty + outsidePenalty + daySpreadPenalty;
+    }
+
+    getEffectiveRoomCapacity(room, efficiency) {
+        const base = Number.isFinite(room.max_with_spacing) && room.max_with_spacing > 0 ? room.max_with_spacing : room.capacity || 0;
+        return Math.max(0, Math.floor(base * efficiency));
+    }
+
+    buildRecommendations(slotAllocation, slots, inputs) {
+        const { assignments } = slotAllocation;
+        const courseMap = this.selectedCourseData;
+        const slotCourses = new Map();
+        const sortedSlots = slots.slice().sort((a, b) => a.sequence - b.sequence);
+
+        assignments.forEach(({ slotId }, courseCode) => {
+            if (!slotCourses.has(slotId)) {
+                slotCourses.set(slotId, []);
+            }
+            const course = courseMap.get(courseCode);
+            if (course) {
+                slotCourses.get(slotId).push({
+                    ...course
+                });
+            }
+        });
+
+        const recommendations = [];
+
+        for (let i = 0; i < sortedSlots.length; i++) {
+            const slot = sortedSlots[i];
+            const coursesInSlot = (slotCourses.get(slot.id) || []).map(course => ({
+                ...course
+            }));
+            if (coursesInSlot.length === 0) continue;
+
+            const allocation = this.allocateRoomsForSlot(coursesInSlot, inputs);
+
+            const slotRecommendation = {
+                slotId: slot.id,
+                slotSequence: slot.sequence,
+                date: slot.date,
+                slotIndex: slot.slotIndex,
+                outsideWindow: slot.outsideWindow,
+                rooms: allocation.roomPlans,
+                courses: Array.from(allocation.courseSummaries.values()),
+                overflow: allocation.overflowCourses.length > 0
+            };
+            recommendations.push(slotRecommendation);
+
+            if (allocation.roomPlans.length === 0 && allocation.overflowCourses.length > 0) {
+                console.warn('No seating capacity available for slot', slot.slotSequence);
+                continue;
+            }
+
+            if (allocation.overflowCourses.length > 0) {
+                const overflowSlot = this.createOverflowSlot(slots, inputs);
+                const nextCourses = allocation.overflowCourses.map(item => ({
+                    ...item.course,
+                    students: item.remaining
+                }));
+                slotCourses.set(overflowSlot.id, (slotCourses.get(overflowSlot.id) || []).concat(nextCourses));
+                sortedSlots.push(overflowSlot);
+            }
+        }
+
+        return recommendations.sort((a, b) => a.slotSequence - b.slotSequence);
+    }
+
+    allocateRoomsForSlot(coursesInSlot, inputs) {
+        const roomStates = this.roomsData
+            .map(room => {
+                const effective = this.getEffectiveRoomCapacity(room, inputs.algorithmEfficiency);
+                return {
+                    room,
+                    capacity: effective,
+                    remaining: effective,
+                    allocations: [],
+                    _allocationMap: new Map()
+                };
+            })
+            .filter(state => state.capacity > 0)
+            .sort((a, b) => b.capacity - a.capacity);
+
+        const courseStates = coursesInSlot.map(course => ({
+            course,
+            remaining: course.students
+        }));
+
+        const courseSummaries = new Map();
+
+        roomStates.forEach(roomState => {
+            if (courseStates.every(cs => cs.remaining <= 0)) {
+                return;
+            }
+
+            while (roomState.remaining > 0) {
+                const activeCourses = courseStates
+                    .filter(cs => cs.remaining > 0)
+                    .sort((a, b) => b.remaining - a.remaining);
+
+                if (activeCourses.length === 0) break;
+
+                const share = Math.max(1, Math.ceil(roomState.remaining / activeCourses.length));
+
+                for (let idx = 0; idx < activeCourses.length && roomState.remaining > 0; idx++) {
+                    const courseState = activeCourses[idx];
+                    if (courseState.remaining <= 0) continue;
+
+                    const maxAssignable = Math.min(courseState.remaining, roomState.remaining);
+                    if (maxAssignable <= 0) continue;
+
+                    const allocation = idx === activeCourses.length - 1
+                        ? maxAssignable
+                        : Math.min(maxAssignable, share);
+
+                    if (allocation <= 0) continue;
+
+                    if (!roomState._allocationMap.has(courseState.course.code)) {
+                        const allocationEntry = { course: courseState.course, students: 0 };
+                        roomState._allocationMap.set(courseState.course.code, allocationEntry);
+                        roomState.allocations.push(allocationEntry);
+                    }
+                    const allocationEntry = roomState._allocationMap.get(courseState.course.code);
+                    allocationEntry.students += allocation;
+
+                    roomState.remaining -= allocation;
+                    courseState.remaining -= allocation;
+
+                    if (!courseSummaries.has(courseState.course.code)) {
+                        courseSummaries.set(courseState.course.code, {
+                            course: courseState.course,
+                            totalAssigned: 0,
+                            rooms: []
+                        });
+                    }
+
+                    const summary = courseSummaries.get(courseState.course.code);
+                    summary.totalAssigned += allocation;
+                    let roomRecord = summary.rooms.find(r => (r.room.room_id || r.room.room_name) === (roomState.room.room_id || roomState.room.room_name));
+                    if (!roomRecord) {
+                        roomRecord = { room: roomState.room, students: 0 };
+                        summary.rooms.push(roomRecord);
+                    }
+                    roomRecord.students += allocation;
+                }
+
+                if (activeCourses.every(cs => cs.remaining <= 0)) break;
+                if (roomState.remaining <= 0) break;
+
+                // Prevent infinite loop when share is larger than remaining single course
+                const remainingActive = courseStates.filter(cs => cs.remaining > 0);
+                if (remainingActive.length === 1) {
+                    const courseState = remainingActive[0];
+                    const allocation = Math.min(courseState.remaining, roomState.remaining);
+                    if (allocation <= 0) break;
+
+                    if (!roomState._allocationMap.has(courseState.course.code)) {
+                        const allocationEntry = { course: courseState.course, students: 0 };
+                        roomState._allocationMap.set(courseState.course.code, allocationEntry);
+                        roomState.allocations.push(allocationEntry);
+                    }
+                    const allocationEntry = roomState._allocationMap.get(courseState.course.code);
+                    allocationEntry.students += allocation;
+
+                    roomState.remaining -= allocation;
+                    courseState.remaining -= allocation;
+
+                    if (!courseSummaries.has(courseState.course.code)) {
+                        courseSummaries.set(courseState.course.code, {
+                            course: courseState.course,
+                            totalAssigned: 0,
+                            rooms: []
+                        });
+                    }
+
+                    const summary = courseSummaries.get(courseState.course.code);
+                    summary.totalAssigned += allocation;
+                    let roomRecord = summary.rooms.find(r => (r.room.room_id || r.room.room_name) === (roomState.room.room_id || roomState.room.room_name));
+                    if (!roomRecord) {
+                        roomRecord = { room: roomState.room, students: 0 };
+                        summary.rooms.push(roomRecord);
+                    }
+                    roomRecord.students += allocation;
+                    break;
+                }
+            }
+
+            roomState.allocations.sort((a, b) => b.students - a.students);
+        });
+
+        const roomPlans = roomStates
+            .filter(state => state.allocations.length > 0)
+            .map(state => ({
+                room: state.room,
+                plannedCapacity: state.capacity,
+                assigned: state.capacity - state.remaining,
+                remaining: state.remaining,
+                allocations: state.allocations
+            }));
+
+        const overflowCourses = courseStates
+            .filter(cs => cs.remaining > 0)
+            .map(cs => ({
+                course: cs.course,
+                remaining: cs.remaining
+            }));
+
+        courseSummaries.forEach(summary => {
+            summary.rooms.sort((a, b) => b.students - a.students);
+        });
+
+        return {
+            roomPlans,
+            courseSummaries,
+            overflowCourses
+        };
+    }
+
+    formatSlotLabel(rec, inputs) {
+        const dateText = rec.date ? rec.date.toLocaleDateString() : 'TBD';
+        const timeText = this.formatTimeWindow(rec.slotIndex, inputs.slotDurationHours || 2);
+        const dayIndex = Math.floor((rec.slotSequence - 1) / inputs.slotsPerDay) + 1;
+        const slotText = `Day ${dayIndex}, Slot ${rec.slotIndex + 1}`;
+        return `${dateText} • ${timeText} (${slotText})`;
+    }
+
+    formatTimeWindow(slotIndex, durationHours) {
+        const baseHour = 9; // 9 AM default start
+        const duration = Math.max(1, durationHours);
+        const start = baseHour + (slotIndex * duration);
+        const end = start + duration;
+
+        const toTime = (value) => {
+            const hours = Math.floor(value);
+            const minutes = Math.round((value - hours) * 60);
+            const date = new Date(0, 0, 0, hours, minutes, 0);
+            return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        };
+
+        return `${toTime(start)} - ${toTime(end)}`;
+    }
+
 
 	// Parse CSV text into array of objects using first row as headers
 	parseCSV(text) {
@@ -801,20 +1226,49 @@ class ExamSchedulingSystem {
 			const raw = String(reader.result || '');
 			const rows = this.parseCSV(raw);
 			// Map common room CSV headers into expected structure
+			const normalizeKey = (key) => String(key || '').trim().toLowerCase().replace(/^\ufeff/, '');
+			const none = (v) => {
+				const s = String(v ?? '').trim();
+				return s.length === 0 || s.toLowerCase() === 'none' ? '' : s;
+			};
+			const toInt = (v, d = 0) => {
+				const n = parseInt(String(v ?? '').trim(), 10);
+				return Number.isFinite(n) ? n : d;
+			};
+			const parseCols = (v) => {
+				const s = none(v);
+				if (!s) return [];
+				try {
+					// Try JSON array: "[10, 10]"
+					const arr = JSON.parse(s);
+					return Array.isArray(arr) ? arr.map(x => toInt(x, 0)) : [];
+				} catch (_) {
+					return [];
+				}
+			};
 			this.roomsData = rows.map(r => {
-				const capacity = parseInt(r['capacity'] || r['Capacity'] || r['cap'] || '0') || 0;
-				const maxWithSpacing = parseInt(r['max_with_spacing'] || r['Max With Spacing'] || r['effective_capacity'] || r['effective'] || '0') || Math.floor(capacity * 0.33) || 0;
+				const normalized = {};
+				Object.keys(r).forEach(key => {
+					const cleanKey = normalizeKey(key);
+					if (cleanKey.length === 0) return;
+					normalized[cleanKey] = r[key];
+				});
+				const capacity = toInt(normalized['capacity'] || normalized['cap'] || 0, 0);
+				const rawEff = normalized['max_with_spacing'] || normalized['max with spacing'] || normalized['effective_capacity'] || normalized['effective'] || '';
+				const effParsed = toInt(rawEff, 0);
+				const maxWithSpacing = effParsed > 0 ? effParsed : Math.floor(capacity * 0.33);
+				const layoutRaw = none(normalized['layout']);
 				return {
-					room_id: r['room_id'] || r['Room ID'] || r['id'] || r['Room'] || '',
-					room_name: r['room_name'] || r['Room Name'] || r['name'] || r['Room'] || '',
+					room_id: none(normalized['room_id'] || normalized['id'] || normalized['room']),
+					room_name: none(normalized['room_name'] || normalized['name'] || normalized['room']),
 					capacity: capacity,
-					layout: r['layout'] || r['Layout'] || 'grid',
-					rows: parseInt(r['rows'] || r['Rows'] || '0') || 0,
-					cols_per_row: [],
-					building: r['building'] || r['Building'] || '',
-					max_with_spacing: maxWithSpacing
+					layout: layoutRaw || 'grid',
+					rows: toInt(normalized['rows'] || 0, 0),
+					cols_per_row: parseCols(normalized['cols_per_row'] || normalized['cols per row']),
+					building: none(normalized['building']),
+					max_with_spacing: Math.max(0, maxWithSpacing)
 				};
-			}).filter(r => r.room_id || r.room_name);
+			}).filter(r => (r.room_id || r.room_name) && r.capacity > 0);
 			this.displayDataPreview(this.roomsData, 'rooms-preview');
 			this.validateData();
 		};
@@ -822,242 +1276,346 @@ class ExamSchedulingSystem {
 		reader.readAsText(file);
 	}
 
-	assignRoomsAndGenerateRecommendations(schedule) {
-		const recommendations = [];
-		// Simple ML: cluster rooms by capacity using 1D k-means (k=3) to guide selection
-		const roomCaps = this.roomsData.map(r => r.capacity).sort((a,b)=>a-b);
-		const k = Math.min(3, roomCaps.length);
-		let centroids = roomCaps.length ? [roomCaps[0], roomCaps[Math.floor(roomCaps.length/2)], roomCaps[roomCaps.length-1]].slice(0,k) : [];
-		for (let iter=0; iter<5 && centroids.length>0; iter++) {
-			const buckets = centroids.map(()=>[]);
-			roomCaps.forEach(v => {
-				let bi = 0, bd = Infinity;
-				centroids.forEach((c,i)=>{ const d = Math.abs(v-c); if (d<bd) { bd=d; bi=i; } });
-				buckets[bi].push(v);
-			});
-			centroids = buckets.map(b => b.length? b.reduce((s,x)=>s+x,0)/b.length : 0);
-		}
-		const sortedRooms = [...this.roomsData].sort((a, b) => a.capacity - b.capacity);
 
-		// Helper to compute date/time for any slot number
-		const mapDateTime = (slotNum) => this.getDateTimeForSlot(slotNum);
-		// Effective capacity per room considering spacing and selected algorithm efficiency
-		const efficiency = parseInt(this.selectedAlgorithm?.efficiency || '90') / 100;
-		const effectiveCapacity = (room) => Math.floor((room.max_with_spacing || room.capacity) * efficiency);
-
-		let maxSlot = Math.max(...Object.keys(schedule).map(n => parseInt(n) || 0), 0);
-		Object.keys(schedule).forEach(slotKey => {
-			const slot = parseInt(slotKey);
-			const coursesInSlot = schedule[slotKey].slice().sort((a,b)=>b.course.students-a.course.students);
-			// Track room usage within the slot to avoid double booking
-			const usedRoomIds = new Set();
-			coursesInSlot.forEach(item => {
-				const studentCount = item.course.students;
-				let bestRoom = null;
-				let overflowRooms = [];
-				let justification = '';
-
-				// Choose cluster closest to demand to bias room choice
-				let targetCentroid = null;
-				if (centroids.length) {
-					targetCentroid = centroids.reduce((best, c) => best===null || Math.abs(c - studentCount) < Math.abs(best - studentCount) ? c : best, null);
-				}
-
-				// First Fit Decreasing bin-packing over rooms for this course, avoiding double-booking
-				let remaining = studentCount;
-				// Only consider rooms not already used in this slot
-				let candidateRooms = sortedRooms.filter(r => !usedRoomIds.has(r.room_id)).slice().sort((a,b)=>b.capacity-a.capacity);
-				if (targetCentroid !== null) {
-					candidateRooms.sort((a,b)=>Math.abs(a.capacity-targetCentroid)-Math.abs(b.capacity-targetCentroid));
-				}
-				const assignedRooms = [];
-				for (const room of candidateRooms) {
-					if (remaining <= 0) break;
-					const cap = effectiveCapacity(room);
-					if (cap <= 0) continue;
-					assignedRooms.push(room);
-					usedRoomIds.add(room.room_id);
-					remaining -= cap;
-				}
-
-				// Collect alternative suggestions (not used in this slot), top 3 by closeness to demand
-				const alternativeRooms = sortedRooms
-					.filter(r => !usedRoomIds.has(r.room_id) && !assignedRooms.includes(r))
-					.sort((a,b)=>Math.abs(effectiveCapacity(a)-studentCount)-Math.abs(effectiveCapacity(b)-studentCount))
-					.slice(0, 3);
-
-				if (assignedRooms.length > 0) {
-					bestRoom = assignedRooms.shift();
-					overflowRooms = assignedRooms;
-					justification = overflowRooms.length ? 'Bin-packed across multiple rooms without double-booking' : 'Cluster-guided best fit';
-				}
-
-				// If still remaining students after exhausting rooms in this slot, create overflow slots
-				if (remaining > 0) {
-					while (remaining > 0) {
-						maxSlot += 1;
-						// allocate next slot with rooms again
-						const nextUsed = new Set();
-						let roomsLeft = sortedRooms.slice().sort((a,b)=>b.capacity-a.capacity);
-						if (targetCentroid !== null) {
-							roomsLeft.sort((a,b)=>Math.abs(a.capacity-targetCentroid)-Math.abs(b.capacity-targetCentroid));
-						}
-						const overflowAssigned = [];
-						for (const room of roomsLeft) {
-							if (remaining <= 0) break;
-							if (nextUsed.has(room.room_id)) continue;
-							const cap = effectiveCapacity(room);
-							if (cap <= 0) continue;
-							overflowAssigned.push(room);
-							nextUsed.add(room.room_id);
-							remaining -= cap;
-						}
-						const dt = mapDateTime(maxSlot);
-						const first = overflowAssigned.shift() || null;
-						recommendations.push({
-							course: item.course,
-							date: dt.date,
-							timeSlot: dt.timeSlot,
-							slot: dt.slot,
-							room: first,
-							overflowRooms: overflowAssigned,
-							alternativeRooms: alternativeRooms,
-							justification: dt.outsideWindow ? 'Outside selected date window; auto-overflow to extra slot' : 'Auto-overflow to additional slot due to insufficient capacity'
-						});
-					}
-				} else {
-					// push the main assignment for this slot
-					recommendations.push({
-						...item,
-						room: bestRoom,
-						overflowRooms,
-						alternativeRooms,
-						justification
-					});
-				}
-			});
-		});
-
-		return recommendations;
-	}
-
-	getDateTimeForSlot(slotNum) {
-		const startDate = new Date(document.getElementById('exam-start-date').value);
-		const endDate = new Date(document.getElementById('exam-end-date').value);
-		const slotsPerDay = parseInt(document.getElementById('exam-slots').value);
-		const dayOffset = Math.floor((slotNum - 1) / slotsPerDay);
-		const timeSlot = (slotNum - 1) % slotsPerDay;
-		const date = new Date(startDate);
-		date.setDate(startDate.getDate() + dayOffset);
-		const outsideWindow = isNaN(endDate.getTime()) ? false : date > endDate;
-		return { slot: slotNum, date, timeSlot, outsideWindow };
-	}
-
-    displayRecommendations(recommendations) {
+    displayRecommendations(recommendations, slots, inputs) {
         const recommendationsContainer = document.getElementById('recommendations-content');
-        let html = '<h3>Exam Schedule Recommendations</h3>';
+        if (!recommendationsContainer) return;
+
+        let html = '<h3>AI-Assisted Exam Schedule</h3>';
 
         if (recommendations.length === 0) {
-            html += '<p>No recommendations generated.</p>';
+            html += '<p>No schedule could be generated with the current selection. Please review course selection and room capacity.</p>';
             recommendationsContainer.innerHTML = html;
             return;
         }
 
-		html += '<table><thead><tr><th>Course</th><th>Students</th><th>Date</th><th>Time Slot</th><th>Recommended Room</th><th>Capacity</th><th>Overflow</th><th>Justification</th></tr></thead><tbody>';
-        recommendations.forEach(rec => {
-			const effCap = rec.room ? Math.floor((rec.room.max_with_spacing || rec.room.capacity) * (parseInt(this.selectedAlgorithm?.efficiency || '90') / 100)) : 'N/A';
-			const overflowText = rec.overflowRooms.map(r => r.room_name).join(', ');
-			const altText = rec.alternativeRooms && rec.alternativeRooms.length ? ` | Alternatives: ${rec.alternativeRooms.map(r=>r.room_name).join(', ')}` : '';
+        const uniqueCourses = new Set();
+        let totalStudentsScheduled = 0;
+        let totalRoomsUsed = 0;
+        let overflowSlots = 0;
+
+        recommendations.forEach(slot => {
+            slot.courses.forEach(courseSummary => {
+                uniqueCourses.add(courseSummary.course.code);
+                totalStudentsScheduled += courseSummary.totalAssigned;
+            });
+            totalRoomsUsed += slot.rooms.length;
+            if (slot.overflow) overflowSlots += 1;
+        });
+
+        const outsideWindow = recommendations.filter(rec => rec.outsideWindow).length;
+
+        html += `
+            <div class="schedule-overview">
+                <div class="overview-item">
+                    <span class="overview-label">Unique Courses Scheduled</span>
+                    <span class="overview-value">${uniqueCourses.size}</span>
+                </div>
+                <div class="overview-item">
+                    <span class="overview-label">Time Slots Used</span>
+                    <span class="overview-value">${recommendations.length}</span>
+                </div>
+                <div class="overview-item">
+                    <span class="overview-label">Rooms Utilized</span>
+                    <span class="overview-value">${totalRoomsUsed}</span>
+                </div>
+                <div class="overview-item">
+                    <span class="overview-label">Students Placed</span>
+                    <span class="overview-value">${totalStudentsScheduled}</span>
+                </div>
+                <div class="overview-item">
+                    <span class="overview-label">Overflow Slots Added</span>
+                    <span class="overview-value">${overflowSlots}</span>
+                </div>
+                <div class="overview-item">
+                    <span class="overview-label">Outside Preferred Window</span>
+                    <span class="overview-value ${outsideWindow > 0 ? 'text-warning' : ''}">${outsideWindow}</span>
+                </div>
+            </div>
+        `;
+
+        // Callout about mixing policy
+        html += `
+            <div class="card card--info" style="margin: 12px 0;">
+                <div><strong>Note</strong>: Rooms are intentionally mixed — multiple courses and semesters share the same room to optimize capacity.</div>
+            </div>
+        `;
+
+        const courseRows = [];
+        recommendations.forEach(slot => {
+            slot.courses.forEach(courseSummary => {
+                if (!courseSummary || courseSummary.totalAssigned <= 0) return;
+                const rooms = courseSummary.rooms.slice().sort((a, b) => b.students - a.students);
+                const primaryRoom = rooms[0] ? rooms[0].room : null;
+                const overflowRooms = rooms.slice(1);
+                courseRows.push({
+                    course: courseSummary.course,
+                    students: courseSummary.totalAssigned,
+                    slot,
+                    primaryRoom,
+                    overflowRooms,
+                    rooms
+                });
+            });
+        });
+
+        courseRows.sort((a, b) => {
+            if (a.slot.slotSequence !== b.slot.slotSequence) {
+                return a.slot.slotSequence - b.slot.slotSequence;
+            }
+            return a.course.code.localeCompare(b.course.code);
+        });
+
+        html += `
+            <div class="legacy-table-block">
+                <h4>Course Schedule Summary</h4>
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Students</th>
+                            <th>Exam Date & Time</th>
+                            <th>Primary Room</th>
+                            <th>Additional Rooms</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        courseRows.forEach(row => {
+            const altRooms = row.overflowRooms.map(entry => `${entry.room.room_name} (${entry.students})`).join(', ') || 'None';
+            const primaryName = row.primaryRoom ? `${row.primaryRoom.room_name}` : 'Assigned via overflow';
+            const noteParts = [];
+            if (row.overflowRooms.length > 0) {
+                noteParts.push('Distributed across multiple rooms to satisfy capacity and mixing requirements');
+            }
+            if (row.slot.outsideWindow) {
+                noteParts.push('Scheduled outside selected date window');
+            }
+            const note = noteParts.length > 0 ? noteParts.join(' • ') : 'Standard placement';
+
             html += `
                 <tr>
-                    <td>${rec.course.name}</td>
-                    <td>${rec.course.students}</td>
-                    <td>${rec.date.toLocaleDateString()}</td>
-                    <td>${rec.timeSlot + 1}</td>
-                    <td>${rec.room ? rec.room.room_name : 'N/A'}</td>
-					<td>${effCap}</td>
-					<td>${overflowText || 'None'}${altText}</td>
-					<td>${rec.justification}</td>
+                    <td>${row.course.code} - ${row.course.name}</td>
+                    <td>${row.students}</td>
+                    <td>${this.formatSlotLabel(row.slot, inputs)}</td>
+                    <td>${primaryName}</td>
+                    <td>${altRooms}</td>
+                    <td>${note}</td>
                 </tr>
             `;
         });
-        html += '</tbody></table>';
+
+        if (courseRows.length === 0) {
+            html += `
+                <tr>
+                    <td colspan="6" class="text-secondary">No courses were scheduled.</td>
+                </tr>
+            `;
+        }
+
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        recommendations.forEach(slot => {
+            const slotLabel = this.formatSlotLabel(slot, inputs);
+            const totalInSlot = slot.courses.reduce((sum, c) => sum + c.totalAssigned, 0);
+            html += `
+                <div class="slot-block">
+                    <div class="slot-header">
+                        <h4>${slotLabel}</h4>
+                        <div class="slot-meta">
+                            <span>${slot.rooms.length} room(s)</span>
+                            <span>${totalInSlot} students</span>
+                            <span>Slot ${slot.slotSequence}</span>
+                        </div>
+                        ${slot.outsideWindow ? '<p class="text-warning">⚠ Scheduled outside selected date range</p>' : ''}
+                        ${slot.overflow ? '<p class="text-warning">Unplaced students were automatically moved to an extra slot.</p>' : ''}
+                    </div>
+                    <div class="slot-body">
+                        <div class="room-grid">
+            `;
+
+            slot.rooms.forEach(roomPlan => {
+                const allocations = roomPlan.allocations.slice().sort((a, b) => a.course.code.localeCompare(b.course.code));
+                const roomUtil = roomPlan.plannedCapacity > 0 ? Math.round((roomPlan.assigned / roomPlan.plannedCapacity) * 100) : 0;
+                html += `
+                    <div class="room-card">
+                        <div class="room-card__header">
+                            <h5>${roomPlan.room.room_name}</h5>
+                            <span>${roomPlan.assigned}/${roomPlan.plannedCapacity} seats • ${roomUtil}% utilization</span>
+                        </div>
+                        <table class="room-allocation-table">
+                            <thead>
+                                <tr>
+                                    <th>Course (Semester)</th>
+                                    <th>Students</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                allocations.forEach(allocation => {
+                    html += `
+                        <tr>
+                            <td>${allocation.course.code} - ${allocation.course.name} <span class="text-secondary">(${allocation.course.semester || 'N/A'})</span></td>
+                            <td>${allocation.students}</td>
+                        </tr>
+                    `;
+                });
+
+                if (roomPlan.remaining > 0) {
+                    html += `
+                        <tr class="room-remaining">
+                            <td colspan="2">${roomPlan.remaining} seats left available for contingency.</td>
+                        </tr>
+                    `;
+                }
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr class="room-separator" />
+                `;
+            });
+
+            html += `
+                        </div>
+                        <div class="course-summary">
+                            <h5>Course Coverage</h5>
+                            <table class="course-allocation-table">
+                                <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Semester</th>
+                                        <th>Students</th>
+                                        <th>Rooms Utilized</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+            `;
+
+            const sortedCourses = slot.courses.slice().sort((a, b) => a.course.code.localeCompare(b.course.code));
+            sortedCourses.forEach(courseSummary => {
+                const roomNames = courseSummary.rooms.map(r => `${r.room.room_name} (${r.students})`).join(', ');
+                html += `
+                    <tr>
+                        <td>${courseSummary.course.code} - ${courseSummary.course.name}</td>
+                        <td>${courseSummary.course.semester || 'N/A'}</td>
+                        <td>${courseSummary.totalAssigned}</td>
+                        <td>${roomNames}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
         recommendationsContainer.innerHTML = html;
 
-		// Compute and render analytics within recommendations tab
-		this.calculateAnalytics();
-		this.renderRecommendationsAnalytics();
+        this.calculateAnalytics(inputs);
+        this.renderRecommendationsAnalytics(inputs);
     }
 
 	// Render analytics UI inside the recommendations tab
-	renderRecommendationsAnalytics() {
-		const container = document.getElementById('recommendations-analytics');
-		if (!container) return;
-		const stats = this.analytics || { totalExams: 0, totalRoomsUsed: 0, overallEfficiency: 0, roomBreakdown: [] };
-		container.innerHTML = `
-			<div class="analytics-dashboard">
-				<h3>Analytics</h3>
-				<div class="stats-grid" style="margin-top: 12px;">
-					<div class="stat-item"><div class="stat-number">${stats.totalExams}</div><div class="stat-label">Exams</div></div>
-					<div class="stat-item"><div class="stat-number">${stats.totalRoomsUsed}</div><div class="stat-label">Rooms Used</div></div>
-					<div class="stat-item"><div class="stat-number">${stats.overallEfficiency}%</div><div class="stat-label">Space Efficiency</div></div>
-					<div class="stat-item"><div class="stat-number">${this.selectedCourses.size}</div><div class="stat-label">Courses Scheduled</div></div>
-				</div>
-				<div class="analytics-grid" style="margin-top: 16px;">
-					<div class="analytics-card">
-						<h3>Room Utilization</h3>
-						<div class="chart-container" style="position: relative; height: 260px;">
-							<canvas id="reco-utilization-chart"></canvas>
-						</div>
-					</div>
-					<div class="analytics-card">
-						<h3>Slot Distribution</h3>
-						<div class="chart-container" style="position: relative; height: 260px;">
-							<canvas id="reco-distribution-chart"></canvas>
-						</div>
-					</div>
-				</div>
-			</div>
-		`;
+    renderRecommendationsAnalytics(inputs = null) {
+        const container = document.getElementById('recommendations-analytics');
+        if (!container) return;
 
-		// Draw charts
-		const utilCanvas = document.getElementById('reco-utilization-chart');
-		if (utilCanvas) {
-			const ctx = utilCanvas.getContext('2d');
-			const roomData = (this.analytics.roomBreakdown || []).filter(b => b.room);
-			new Chart(ctx, {
-				type: 'bar',
-				data: {
-					labels: roomData.map(r => r.room.room_name),
-					datasets: [{
-						label: 'Utilization (%)',
-						data: roomData.map(r => r.utilization),
-						backgroundColor: '#1FB8CD',
-						borderColor: '#1FB8CD',
-						borderWidth: 1
-					}]
-				},
-				options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } }
-			});
-		}
+        const stats = this.analytics || { totalExams: 0, totalRoomsUsed: 0, overallEfficiency: 0, roomBreakdown: [], totalStudents: 0 };
+        const schedulingInputs = inputs || this.lastSchedulingInputs || this.getSchedulingInputs();
 
-		const distCanvas = document.getElementById('reco-distribution-chart');
-		if (distCanvas) {
-			const ctx = distCanvas.getContext('2d');
-			const courseDistribution = {};
-			(this.recommendations || []).forEach(rec => {
-				const slot = rec.slot;
-				courseDistribution[slot] = (courseDistribution[slot] || 0) + 1;
-			});
-			const labels = Object.keys(courseDistribution).map(s => `Slot ${s}`);
-			const data = Object.values(courseDistribution);
-			new Chart(ctx, {
-				type: 'doughnut',
-				data: { labels, datasets: [{ data, backgroundColor: this.courseColors, borderColor: this.courseColors, borderWidth: 2 }] },
-				options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-			});
-		}
-	}
+        container.innerHTML = `
+            <div class="analytics-dashboard">
+                <h3>Analytics</h3>
+                <div class="stats-grid" style="margin-top: 12px;">
+                    <div class="stat-item"><div class="stat-number">${stats.totalStudents}</div><div class="stat-label">Students Scheduled</div></div>
+                    <div class="stat-item"><div class="stat-number">${stats.totalExams}</div><div class="stat-label">Exam Sessions</div></div>
+                    <div class="stat-item"><div class="stat-number">${stats.totalRoomsUsed}</div><div class="stat-label">Rooms Utilized</div></div>
+                    <div class="stat-item"><div class="stat-number">${stats.overallEfficiency}%</div><div class="stat-label">Seat Efficiency</div></div>
+                </div>
+                <div class="analytics-grid" style="margin-top: 16px;">
+                    <div class="analytics-card">
+                        <h3>Room Utilization</h3>
+                        <div class="chart-container" style="position: relative; height: 260px;">
+                            <canvas id="reco-utilization-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Slot Distribution</h3>
+                        <div class="chart-container" style="position: relative; height: 260px;">
+                            <canvas id="reco-distribution-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const utilCanvas = document.getElementById('reco-utilization-chart');
+        if (utilCanvas) {
+            const ctx = utilCanvas.getContext('2d');
+            const roomData = (this.analytics.roomBreakdown || []).filter(b => b.room);
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: roomData.map(r => r.room.room_name),
+                    datasets: [{
+                        label: 'Avg Utilization (%)',
+                        data: roomData.map(r => r.utilization),
+                        backgroundColor: '#1FB8CD',
+                        borderColor: '#1FB8CD',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, max: 100 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        const distCanvas = document.getElementById('reco-distribution-chart');
+        if (distCanvas) {
+            const ctx = distCanvas.getContext('2d');
+            const courseDistribution = {};
+            (this.recommendations || []).forEach(rec => {
+                const key = `Slot ${rec.slotSequence}`;
+                courseDistribution[key] = (courseDistribution[key] || 0) + rec.courses.length;
+            });
+            const labels = Object.keys(courseDistribution);
+            const data = Object.values(courseDistribution);
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{
+                        data,
+                        backgroundColor: this.courseColors,
+                        borderColor: this.courseColors,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+    }
 
     showProcessingModal() {
         const modal = document.getElementById('processing-modal');
@@ -1441,7 +1999,8 @@ class ExamSchedulingSystem {
 
     initAnalytics() {
         console.log('Initializing analytics...');
-        this.calculateAnalytics();
+        const inputs = this.lastSchedulingInputs || this.getSchedulingInputs();
+        this.calculateAnalytics(inputs);
         this.updateAnalyticsDisplay();
         
         // Delay chart creation to ensure DOM is ready
@@ -1450,33 +2009,69 @@ class ExamSchedulingSystem {
         }, 100);
     }
 
-    calculateAnalytics() {
+    calculateAnalytics(inputs = null) {
+        const schedulingInputs = inputs || this.lastSchedulingInputs || this.getSchedulingInputs();
         const recommendations = this.recommendations || [];
-        const totalExams = recommendations.length;
-        const roomsUsed = new Set(recommendations.map(rec => rec.room ? rec.room.room_id : null).filter(id => id));
-        const totalRoomsUsed = roomsUsed.size;
+        const roomsUsed = new Set();
 
         let totalStudents = 0;
-        let totalCapacityUsed = 0;
-        recommendations.forEach(rec => {
-            totalStudents += rec.course.students;
-            if (rec.room) {
-                totalCapacityUsed += rec.room.capacity;
-            }
+        let totalAssignedSeats = 0;
+        let totalEffectiveCapacity = 0;
+        let totalCourseSessions = 0;
+
+        const roomBreakdownMap = new Map();
+
+        recommendations.forEach(slot => {
+            slot.courses.forEach(courseSummary => {
+                totalStudents += courseSummary.totalAssigned;
+                totalCourseSessions += 1;
+            });
+
+            slot.rooms.forEach(roomPlan => {
+                const room = roomPlan.room;
+                const roomKey = room.room_id || room.room_name;
+                roomsUsed.add(roomKey);
+                totalAssignedSeats += roomPlan.assigned;
+                totalEffectiveCapacity += roomPlan.plannedCapacity;
+
+                if (!roomBreakdownMap.has(roomKey)) {
+                    roomBreakdownMap.set(roomKey, {
+                        room,
+                        totalStudents: 0,
+                        sessions: 0,
+                        capacity: 0
+                    });
+                }
+
+                const record = roomBreakdownMap.get(roomKey);
+                record.totalStudents += roomPlan.assigned;
+                record.sessions += 1;
+                record.capacity += roomPlan.plannedCapacity;
+            });
         });
 
-        const overallEfficiency = totalCapacityUsed > 0 ? Math.round((totalStudents / totalCapacityUsed) * 100) : 0;
+        const overallEfficiency = totalEffectiveCapacity > 0
+            ? Math.round((totalAssignedSeats / totalEffectiveCapacity) * 100)
+            : 0;
+
+        const roomBreakdown = Array.from(roomBreakdownMap.values()).map(record => {
+            const utilization = record.capacity > 0
+                ? Math.round((record.totalStudents / record.capacity) * 100)
+                : 0;
+            return {
+                room: record.room,
+                totalStudents: record.totalStudents,
+                sessions: record.sessions,
+                utilization: Math.min(100, Math.max(0, utilization))
+            };
+        }).sort((a, b) => b.utilization - a.utilization);
 
         this.analytics = {
-            totalExams,
-            totalRoomsUsed,
+            totalExams: totalCourseSessions,
+            totalRoomsUsed: roomsUsed.size,
             overallEfficiency,
-            roomBreakdown: recommendations.map(rec => ({
-                room: rec.room,
-                course: rec.course,
-                students: rec.course.students,
-                utilization: rec.room ? Math.round((rec.course.students / rec.room.capacity) * 100) : 0
-            }))
+            totalStudents,
+            roomBreakdown
         };
 
         console.log('Analytics calculated:', this.analytics);
@@ -1490,12 +2085,43 @@ class ExamSchedulingSystem {
             courses: document.getElementById('analytics-courses'),
         };
 
-        if (elements.students) elements.students.textContent = this.analytics.totalExams;
+        if (elements.students) elements.students.textContent = this.analytics.totalStudents || 0;
         if (elements.rooms) elements.rooms.textContent = this.analytics.totalRoomsUsed;
         if (elements.efficiency) elements.efficiency.textContent = this.analytics.overallEfficiency + '%';
         if (elements.courses) elements.courses.textContent = this.selectedCourses.size;
 
         this.updateRoomBreakdown();
+    }
+
+    updateRoomBreakdown() {
+        const container = document.getElementById('room-breakdown');
+        if (!container) return;
+
+        const breakdown = this.analytics?.roomBreakdown || [];
+
+        if (breakdown.length === 0) {
+            container.innerHTML = '<p class="text-secondary">Room utilization insights will appear after generating a schedule.</p>';
+            return;
+        }
+
+        let html = '';
+        breakdown.forEach(record => {
+            html += `
+                <div class="room-breakdown-item">
+                    <div class="room-header">
+                        <span class="room-name">${record.room.room_name}</span>
+                        <span class="room-utilization">${record.utilization}% average utilization</span>
+                    </div>
+                    <div class="room-details">
+                        <span>Sessions: ${record.sessions}</span>
+                        <span>Students Assigned: ${record.totalStudents}</span>
+                        <span>Effective Capacity: ${this.getEffectiveRoomCapacity(record.room, this.lastSchedulingInputs?.algorithmEfficiency || 0.9)}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
     }
 
     createCharts() {
@@ -1550,11 +2176,11 @@ class ExamSchedulingSystem {
         const courseDistribution = {};
         const recommendations = this.recommendations || [];
         recommendations.forEach(rec => {
-            const slot = rec.slot;
+            const slot = rec.slotSequence;
             if (!courseDistribution[slot]) {
                 courseDistribution[slot] = 0;
             }
-            courseDistribution[slot]++;
+            courseDistribution[slot] += rec.courses.length;
         });
 
         const labels = Object.keys(courseDistribution).map(slot => `Slot ${slot}`);

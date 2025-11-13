@@ -3,406 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Exam Scheduling System</title>
+    <title>OLIVER Exam Room Orchestrator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>OLIVER</h1>
-            <p class="text-secondary">Intelligent Seating Assignment & Room Management</p>
+    <div class="wrapper">
+        <header class="hero">
+            <div>
+                <h1>OLIVER Exam Room Orchestrator</h1>
+                <p>Upload enrollment & room data, configure intelligent allocation, and review AI-powered insights.</p>
+            </div>
+            <div class="hero-metrics">
+                <div class="metric" id="metric-students">
+                    <span class="metric-value">0</span>
+                    <span class="metric-label">Students Parsed</span>
+                </div>
+                <div class="metric" id="metric-rooms">
+                    <span class="metric-value">0</span>
+                    <span class="metric-label">Rooms Parsed</span>
+                </div>
+                <div class="metric" id="metric-capacity">
+                    <span class="metric-value">0</span>
+                    <span class="metric-label">Total Capacity</span>
+                </div>
+            </div>
         </header>
 
-        <!-- Progress Navigation -->
-        <nav class="progress-nav">
-            <div class="progress-step active" data-tab="data-import">
-                <div class="step-number">1</div>
-                <span>Data Import</span>
-            </div>
-            <div class="progress-step" data-tab="algorithm-selection">
-                <div class="step-number">2</div>
-                <span>Algorithm</span>
-            </div>
-            <div class="progress-step" data-tab="course-selection">
-                <div class="step-number">3</div>
-                <span>Courses & Dates</span>
-            </div>
-            <!-- <div class="progress-step" data-tab="seating-visualization">
-                <div class="step-number">4</div>
-                <span>Seating</span>
-            </div> -->
-            <div class="progress-step" data-tab="recommendations">
-                <div class="step-number">4</div>
-                <span>Recommendations</span>
-            </div>
-            <div class="progress-step" data-tab="analytics">
-                <div class="step-number">5</div>
-                <span>Analytics</span>
-            </div>
-        </nav>
+        <main class="content">
+            <nav class="wizard-nav">
+                <div class="wizard-step active" data-step="1">
+                    <span class="wizard-index">1</span>
+                    <span>Upload Data</span>
+                </div>
+                <div class="wizard-step" data-step="2">
+                    <span class="wizard-index">2</span>
+                    <span>Algorithm Setup</span>
+                </div>
+                <div class="wizard-step" data-step="3">
+                    <span class="wizard-index">3</span>
+                    <span>Filters & Schedule</span>
+                </div>
+                <div class="wizard-step" data-step="4">
+                    <span class="wizard-index">4</span>
+                    <span>Results & Insights</span>
+                </div>
+            </nav>
 
-        <!-- Tab Content -->
-        <main class="tab-content">
-            
-            <!-- Data Import Tab -->
-            <section id="data-import" class="tab-panel active">
-                <div class="card">
-                    <div class="card__header">
-                        <h2>Data Import & Validation</h2>
-                        <p class="text-secondary">Upload enrollment data and configure room layouts</p>
+            <section class="step active" data-step="1">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Upload Student Data</h2>
+                            <p>Supports `processed_enrollment.csv` or similarly structured files.</p>
+                        </div>
+                        <div class="card-body">
+                            <label class="upload-tile">
+                                <input type="file" id="enrollment-input" accept=".csv">
+                                <span class="icon">📄</span>
+                                <span>Choose Enrollment CSV</span>
+                            </label>
+                            <button class="btn btn-secondary" id="load-enrollment-sample">Load Sample Students</button>
+                            <div class="preview" id="enrollment-preview"></div>
+                        </div>
                     </div>
-                    <div class="card__body">
-                        <div class="data-import-grid">
-                            <div class="import-section">
-                                <h3>Student Enrollment Data</h3>
-                                <div class="file-upload">
-                                    <input type="file" id="enrollment-file" accept=".csv" class="file-input">
-                                    <label for="enrollment-file" class="file-label">
-                                        <span class="upload-icon">📄</span>
-                                        <span class="upload-text">Upload Enrollment CSV</span>
-                                    </label>
-                                    <button class="btn btn--secondary" id="load-sample-data">Load Sample Data</button>
-                                </div>
-                                <div id="enrollment-preview" class="data-preview hidden"></div>
-                            </div>
-                            
-                            <div class="import-section">
-                                <h3>Room Configuration</h3>
-                                <div class="file-upload">
-                                    <input type="file" id="rooms-file" accept=".csv" class="file-input">
-                                    <label for="rooms-file" class="file-label">
-                                        <span class="upload-icon">🏢</span>
-                                        <span class="upload-text">Upload Rooms CSV</span>
-                                    </label>
-                                    <button class="btn btn--secondary" id="load-sample-rooms">Load Sample Rooms</button>
-                                </div>
-                                <div id="rooms-preview" class="data-preview hidden"></div>
-                            </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Upload Room Data</h2>
+                            <p>Use `rooms_config.csv`, `room.csv`, or a compatible layout (layout/rows ignored).</p>
                         </div>
-                        
-                        <div class="validation-summary hidden" id="validation-summary">
-                            <h3>Data Validation Summary</h3>
-                            <div class="validation-stats"></div>
-                        </div>
-                        
-                        <div class="action-buttons">
-                            <button class="btn btn--primary" id="proceed-to-algorithm" disabled>
-                                Proceed to Algorithm Selection
-                            </button>
+                        <div class="card-body">
+                            <label class="upload-tile">
+                                <input type="file" id="rooms-input" accept=".csv">
+                                <span class="icon">🏢</span>
+                                <span>Choose Rooms CSV</span>
+                            </label>
+                            <button class="btn btn-secondary" id="load-rooms-sample">Load Sample Rooms</button>
+                            <div class="preview" id="rooms-preview"></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Algorithm Selection Tab -->
-            <section id="algorithm-selection" class="tab-panel">
+            <section class="step" data-step="2">
                 <div class="card">
-                    <div class="card__header">
-                        <h2>Seating Algorithm Selection</h2>
-                        <p class="text-secondary">Choose the optimal seating assignment strategy</p>
+                    <div class="card-header">
+                        <h2>Algorithm & Mixing Strategy</h2>
                     </div>
-                    <div class="card__body">
-                        <div class="algorithm-grid">
-                            <div class="algorithm-card" data-algorithm="ultra_efficient_mixed">
-                                <div class="algorithm-header">
-                                    <h3>Ultra-Efficient Mixed</h3>
-                                    <div class="efficiency-badge">95% Efficiency</div>
-                                </div>
-                                <p>Different courses can be adjacent for maximum space utilization</p>
-                                <div class="algorithm-features">
-                                    <span class="feature">✓ Course Mixing</span>
-                                    <span class="feature">✓ Anti-Cheating</span>
-                                    <span class="feature">✓ Maximum Efficiency</span>
-                                </div>
-                            </div>
-                            
-                            <div class="algorithm-card" data-algorithm="conservative_mixed">
-                                <div class="algorithm-header">
-                                    <h3>Conservative Mixed</h3>
-                                    <div class="efficiency-badge">85% Efficiency</div>
-                                </div>
-                                <p>More spacing between different courses for extra security</p>
-                                <div class="algorithm-features">
-                                    <span class="feature">✓ Extra Spacing</span>
-                                    <span class="feature">✓ Course Mixing</span>
-                                    <span class="feature">✓ Enhanced Security</span>
-                                </div>
-                            </div>
-                            
-                            <div class="algorithm-card" data-algorithm="department_spread">
-                                <div class="algorithm-header">
-                                    <h3>Department Spread</h3>
-                                    <div class="efficiency-badge">80% Efficiency</div>
-                                </div>
-                                <p>Ensures even distribution of departments across room</p>
-                                <div class="algorithm-features">
-                                    <span class="feature">✓ Department Balance</span>
-                                    <span class="feature">✓ Even Distribution</span>
-                                    <span class="feature">✓ Strategic Placement</span>
-                                </div>
-                            </div>
-                            
-                            <div class="algorithm-card" data-algorithm="anti_cheating_plus">
-                                <div class="algorithm-header">
-                                    <h3>Anti-Cheating Plus</h3>
-                                    <div class="efficiency-badge">75% Efficiency</div>
-                                </div>
-                                <p>Maximum security with strategic course separation</p>
-                                <div class="algorithm-features">
-                                    <span class="feature">✓ Maximum Security</span>
-                                    <span class="feature">✓ Course Separation</span>
-                                    <span class="feature">✓ Fraud Prevention</span>
-                                </div>
-                            </div>
-                            
-                            <div class="algorithm-card" data-algorithm="balanced_optimization">
-                                <div class="algorithm-header">
-                                    <h3>Balanced Optimization</h3>
-                                    <div class="efficiency-badge">90% Efficiency</div>
-                                </div>
-                                <p>Optimal balance between efficiency and security</p>
-                                <div class="algorithm-features">
-                                    <span class="feature">✓ Balance Mode</span>
-                                    <span class="feature">✓ Optimal Mix</span>
-                                    <span class="feature">✓ Best Practice</span>
-                                </div>
-                            </div>
+                    <div class="card-body grid grid-3">
+                        <label class="choice-tile">
+                            <input type="radio" name="algorithm" value="smart" checked>
+                            <span class="choice-title">Smart Randomized Mix</span>
+                            <span class="choice-desc">Shuffle multi-course cohorts for unpredictable seating.</span>
+                        </label>
+                        <label class="choice-tile">
+                            <input type="radio" name="algorithm" value="course-wise">
+                            <span class="choice-title">Course-Wise Split</span>
+                            <span class="choice-desc">Keep rooms dedicated to a single course per slot.</span>
+                        </label>
+                        <label class="choice-tile">
+                            <input type="radio" name="algorithm" value="balanced">
+                            <span class="choice-title">Balanced Utilization</span>
+                            <span class="choice-desc">Fill larger cohorts first to maximize seat usage.</span>
+                        </label>
+
+                        <div class="field">
+                            <label for="max-courses" class="field-label">Max Courses Per Room</label>
+                            <input type="number" id="max-courses" class="field-input" min="1" value="3">
                         </div>
-                        
-                        <div class="selected-algorithm-summary hidden" id="algorithm-summary">
-                            <h3>Selected Algorithm: <span id="selected-algorithm-name"></span></h3>
-                            <p id="selected-algorithm-description"></p>
+                        <div class="field">
+                            <label for="seed" class="field-label">Random Seed (optional)</label>
+                            <input type="text" id="seed" class="field-input" placeholder="Leave blank for system random">
                         </div>
-                        
-                        <div class="action-buttons">
-                            <button class="btn btn--outline" id="back-to-import">Back to Data Import</button>
-                            <button class="btn btn--primary" id="proceed-to-courses" disabled>
-                                Proceed to Course Selection
-                            </button>
+                        <div class="field">
+                            <label for="slot-capacity-mode" class="field-label">Seat Fill Mode</label>
+                            <select id="slot-capacity-mode" class="field-input">
+                                <option value="greedy" selected>Greedy fill (default)</option>
+                                <option value="strict">Strict (keep leftovers for next room)</option>
+                            </select>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Course & Date Selection Tab -->
-            <section id="course-selection" class="tab-panel">
-                <div class="card">
-                    <div class="card__header">
-                        <h2>Course & Date Selection</h2>
-                        <p class="text-secondary">Select multiple courses and set exam dates</p>
+            <section class="step" data-step="3">
+                <div class="card card--filters">
+                    <div class="card-header">
+                        <h2>Optional Filters</h2>
+                        <p>Pick a semester to see its courses. Leave everything unchecked to schedule every cohort.</p>
                     </div>
-                    <div class="card__body">
-                        <div class="course-selection-grid">
-                            <div class="semester-sections">
-                                <div class="semester-section">
-                                    <h3>Semester 2 <span class="student-count" id="sem2-count">(1074 students)</span></h3>
-                                    <div class="action-buttons" style="margin: 8px 0 12px 0;">
-                                        <button class="btn btn--outline" data-select-all="semester-2-courses">Select all</button>
-                                    </div>
-                                    <div class="course-list" id="semester-2-courses"></div>
-                                </div>
-                                
-                                <div class="semester-section">
-                                    <h3>Semester 4 <span class="student-count" id="sem4-count">(521 students)</span></h3>
-                                    <div class="action-buttons" style="margin: 8px 0 12px 0;">
-                                        <button class="btn btn--outline" data-select-all="semester-4-courses">Select all</button>
-                                    </div>
-                                    <div class="course-list" id="semester-4-courses"></div>
-                                </div>
-                                
-                                <div class="semester-section">
-                                    <h3>Semester 6 <span class="student-count" id="sem6-count">(472 students)</span></h3>
-                                    <div class="action-buttons" style="margin: 8px 0 12px 0;">
-                                        <button class="btn btn--outline" data-select-all="semester-6-courses">Select all</button>
-                                    </div>
-                                    <div class="course-list" id="semester-6-courses"></div>
-                                </div>
-                                
-                                <div class="semester-section">
-                                    <h3>Semester 8 <span class="student-count" id="sem8-count">(92 students)</span></h3>
-                                    <div class="action-buttons" style="margin: 8px 0 12px 0;">
-                                        <button class="btn btn--outline" data-select-all="semester-8-courses">Select all</button>
-                                    </div>
-                                    <div class="course-list" id="semester-8-courses"></div>
-                                </div>
+                    <div class="card-body filters-body">
+                        <div id="filters-container"></div>
+                        <div class="filters-summary-row">
+                            <div class="filter-summary" id="semester-summary"></div>
+                            <div class="filters-actions">
+                                <button class="btn btn-chip" type="button" id="clear-semesters">Clear Semesters</button>
+                                <button class="btn btn-chip" type="button" id="clear-courses">Clear Courses</button>
                             </div>
-                            
-                                                            <div class="selection-summary">
-                                                            <h3>Exam Schedule</h3>
-                                                            <div class="form-group">
-                                                                <label class="form-label" for="exam-start-date">Exam Start Date</label>
-                                                                <input type="date" id="exam-start-date" class="form-control">
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="form-label" for="exam-end-date">Exam End Date</label>
-                                                                <input type="date" id="exam-end-date" class="form-control">
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="form-label" for="exam-slots">Slots per Day</label>
-                                                                <input type="number" id="exam-slots" class="form-control" value="2">
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="form-label" for="slot-duration">Slot Duration (hours)</label>
-                                                                <input type="number" id="slot-duration" class="form-control" value="2">
-                                                            </div>
-                                                            
-                                                            <div class="selected-courses" id="selected-courses">
-                                                                <h4>Selected Courses</h4>
-                                                                <div class="course-summary" id="course-summary">
-                                                                    <p class="text-secondary">No courses selected</p>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div id="exam-schedule" class="exam-schedule"></div>
-                            
-                                                            <div class="capacity-analysis">
-                                                                <div class="stat-card">
-                                                                    <div class="stat-number" id="total-students">0</div>
-                                                                    <div class="stat-label">Total Students</div>
-                                                                </div>
-                                                                <div class="stat-card">
-                                                                    <div class="stat-number" id="total-capacity">610</div>
-                                                                    <div class="stat-label">Room Capacity</div>
-                                                                </div>
-                                                                <div class="stat-card">
-                                                                    <div class="stat-number" id="rooms-needed">0</div>
-                                                                    <div class="stat-label">Rooms Required</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>                        </div>
-                        
-                        <div class="action-buttons">
-                            <button class="btn btn--outline" id="back-to-algorithm">Back to Algorithm</button>
-                            <button class="btn btn--primary" id="generate-recommendations" disabled>
-                                Generate Recommendations
-                            </button>
+                        </div>
+                        <div class="filter-summary" id="course-summary"></div>
+                        <div class="filter-note" id="filter-note"></div>
+                    </div>
+                </div>
+
+                <div class="card card--schedule">
+                    <div class="card-header">
+                        <h2>Exam Window & Slots</h2>
+                        <p>Provide the exam window; slots will be generated automatically for every day in the range.</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid grid-2 gap-md exam-window-grid">
+                            <div class="field">
+                                <label for="schedule-start" class="field-label">Exam Start Date</label>
+                                <input type="date" id="schedule-start" class="field-input">
+                            </div>
+                            <div class="field">
+                                <label for="schedule-end" class="field-label">Exam End Date</label>
+                                <input type="date" id="schedule-end" class="field-input">
+                            </div>
+                            <div class="field">
+                                <label for="slots-per-day" class="field-label">Slots per Day</label>
+                                <input type="number" id="slots-per-day" class="field-input" min="1" value="2">
+                            </div>
+                        </div>
+                        <div class="slot-config-wrapper">
+                            <div class="slot-config-header">
+                                <div>
+                                    <h3>Daily Slot Templates</h3>
+                                    <p>Labels and times apply to each day between the selected start and end dates.</p>
+                                </div>
+                                <button class="btn btn-chip" type="button" id="add-slot-template">Add Slot</button>
+                            </div>
+                            <div id="slot-config" class="slot-config"></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Seating Visualization Tab -->
-            <!-- <section id="seating-visualization" class="tab-panel">
-                ...
-            </section> -->
+            <section class="step" data-step="4">
+                <section class="card" id="results-card" hidden>
+                    <div class="card-header">
+                        <div class="card-header__title">
+                            <h2>Room Allocation Summary</h2>
+                            <p>Detailed per-room placement including slot usage, courses, and semesters.</p>
+                        </div>
+                        <div class="export-group">
+                            <button class="btn btn-secondary" id="export-csv" disabled>Export CSV</button>
+                            <button class="btn btn-secondary" id="export-excel" disabled>Export Excel</button>
+                            <button class="btn btn-secondary" id="export-pdf" disabled>Export PDF</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="results-container" class="table-responsive"></div>
+                    </div>
+                </section>
 
-            <section id="recommendations" class="tab-panel">
-                <div class="card">
-                    <div class="card__header">
-                        <h2>Exam Schedule & Room Recommendations</h2>
-                        <p class="text-secondary">Intelligent suggestions for your exam schedule</p>
+                <section class="card" id="analytics-card" hidden>
+                    <div class="card-header">
+                        <h2>AI / ML Analytics</h2>
                     </div>
-                    <div class="card__body" id="recommendations-content">
-						
-                    </div>
-					<!-- Inline Analytics for Recommendations -->
-					<div class="card__body" id="recommendations-analytics" style="margin-top: 16px;">
-						<!-- Populated dynamically by app.js -->
-					</div>
-                </div>
-            </section>
-
-            <!-- Analytics Dashboard Tab -->
-            <section id="analytics" class="tab-panel">
-                <div class="analytics-dashboard">
-                    <div class="analytics-header">
-                        <h2>Analytics Dashboard</h2>
-                        <p class="text-secondary">Comprehensive efficiency metrics and capacity analysis</p>
-                    </div>
-                    
-                    <div class="analytics-grid">
-                        <div class="analytics-card">
-                            <h3>Overall Statistics</h3>
-                            <div class="stats-grid">
-                                <div class="stat-item">
-                                    <div class="stat-number" id="analytics-students">0</div>
-                                    <div class="stat-label">Students Processed</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-number" id="analytics-rooms">0</div>
-                                    <div class="stat-label">Rooms Utilized</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-number" id="analytics-efficiency">0%</div>
-                                    <div class="stat-label">Space Efficiency</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-number" id="analytics-courses">0</div>
-                                    <div class="stat-label">Courses Scheduled</div>
-                                </div>
+                    <div class="card-body">
+                        <div class="insights-grid">
+                            <div class="insight">
+                                <span class="insight-label">Overall Utilization</span>
+                                <span class="insight-value" id="overall-utilization">0%</span>
+                            </div>
+                            <div class="insight">
+                                <span class="insight-label">Unassigned Students</span>
+                                <span class="insight-value" id="unassigned-count">0</span>
+                            </div>
+                            <div class="insight">
+                                <span class="insight-label">High Utilization Rooms</span>
+                                <span class="insight-value" id="high-util-count">0</span>
+                            </div>
+                            <div class="insight">
+                                <span class="insight-label">Low Utilization Rooms</span>
+                                <span class="insight-value" id="low-util-count">0</span>
                             </div>
                         </div>
-                        
-                        <div class="analytics-card">
-                            <h3>Room Utilization</h3>
-                            <div class="chart-container" style="position: relative; height: 300px;">
+                        <div class="ai-summary" id="ai-summary"></div>
+                        <div class="chart-grid">
+                            <div>
+                                <h3 class="chart-title">Room Utilization</h3>
                                 <canvas id="utilization-chart"></canvas>
                             </div>
-                        </div>
-                        
-                        <div class="analytics-card">
-                            <h3>Course Distribution</h3>
-                            <div class="chart-container" style="position: relative; height: 300px;">
-                                <canvas id="distribution-chart"></canvas>
+                            <div>
+                                <h3 class="chart-title">Course Distribution by Slot</h3>
+                                <canvas id="slot-distribution-chart"></canvas>
                             </div>
                         </div>
-                        
-                        <div class="analytics-card">
-                            <h3>Efficiency Comparison</h3>
-                            <div class="efficiency-comparison">
-                                <div class="comparison-item">
-                                    <div class="comparison-label">Traditional Method</div>
-                                    <div class="comparison-bar">
-                                        <div class="comparison-fill" style="width: 35%"></div>
-                                    </div>
-                                    <div class="comparison-value">35%</div>
-                                </div>
-                                <div class="comparison-item">
-                                    <div class="comparison-label">Our Algorithm</div>
-                                    <div class="comparison-bar">
-                                        <div class="comparison-fill current-efficiency" style="width: 0%"></div>
-                                    </div>
-                                    <div class="comparison-value" id="current-efficiency-value">0%</div>
-                                </div>
-                                <div class="improvement-stat">
-                                    <span class="improvement-value" id="improvement-percentage">0%</span>
-                                    <span class="improvement-label">Improvement</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="analytics-card full-width">
-                            <h3>Detailed Room Breakdown</h3>
-                            <div class="room-breakdown" id="room-breakdown"></div>
-                        </div>
                     </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn--outline" id="back-to-seating">Back to Seating</button>
-                        <button class="btn btn--secondary" id="export-analytics">Export Report</button>
-                        <button class="btn btn--primary" id="generate-pdf">Generate PDF Report</button>
-                    </div>
-                </div>
+                </section>
             </section>
+
+            <div class="step-controls">
+                <button class="btn btn-outline" id="prev-step">Back</button>
+                <button class="btn btn-primary" id="next-step">Next</button>
+            </div>
         </main>
     </div>
 
-    <!-- Processing Modal -->
-    <div class="modal hidden" id="processing-modal">
-        <div class="modal-content">
-            <div class="processing-animation">
-                <div class="spinner"></div>
-                <h3 id="processing-title">Processing...</h3>
-                <p id="processing-description">Generating optimal seating arrangement</p>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="processing-progress"></div>
-                </div>
-                <div class="processing-stats" id="processing-stats"></div>
-            </div>
-        </div>
+    <div id="notification-banner" class="notification-banner" role="alert" tabindex="-1" hidden>
+        <span class="notification-message"></span>
+        <button type="button" id="dismiss-notification" aria-label="Dismiss notification">×</button>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
+

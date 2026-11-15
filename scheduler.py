@@ -158,6 +158,9 @@ def check_constraints(cons, exams, rooms):
 
 # ---------------- stage 1: timetable ----------------
 
+EMPTY_SEAT_WEIGHT = 3      # per seat left empty only because a paper sits alone in its session
+
+
 def solve_timetable(exams, students, slots, rooms, cons, cuts=(), time_limit=60, diagnose=False):
     m = cp_model.CpModel()
     E, T = sorted(exams), range(len(slots))
@@ -261,6 +264,21 @@ def solve_timetable(exams, students, slots, rooms, cons, cuts=(), time_limit=60,
                 m.Add(x[e, t] == 0)
         for S in cuts:
             m.Add(sum(x[e, t] for e in S) <= len(S) - 1)
+
+    # Rooms filled completely. Same-exam students may not sit side by side, so an exam alone in a session
+    # needs about usable/spaced times its size in seats, and the gaps stay empty unless other exams in the
+    # same session fill them (the office's plans mix papers in every room). Penalise those empty seats so big
+    # exams share sessions with other papers instead of sitting alone in half-empty rooms.
+    for t in T:
+        u, sp = sum(r["usable"] for r in caps[t].values()), sum(r["spaced"] for r in caps[t].values())
+        if not sp or u <= sp:
+            continue
+        load = sum(size[e] * x[e, t] for e in E)
+        empty = m.NewIntVar(0, u, f"empty{t}")
+        for e in E:
+            if e not in allow_adj and size[e] * u > 2 * sp * 10:   # skip tiny papers; they never force rooms open
+                m.Add(empty >= (size[e] * u) // sp - load).OnlyEnforceIf(x[e, t])
+        obj.append(EMPTY_SEAT_WEIGHT * empty)
 
     if diagnose:
         m.AddAssumptions(list(lits.values()))

@@ -119,6 +119,23 @@ def t_no_mostly_empty_rooms():
             n = sum(len(v) for v in rs.values())
             assert len(rs) <= -(-n // 24) + 1, (mode, sl["date"], len(rs), n)   # 24 = spaced seats per room
 
+def t_rooms_filled_completely():
+    """Regression: a big paper was put alone in a session, so same-paper spacing left every other seat empty
+    in all its rooms (real data: CC1101, 527 students in 18 half-full rooms) while other papers that could
+    have filled those gaps sat in other sessions. Big papers must share sessions so the rooms fill up."""
+    lines = ["Student Session,Student Roll Number,Student Name,Subject Code,Subject Name,Subject Type"]
+    for c, (big, small) in enumerate([("BA1000", "BA1001"), ("BB2000", "BB2001")]):  # two cohorts, no shared students
+        for n in range(96):
+            for e in (big, small):
+                lines.append(f"SEMESTER {c + 1},R{c}{n:03d},Student {c}{n},{e},Course {e},Core")
+    rooms = [{"id": f"H{i}", "layout": "\n".join(["SSSS SSSS"] * 6)} for i in range(8)]   # 48 seats, 24 spaced
+    r = ok(solve("\n".join(lines), rooms, []))
+    caps = s.room_capacity(rooms, r["slots"], [])
+    for sl in r["slots"]:
+        rs = r["seating"].get(str(sl["id"]), {})
+        empty = sum(caps[sl["id"]][k]["usable"] - len(v) for k, v in rs.items())
+        assert empty < 48, (sl["date"], sl["slot"], sl["exams"], f"{empty} empty seats in {len(rs)} rooms")
+
 def t_weekends_skipped():
     r = ok(solve(ENR, ROOMS, []))
     import datetime as dt

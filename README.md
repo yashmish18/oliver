@@ -11,6 +11,7 @@
 - [Key Features](#key-features)
 - [System Architecture](#system-architecture)
   - [Two-Stage Solving Pipeline](#two-stage-solving-pipeline)
+  - [Room Filling Guarantees](#room-filling-guarantees)
   - [Feedback Loops and Infeasible Cuts](#feedback-loops-and-infeasible-cuts)
   - [Minimal Unsatisfiable Core Diagnosis](#minimal-unsatisfiable-core-diagnosis)
 - [2D Physical Room Layout Engine](#2d-physical-room-layout-engine)
@@ -129,7 +130,7 @@ flowchart TD
 
 ## System Architecture
 
-The core solver engine lives in [`scheduler.py`](file:///home/yaxh/oliver/scheduler.py) and operates in two coordinated stages using Google OR-Tools CP-SAT.
+The core solver engine lives in [`scheduler.py`](scheduler.py) and operates in two coordinated stages using Google OR-Tools CP-SAT.
 
 ### Two-Stage Solving Pipeline
 
@@ -171,12 +172,45 @@ The core solver engine lives in [`scheduler.py`](file:///home/yaxh/oliver/schedu
   - Spread exams evenly across the calendar; avoid back-to-back papers on consecutive days.
   - Utilize the full exam period (from the first selected day to the last).
   - Respect administrator soft preferences (`prefer_early`, `prefer_late`, `prefer_slot`).
+  - **Fill rooms completely** (see [Room Filling Guarantees](#room-filling-guarantees)): penalise seats that would stay empty because a big paper sits alone in its session.
 
 #### Stage 2: Seating Allocation (`seat_slot`)
 - For each time slot $t$, solves seating independently:
-  1. **Room Assignment**: Allocates student counts per exam to available rooms (`allocate_rooms`), minimizing the total rooms used or spreading students evenly across rooms (`room_use`).
+  1. **Room Assignment**: Allocates student counts per exam to available rooms (`allocate_rooms`). Both modes open the **fewest rooms** first; `compact` (default) then fills them one after another so only the last room opened has empty seats, `spread` shares students evenly over those same rooms (`room_use`).
   2. **Seat Placement**: Places students onto individual room seat coordinates (`place_in_room`), ensuring no two students taking the same exam share adjacent seats.
   3. **Roll Number Ordering**: Fills seats sequentially by roll number (`assign_rolls`), ensuring cohort groupings remain orderly and easy for invigilators to manage.
+
+### Room Filling Guarantees
+
+Same-exam students may not sit side by side, so a room holding only **one** paper can use only its *spaced* seats (roughly every other seat). The gaps fill only when a **different** paper shares the room, which is how the office's own past plans look: three or four papers mixed in every room.
+
+An earlier version scheduled big papers alone in their own session. On the real end-term data, CC1101 (527 students) sat alone in 18 rooms with about a third of the seats empty, while the papers that could have filled those gaps were in other sessions. Across the whole period, **1,771 seats in opened rooms stayed empty**.
+
+Stage 1 now estimates, for every session, the seats a lone paper would leave empty:
+
+$$\text{empty}_t \ \ge\ \Big\lfloor n_e \cdot \tfrac{\text{usable}_t}{\text{spaced}_t} \Big\rfloor - \sum_{e'} n_{e'}\,x_{e',t} \qquad \text{whenever } x_{e,t}=1$$
+
+and minimises `EMPTY_SEAT_WEIGHT × empty_t` (`scheduler.py`) alongside the spreading objectives. The solver therefore pairs big papers from cohorts that share no students in the same session, and their students interleave seat by seat.
+
+| Real end-term data (1,201 students, 72 exams, 20 days) | Before | After |
+| :--- | ---: | ---: |
+| Empty seats in opened rooms (whole period) | 1,771 | 215 |
+| Room-sessions to staff with invigilators | 161 | 127 |
+| Students with more than one exam on a day | 0 | 0 |
+| Rule violations | 0 | 0 |
+
+The remaining empty seats are tiny sessions, such as one backlog student in a 32-seat room, that clash with every other session.
+
+**Regression tests that keep these mistakes from coming back** (`test_scenarios.py`):
+
+| Test | The mistake it catches |
+| :--- | :--- |
+| `t_rooms_filled_completely` | A big paper alone in a session, leaving its rooms half empty while other papers could fill them. The test fails on the old code: 96 empty seats in 4 rooms. |
+| `t_no_mostly_empty_rooms` | `spread` once put about 10 students in each of 15 rooms instead of filling 3. |
+| `t_room_use_spread` | `spread` opening more rooms than `compact`. |
+| stress test (`extra_rooms`) | Any of 200 random universities opening more rooms than its students need. |
+
+Every plan also lists its room findings in the UI (`room_checks`): rooms that aren't full because only one paper is in them, sessions with more than one partly-filled room, and a last room that is less than half full.
 
 ### Feedback Loops and Infeasible Cuts
 If Stage 1 schedules a combination of exams in slot $t$ that cannot physically fit into the available rooms under spacing constraints (even though the sum of student counts is theoretically smaller than total raw seats), Stage 2 raises an infeasibility cut:
@@ -197,7 +231,7 @@ University lecture rooms are rarely simple rectangular grids. They feature aisle
 
 ### Layout Grid Syntax
 
-Oliver represents rooms as multiline ASCII strings (stored in [`rooms.json`](file:///home/yaxh/oliver/rooms.json)):
+Oliver represents rooms as multiline ASCII strings (stored in [`rooms.json`](rooms.json)):
 
 | Character | Meaning | Description |
 | :---: | :--- | :--- |
@@ -235,7 +269,7 @@ By default, **students sitting the same exam paper are strictly forbidden from s
 
 ## Constraint Vocabulary (VOCAB)
 
-The solver understands 22 formal constraint types. All natural language rules or web form toggles map directly into this vocabulary:
+The solver understands 23 formal constraint types. All natural language rules or web form toggles map directly into this vocabulary:
 
 | Constraint Type | Parameters | Nature | Description |
 | :--- | :--- | :---: | :--- |
@@ -253,7 +287,8 @@ The solver understands 22 formal constraint types. All natural language rules or
 | `prefer_late` | `exams?: [code], weight?: int` | Soft | Optimizes the schedule to place these exams toward the end of the period. |
 | `prefer_slot` | `exams: [code], slot: int, weight?: int` | Soft | Biases exams toward a specific slot of the day (e.g., slot 1 for morning). |
 | `max_exams_per_room`| `n: int` | Hard | Limits the maximum number of distinct exam courses placed in any single room. |
-| `room_use` | `mode: "spread" \| "compact"` | Optimization | Spreads students across all selected rooms or concentrates them into as few as possible. |
+| `room_use` | `mode: "spread" \| "compact"` | Optimization | Both open the fewest rooms needed; `compact` (default) fills them one after another, `spread` shares students evenly among them. |
+| `adjacent_when_needed` | none | Learned | Papers too big to space out in any session may sit side by side, as in past plans. |
 | `room_fill` | `max_fraction: float, room?: id` | Hard | Restricts room occupancy to a percentage of total capacity (e.g., 0.85 = 85%). |
 | `room_unavailable` | `room: id, date?: ISO, slot?: int` | Hard | Marks a specific room as unavailable during given dates or slots. |
 | `seat_spacing` | `directions: ["side", "front"]` | Hard | Prohibits same-exam seating along specified geometric directions. |
@@ -266,7 +301,7 @@ The solver understands 22 formal constraint types. All natural language rules or
 
 ## AI Natural Language Rule Reader (`rule_model.py`)
 
-Rather than forcing users to write JSON or learn query syntax, Oliver includes a local Small Language Model (SLM) pipeline in [`rule_model.py`](file:///home/yaxh/oliver/rule_model.py).
+Rather than forcing users to write JSON or learn query syntax, Oliver includes a local Small Language Model (SLM) pipeline in [`rule_model.py`](rule_model.py).
 
 ```
 "Schedule Discrete Maths and Data Structures at least two days apart"
@@ -314,7 +349,7 @@ When an administrator edits or corrects a rule interpretation in the web UI, the
 
 ## Historical Data Mining & Profile Extraction (`history.py`)
 
-Universities develop unwritten scheduling habits over decades. Rather than requiring users to manually re-enter these preferences, [`history.py`](file:///home/yaxh/oliver/history.py) extracts knowledge directly from historical documents placed in `data/past/`:
+Universities develop unwritten scheduling habits over decades. Rather than requiring users to manually re-enter these preferences, [`history.py`](history.py) extracts knowledge directly from historical documents placed in `data/past/`:
 
 1. **Word (.docx) Room Layout Extraction**:
    - Parses the actual floor plan seating grids in Word format (`.docx` tables with seat boundaries).
@@ -407,15 +442,22 @@ Start the local server (`./start.sh`) and navigate to `http://localhost:8000`.
 
 3. Install required Python packages:
    ```bash
-   pip install ortools python-docx openpyxl torch transformers peft accelerate playwright
+   pip install -r requirements.txt
    ```
+   Only `ortools`, `openpyxl` and `python-docx` are needed to solve. `torch`, `transformers`, `peft` and `accelerate` run the plain-English rule reader. `playwright` is used only by `test_ui.py`.
 
-4. *(Optional)* Install Playwright browser binaries if running UI automated tests:
+4. Train the rule reader once. The LoRA weights (`rule_model/`, about 45 MB) are not stored in git, and the **Interpret** button needs them:
+   ```bash
+   python rule_model.py train   # ~10 min on a laptop GPU, longer on CPU; downloads Qwen2.5-0.5B-Instruct once
+   ```
+   Tick boxes and the solver work without this step.
+
+5. *(Optional)* Install Playwright browser binaries if running UI automated tests:
    ```bash
    playwright install chromium
    ```
 
-5. *(Optional)* Ingest past exam data and initialize rooms:
+6. *(Optional)* Ingest past exam data and initialize rooms:
    ```bash
    python history.py --replay
    ```
@@ -500,6 +542,7 @@ oliver/
 ├── history.py                 # PDF/Word parser & university habit learning engine
 ├── index.html                 # Reactive single-page web application
 ├── README.md                  # Comprehensive documentation
+├── requirements.txt           # Python dependencies
 ├── rooms.json                 # Campus room inventory & 2D layout specifications
 ├── rule_model.py              # Fine-tuned Qwen2.5-0.5B LoRA rule parser
 ├── scheduler.py               # Two-stage OR-Tools CP-SAT scheduling & seating engine

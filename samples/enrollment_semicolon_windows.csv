@@ -1,0 +1,1183 @@
+Student Session;Student Roll Number;Student Name;Subject Code;Subject Name;Subject Type
+SES0001-SEMESTER 1;2026BTech001;Yash Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech001;Yash Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech001;Yash Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech001;Yash Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech001;Yash Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech002;Aarav Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech002;Aarav Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech002;Aarav Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech002;Aarav Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech002;Aarav Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech003;Kabir Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech003;Kabir Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech003;Kabir Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech003;Kabir Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech003;Kabir Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech004;Kavya Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech004;Kavya Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech004;Kavya Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech004;Kavya Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech004;Kavya Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech005;Ananya Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech005;Ananya Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech005;Ananya Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech005;Ananya Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech005;Ananya Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech006;Sanya Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech006;Sanya Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech006;Sanya Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech006;Sanya Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech006;Sanya Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech007;Tanvi Agarwal;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech007;Tanvi Agarwal;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech007;Tanvi Agarwal;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech007;Tanvi Agarwal;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech007;Tanvi Agarwal;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech008;Aditi Sharma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech008;Aditi Sharma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech008;Aditi Sharma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech008;Aditi Sharma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech008;Aditi Sharma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech009;Arjun Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech009;Arjun Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech009;Arjun Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech009;Arjun Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech009;Arjun Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech010;Kavya Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech010;Kavya Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech010;Kavya Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech010;Kavya Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech010;Kavya Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech011;Vihaan Sharma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech011;Vihaan Sharma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech011;Vihaan Sharma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech011;Vihaan Sharma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech011;Vihaan Sharma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech012;Sanya Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech012;Sanya Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech012;Sanya Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech012;Sanya Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech012;Sanya Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech013;Yash Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech013;Yash Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech013;Yash Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech013;Yash Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech013;Yash Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech014;Sanya Agarwal;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech014;Sanya Agarwal;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech014;Sanya Agarwal;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech014;Sanya Agarwal;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech014;Sanya Agarwal;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech015;Kavya Mishra;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech015;Kavya Mishra;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech015;Kavya Mishra;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech015;Kavya Mishra;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech015;Kavya Mishra;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech016;Tanvi Mehta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech016;Tanvi Mehta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech016;Tanvi Mehta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech016;Tanvi Mehta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech016;Tanvi Mehta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech017;Aarav Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech017;Aarav Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech017;Aarav Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech017;Aarav Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech017;Aarav Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech018;Pooja Jain;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech018;Pooja Jain;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech018;Pooja Jain;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech018;Pooja Jain;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech018;Pooja Jain;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech019;Kabir Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech019;Kabir Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech019;Kabir Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech019;Kabir Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech019;Kabir Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech020;Ishaan Jain;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech020;Ishaan Jain;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech020;Ishaan Jain;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech020;Ishaan Jain;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech020;Ishaan Jain;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech021;Ananya Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech021;Ananya Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech021;Ananya Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech021;Ananya Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech021;Ananya Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech022;Om Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech022;Om Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech022;Om Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech022;Om Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech022;Om Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech023;Neha Jain;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech023;Neha Jain;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech023;Neha Jain;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech023;Neha Jain;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech023;Neha Jain;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech024;Vihaan Mehta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech024;Vihaan Mehta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech024;Vihaan Mehta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech024;Vihaan Mehta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech024;Vihaan Mehta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech025;Aditi Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech025;Aditi Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech025;Aditi Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech025;Aditi Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech025;Aditi Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech026;Rahul Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech026;Rahul Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech026;Rahul Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech026;Rahul Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech026;Rahul Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech027;Ananya Agarwal;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech027;Ananya Agarwal;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech027;Ananya Agarwal;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech027;Ananya Agarwal;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech027;Ananya Agarwal;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech028;Arjun Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech028;Arjun Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech028;Arjun Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech028;Arjun Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech028;Arjun Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech029;Meera Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech029;Meera Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech029;Meera Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech029;Meera Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech029;Meera Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech030;Vihaan Jain;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech030;Vihaan Jain;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech030;Vihaan Jain;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech030;Vihaan Jain;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech030;Vihaan Jain;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech031;Tanvi Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech031;Tanvi Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech031;Tanvi Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech031;Tanvi Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech031;Tanvi Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech032;Arjun Sharma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech032;Arjun Sharma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech032;Arjun Sharma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech032;Arjun Sharma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech032;Arjun Sharma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech033;Zara Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech033;Zara Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech033;Zara Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech033;Zara Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech033;Zara Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech034;Meera Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech034;Meera Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech034;Meera Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech034;Meera Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech034;Meera Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech035;Kavya Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech035;Kavya Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech035;Kavya Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech035;Kavya Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech035;Kavya Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech036;Om Mehta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech036;Om Mehta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech036;Om Mehta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech036;Om Mehta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech036;Om Mehta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech037;Rahul Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech037;Rahul Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech037;Rahul Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech037;Rahul Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech037;Rahul Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech038;Neha Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech038;Neha Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech038;Neha Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech038;Neha Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech038;Neha Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech039;Neha Jain;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech039;Neha Jain;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech039;Neha Jain;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech039;Neha Jain;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech039;Neha Jain;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech040;Ishaan Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech040;Ishaan Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech040;Ishaan Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech040;Ishaan Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech040;Ishaan Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech041;Kabir Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech041;Kabir Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech041;Kabir Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech041;Kabir Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech041;Kabir Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech042;Zara Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech042;Zara Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech042;Zara Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech042;Zara Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech042;Zara Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech043;Arjun Choudhary;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech043;Arjun Choudhary;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech043;Arjun Choudhary;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech043;Arjun Choudhary;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech043;Arjun Choudhary;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech044;Yash Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech044;Yash Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech044;Yash Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech044;Yash Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech044;Yash Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech045;Sanya Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech045;Sanya Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech045;Sanya Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech045;Sanya Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech045;Sanya Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech046;Kavya Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech046;Kavya Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech046;Kavya Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech046;Kavya Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech046;Kavya Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech047;Rahul Agarwal;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech047;Rahul Agarwal;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech047;Rahul Agarwal;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech047;Rahul Agarwal;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech047;Rahul Agarwal;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech048;Kabir Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech048;Kabir Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech048;Kabir Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech048;Kabir Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech048;Kabir Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech049;Sanya Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech049;Sanya Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech049;Sanya Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech049;Sanya Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech049;Sanya Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech050;Zara Jain;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech050;Zara Jain;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech050;Zara Jain;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech050;Zara Jain;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech050;Zara Jain;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech051;Aditi Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech051;Aditi Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech051;Aditi Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech051;Aditi Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech051;Aditi Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech052;Aditi Jain;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech052;Aditi Jain;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech052;Aditi Jain;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech052;Aditi Jain;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech052;Aditi Jain;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech053;Om Mehta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech053;Om Mehta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech053;Om Mehta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech053;Om Mehta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech053;Om Mehta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech054;Arjun Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech054;Arjun Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech054;Arjun Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech054;Arjun Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech054;Arjun Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech055;Tanvi Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech055;Tanvi Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech055;Tanvi Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech055;Tanvi Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech055;Tanvi Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech056;Nikhil Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech056;Nikhil Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech056;Nikhil Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech056;Nikhil Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech056;Nikhil Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech057;Yash Mishra;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech057;Yash Mishra;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech057;Yash Mishra;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech057;Yash Mishra;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech057;Yash Mishra;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech058;Om Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech058;Om Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech058;Om Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech058;Om Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech058;Om Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech059;Rahul Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech059;Rahul Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech059;Rahul Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech059;Rahul Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech059;Rahul Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech060;Kabir Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech060;Kabir Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech060;Kabir Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech060;Kabir Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech060;Kabir Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech061;Kavya Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech061;Kavya Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech061;Kavya Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech061;Kavya Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech061;Kavya Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech062;Sanya Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech062;Sanya Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech062;Sanya Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech062;Sanya Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech062;Sanya Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech063;Kabir Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech063;Kabir Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech063;Kabir Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech063;Kabir Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech063;Kabir Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech064;Tanvi Agarwal;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech064;Tanvi Agarwal;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech064;Tanvi Agarwal;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech064;Tanvi Agarwal;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech064;Tanvi Agarwal;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech065;Tanvi Agarwal;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech065;Tanvi Agarwal;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech065;Tanvi Agarwal;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech065;Tanvi Agarwal;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech065;Tanvi Agarwal;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech066;Neha Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech066;Neha Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech066;Neha Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech066;Neha Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech066;Neha Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech067;Dev Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech067;Dev Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech067;Dev Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech067;Dev Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech067;Dev Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech068;Riya Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech068;Riya Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech068;Riya Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech068;Riya Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech068;Riya Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech069;Aditi Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech069;Aditi Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech069;Aditi Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech069;Aditi Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech069;Aditi Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech070;Dev Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech070;Dev Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech070;Dev Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech070;Dev Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech070;Dev Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech071;Diya Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech071;Diya Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech071;Diya Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech071;Diya Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech071;Diya Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech072;Pooja Choudhary;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech072;Pooja Choudhary;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech072;Pooja Choudhary;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech072;Pooja Choudhary;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech072;Pooja Choudhary;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech073;Arjun Agarwal;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech073;Arjun Agarwal;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech073;Arjun Agarwal;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech073;Arjun Agarwal;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech073;Arjun Agarwal;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech074;Om Choudhary;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech074;Om Choudhary;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech074;Om Choudhary;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech074;Om Choudhary;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech074;Om Choudhary;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech075;Rahul Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech075;Rahul Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech075;Rahul Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech075;Rahul Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech075;Rahul Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech076;Kabir Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech076;Kabir Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech076;Kabir Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech076;Kabir Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech076;Kabir Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech077;Aarav Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech077;Aarav Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech077;Aarav Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech077;Aarav Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech077;Aarav Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech078;Ananya Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech078;Ananya Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech078;Ananya Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech078;Ananya Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech078;Ananya Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech079;Sanya Mehta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech079;Sanya Mehta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech079;Sanya Mehta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech079;Sanya Mehta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech079;Sanya Mehta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech080;Yash Jain;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech080;Yash Jain;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech080;Yash Jain;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech080;Yash Jain;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech080;Yash Jain;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech081;Ananya Mehta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech081;Ananya Mehta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech081;Ananya Mehta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech081;Ananya Mehta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech081;Ananya Mehta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech082;Pooja Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech082;Pooja Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech082;Pooja Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech082;Pooja Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech082;Pooja Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech083;Rahul Sharma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech083;Rahul Sharma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech083;Rahul Sharma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech083;Rahul Sharma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech083;Rahul Sharma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech084;Kabir Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech084;Kabir Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech084;Kabir Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech084;Kabir Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech084;Kabir Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech085;Diya Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech085;Diya Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech085;Diya Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech085;Diya Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech085;Diya Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech086;Ananya Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech086;Ananya Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech086;Ananya Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech086;Ananya Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech086;Ananya Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech087;Meera Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech087;Meera Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech087;Meera Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech087;Meera Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech087;Meera Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech088;Rohan Choudhary;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech088;Rohan Choudhary;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech088;Rohan Choudhary;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech088;Rohan Choudhary;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech088;Rohan Choudhary;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech089;Ishaan Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech089;Ishaan Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech089;Ishaan Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech089;Ishaan Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech089;Ishaan Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech090;Neha Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech090;Neha Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech090;Neha Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech090;Neha Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech090;Neha Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech091;Sanya Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech091;Sanya Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech091;Sanya Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech091;Sanya Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech091;Sanya Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech092;Aarav Choudhary;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech092;Aarav Choudhary;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech092;Aarav Choudhary;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech092;Aarav Choudhary;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech092;Aarav Choudhary;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech093;Nikhil Mishra;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech093;Nikhil Mishra;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech093;Nikhil Mishra;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech093;Nikhil Mishra;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech093;Nikhil Mishra;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech094;Aarav Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech094;Aarav Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech094;Aarav Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech094;Aarav Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech094;Aarav Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech095;Neha Mehta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech095;Neha Mehta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech095;Neha Mehta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech095;Neha Mehta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech095;Neha Mehta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech096;Kavya Sharma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech096;Kavya Sharma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech096;Kavya Sharma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech096;Kavya Sharma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech096;Kavya Sharma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech097;Kavya Choudhary;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech097;Kavya Choudhary;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech097;Kavya Choudhary;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech097;Kavya Choudhary;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech097;Kavya Choudhary;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech098;Arjun Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech098;Arjun Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech098;Arjun Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech098;Arjun Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech098;Arjun Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech099;Riya Verma;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech099;Riya Verma;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech099;Riya Verma;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech099;Riya Verma;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech099;Riya Verma;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech100;Sanya Gupta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech100;Sanya Gupta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech100;Sanya Gupta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech100;Sanya Gupta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech100;Sanya Gupta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech101;Dev Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech101;Dev Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech101;Dev Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech101;Dev Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech101;Dev Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech102;Riya Rathore;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech102;Riya Rathore;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech102;Riya Rathore;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech102;Riya Rathore;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech102;Riya Rathore;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech103;Diya Mehta;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech103;Diya Mehta;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech103;Diya Mehta;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech103;Diya Mehta;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech103;Diya Mehta;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech104;Rohan Choudhary;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech104;Rohan Choudhary;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech104;Rohan Choudhary;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech104;Rohan Choudhary;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech104;Rohan Choudhary;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech105;Pooja Singh;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech105;Pooja Singh;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech105;Pooja Singh;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech105;Pooja Singh;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech105;Pooja Singh;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech106;Sanya Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech106;Sanya Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech106;Sanya Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech106;Sanya Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech106;Sanya Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech107;Ishaan Saxena;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech107;Ishaan Saxena;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech107;Ishaan Saxena;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech107;Ishaan Saxena;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech107;Ishaan Saxena;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech108;Meera Agarwal;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech108;Meera Agarwal;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech108;Meera Agarwal;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech108;Meera Agarwal;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech108;Meera Agarwal;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech109;Zara Joshi;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech109;Zara Joshi;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech109;Zara Joshi;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech109;Zara Joshi;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech109;Zara Joshi;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 1;2026BTech110;Neha Mishra;AS1108;Applied Physics;Core
+SES0001-SEMESTER 1;2026BTech110;Neha Mishra;AS1109;Calculus and Ordinary Differential Equations;Core
+SES0001-SEMESTER 1;2026BTech110;Neha Mishra;CS1139;Programming-I;Core
+SES0001-SEMESTER 1;2026BTech110;Neha Mishra;ES1115;Environmental Science and Sustainability;Core
+SES0001-SEMESTER 1;2026BTech110;Neha Mishra;EE1118;Fundamentals of Electrical and Electronics Engineering;Core
+SES0001-SEMESTER 3;2025BTech001;Rohan Mishra;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech001;Rohan Mishra;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech001;Rohan Mishra;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech001;Rohan Mishra;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech001;Rohan Mishra;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech002;Ananya Singh;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech002;Ananya Singh;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech002;Ananya Singh;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech002;Ananya Singh;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech002;Ananya Singh;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech003;Kavya Verma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech003;Kavya Verma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech003;Kavya Verma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech003;Kavya Verma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech003;Kavya Verma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech004;Nikhil Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech004;Nikhil Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech004;Nikhil Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech004;Nikhil Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech004;Nikhil Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech005;Tanvi Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech005;Tanvi Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech005;Tanvi Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech005;Tanvi Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech005;Tanvi Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech006;Kavya Choudhary;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech006;Kavya Choudhary;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech006;Kavya Choudhary;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech006;Kavya Choudhary;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech006;Kavya Choudhary;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech007;Kavya Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech007;Kavya Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech007;Kavya Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech007;Kavya Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech007;Kavya Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech008;Arjun Saxena;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech008;Arjun Saxena;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech008;Arjun Saxena;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech008;Arjun Saxena;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech008;Arjun Saxena;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech009;Yash Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech009;Yash Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech009;Yash Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech009;Yash Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech009;Yash Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech010;Kavya Verma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech010;Kavya Verma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech010;Kavya Verma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech010;Kavya Verma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech010;Kavya Verma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech011;Aditi Jain;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech011;Aditi Jain;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech011;Aditi Jain;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech011;Aditi Jain;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech011;Aditi Jain;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech012;Arjun Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech012;Arjun Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech012;Arjun Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech012;Arjun Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech012;Arjun Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech013;Kavya Mehta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech013;Kavya Mehta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech013;Kavya Mehta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech013;Kavya Mehta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech013;Kavya Mehta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech014;Zara Mishra;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech014;Zara Mishra;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech014;Zara Mishra;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech014;Zara Mishra;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech014;Zara Mishra;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech015;Ishaan Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech015;Ishaan Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech015;Ishaan Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech015;Ishaan Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech015;Ishaan Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech016;Dev Saxena;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech016;Dev Saxena;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech016;Dev Saxena;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech016;Dev Saxena;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech016;Dev Saxena;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech017;Tanvi Choudhary;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech017;Tanvi Choudhary;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech017;Tanvi Choudhary;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech017;Tanvi Choudhary;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech017;Tanvi Choudhary;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech018;Riya Singh;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech018;Riya Singh;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech018;Riya Singh;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech018;Riya Singh;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech018;Riya Singh;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech019;Riya Agarwal;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech019;Riya Agarwal;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech019;Riya Agarwal;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech019;Riya Agarwal;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech019;Riya Agarwal;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech020;Ishaan Verma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech020;Ishaan Verma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech020;Ishaan Verma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech020;Ishaan Verma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech020;Ishaan Verma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech021;Ananya Joshi;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech021;Ananya Joshi;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech021;Ananya Joshi;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech021;Ananya Joshi;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech021;Ananya Joshi;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech022;Pooja Jain;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech022;Pooja Jain;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech022;Pooja Jain;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech022;Pooja Jain;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech022;Pooja Jain;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech023;Pooja Agarwal;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech023;Pooja Agarwal;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech023;Pooja Agarwal;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech023;Pooja Agarwal;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech023;Pooja Agarwal;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech024;Rahul Saxena;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech024;Rahul Saxena;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech024;Rahul Saxena;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech024;Rahul Saxena;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech024;Rahul Saxena;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech025;Aditi Joshi;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech025;Aditi Joshi;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech025;Aditi Joshi;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech025;Aditi Joshi;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech025;Aditi Joshi;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech026;Yash Joshi;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech026;Yash Joshi;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech026;Yash Joshi;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech026;Yash Joshi;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech026;Yash Joshi;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech027;Ananya Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech027;Ananya Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech027;Ananya Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech027;Ananya Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech027;Ananya Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech028;Om Saxena;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech028;Om Saxena;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech028;Om Saxena;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech028;Om Saxena;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech028;Om Saxena;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech029;Nikhil Verma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech029;Nikhil Verma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech029;Nikhil Verma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech029;Nikhil Verma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech029;Nikhil Verma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech030;Kavya Singh;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech030;Kavya Singh;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech030;Kavya Singh;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech030;Kavya Singh;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech030;Kavya Singh;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech031;Ishaan Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech031;Ishaan Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech031;Ishaan Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech031;Ishaan Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech031;Ishaan Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech032;Rahul Gupta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech032;Rahul Gupta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech032;Rahul Gupta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech032;Rahul Gupta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech032;Rahul Gupta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech033;Pooja Gupta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech033;Pooja Gupta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech033;Pooja Gupta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech033;Pooja Gupta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech033;Pooja Gupta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech034;Kabir Mishra;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech034;Kabir Mishra;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech034;Kabir Mishra;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech034;Kabir Mishra;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech034;Kabir Mishra;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech035;Kavya Verma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech035;Kavya Verma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech035;Kavya Verma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech035;Kavya Verma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech035;Kavya Verma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech036;Rahul Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech036;Rahul Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech036;Rahul Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech036;Rahul Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech036;Rahul Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech037;Ananya Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech037;Ananya Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech037;Ananya Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech037;Ananya Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech037;Ananya Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech038;Yash Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech038;Yash Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech038;Yash Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech038;Yash Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech038;Yash Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech039;Aarav Verma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech039;Aarav Verma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech039;Aarav Verma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech039;Aarav Verma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech039;Aarav Verma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech040;Kavya Gupta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech040;Kavya Gupta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech040;Kavya Gupta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech040;Kavya Gupta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech040;Kavya Gupta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech041;Pooja Mishra;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech041;Pooja Mishra;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech041;Pooja Mishra;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech041;Pooja Mishra;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech041;Pooja Mishra;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech042;Riya Singh;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech042;Riya Singh;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech042;Riya Singh;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech042;Riya Singh;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech042;Riya Singh;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech043;Om Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech043;Om Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech043;Om Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech043;Om Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech043;Om Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech044;Diya Agarwal;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech044;Diya Agarwal;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech044;Diya Agarwal;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech044;Diya Agarwal;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech044;Diya Agarwal;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech045;Aarav Agarwal;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech045;Aarav Agarwal;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech045;Aarav Agarwal;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech045;Aarav Agarwal;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech045;Aarav Agarwal;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech046;Kabir Mishra;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech046;Kabir Mishra;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech046;Kabir Mishra;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech046;Kabir Mishra;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech046;Kabir Mishra;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech047;Meera Agarwal;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech047;Meera Agarwal;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech047;Meera Agarwal;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech047;Meera Agarwal;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech047;Meera Agarwal;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech048;Sanya Joshi;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech048;Sanya Joshi;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech048;Sanya Joshi;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech048;Sanya Joshi;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech048;Sanya Joshi;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech049;Riya Gupta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech049;Riya Gupta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech049;Riya Gupta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech049;Riya Gupta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech049;Riya Gupta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech050;Ishaan Mehta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech050;Ishaan Mehta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech050;Ishaan Mehta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech050;Ishaan Mehta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech050;Ishaan Mehta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech051;Ishaan Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech051;Ishaan Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech051;Ishaan Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech051;Ishaan Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech051;Ishaan Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech052;Tanvi Saxena;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech052;Tanvi Saxena;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech052;Tanvi Saxena;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech052;Tanvi Saxena;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech052;Tanvi Saxena;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech053;Sanya Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech053;Sanya Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech053;Sanya Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech053;Sanya Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech053;Sanya Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech054;Nikhil Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech054;Nikhil Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech054;Nikhil Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech054;Nikhil Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech054;Nikhil Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech055;Aditi Choudhary;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech055;Aditi Choudhary;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech055;Aditi Choudhary;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech055;Aditi Choudhary;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech055;Aditi Choudhary;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech056;Riya Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech056;Riya Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech056;Riya Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech056;Riya Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech056;Riya Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech057;Rohan Gupta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech057;Rohan Gupta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech057;Rohan Gupta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech057;Rohan Gupta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech057;Rohan Gupta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech058;Aditi Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech058;Aditi Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech058;Aditi Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech058;Aditi Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech058;Aditi Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech059;Arjun Gupta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech059;Arjun Gupta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech059;Arjun Gupta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech059;Arjun Gupta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech059;Arjun Gupta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech060;Arjun Choudhary;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech060;Arjun Choudhary;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech060;Arjun Choudhary;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech060;Arjun Choudhary;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech060;Arjun Choudhary;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech061;Arjun Joshi;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech061;Arjun Joshi;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech061;Arjun Joshi;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech061;Arjun Joshi;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech061;Arjun Joshi;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech062;Kavya Agarwal;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech062;Kavya Agarwal;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech062;Kavya Agarwal;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech062;Kavya Agarwal;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech062;Kavya Agarwal;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech063;Ananya Choudhary;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech063;Ananya Choudhary;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech063;Ananya Choudhary;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech063;Ananya Choudhary;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech063;Ananya Choudhary;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech064;Kavya Choudhary;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech064;Kavya Choudhary;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech064;Kavya Choudhary;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech064;Kavya Choudhary;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech064;Kavya Choudhary;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech065;Vihaan Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech065;Vihaan Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech065;Vihaan Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech065;Vihaan Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech065;Vihaan Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech066;Vihaan Verma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech066;Vihaan Verma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech066;Vihaan Verma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech066;Vihaan Verma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech066;Vihaan Verma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech067;Pooja Joshi;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech067;Pooja Joshi;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech067;Pooja Joshi;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech067;Pooja Joshi;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech067;Pooja Joshi;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech068;Tanvi Choudhary;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech068;Tanvi Choudhary;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech068;Tanvi Choudhary;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech068;Tanvi Choudhary;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech068;Tanvi Choudhary;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech069;Rohan Jain;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech069;Rohan Jain;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech069;Rohan Jain;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech069;Rohan Jain;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech069;Rohan Jain;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech070;Kabir Singh;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech070;Kabir Singh;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech070;Kabir Singh;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech070;Kabir Singh;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech070;Kabir Singh;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech071;Zara Saxena;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech071;Zara Saxena;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech071;Zara Saxena;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech071;Zara Saxena;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech071;Zara Saxena;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech072;Nikhil Singh;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech072;Nikhil Singh;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech072;Nikhil Singh;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech072;Nikhil Singh;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech072;Nikhil Singh;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech073;Kabir Agarwal;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech073;Kabir Agarwal;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech073;Kabir Agarwal;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech073;Kabir Agarwal;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech073;Kabir Agarwal;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech074;Dev Joshi;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech074;Dev Joshi;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech074;Dev Joshi;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech074;Dev Joshi;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech074;Dev Joshi;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech075;Yash Mehta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech075;Yash Mehta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech075;Yash Mehta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech075;Yash Mehta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech075;Yash Mehta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech076;Rahul Jain;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech076;Rahul Jain;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech076;Rahul Jain;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech076;Rahul Jain;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech076;Rahul Jain;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech077;Arjun Sharma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech077;Arjun Sharma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech077;Arjun Sharma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech077;Arjun Sharma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech077;Arjun Sharma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech078;Rahul Choudhary;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech078;Rahul Choudhary;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech078;Rahul Choudhary;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech078;Rahul Choudhary;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech078;Rahul Choudhary;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech079;Tanvi Verma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech079;Tanvi Verma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech079;Tanvi Verma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech079;Tanvi Verma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech079;Tanvi Verma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech080;Arjun Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech080;Arjun Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech080;Arjun Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech080;Arjun Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech080;Arjun Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech081;Ishaan Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech081;Ishaan Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech081;Ishaan Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech081;Ishaan Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech081;Ishaan Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech082;Kabir Gupta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech082;Kabir Gupta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech082;Kabir Gupta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech082;Kabir Gupta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech082;Kabir Gupta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech083;Neha Verma;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech083;Neha Verma;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech083;Neha Verma;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech083;Neha Verma;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech083;Neha Verma;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech084;Kavya Jain;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech084;Kavya Jain;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech084;Kavya Jain;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech084;Kavya Jain;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech084;Kavya Jain;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech085;Meera Gupta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech085;Meera Gupta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech085;Meera Gupta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech085;Meera Gupta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech085;Meera Gupta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech086;Rahul Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech086;Rahul Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech086;Rahul Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech086;Rahul Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech086;Rahul Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech087;Meera Choudhary;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech087;Meera Choudhary;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech087;Meera Choudhary;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech087;Meera Choudhary;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech087;Meera Choudhary;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech088;Yash Rathore;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech088;Yash Rathore;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech088;Yash Rathore;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech088;Yash Rathore;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech088;Yash Rathore;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech089;Aarav Joshi;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech089;Aarav Joshi;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech089;Aarav Joshi;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech089;Aarav Joshi;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech089;Aarav Joshi;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 3;2025BTech090;Sanya Mehta;CS1131;Data Structure and Algorithms;Core
+SES0001-SEMESTER 3;2025BTech090;Sanya Mehta;CS1133;Database Management System;Core
+SES0001-SEMESTER 3;2025BTech090;Sanya Mehta;CS1134;Computer Organization and Architecture;Core
+SES0001-SEMESTER 3;2025BTech090;Sanya Mehta;LS1108;Essentials of Business Management;Core
+SES0001-SEMESTER 3;2025BTech090;Sanya Mehta;CS1142;Discrete Mathematics;Core
+SES0001-SEMESTER 5;2024BTech001;Zara Verma;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech001;Zara Verma;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech001;Zara Verma;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech002;Ananya Verma;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech002;Ananya Verma;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech002;Ananya Verma;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech003;Meera Choudhary;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech003;Meera Choudhary;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech003;Meera Choudhary;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech004;Nikhil Singh;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech004;Nikhil Singh;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech004;Nikhil Singh;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech005;Riya Mehta;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech005;Riya Mehta;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech005;Riya Mehta;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech006;Yash Agarwal;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech006;Yash Agarwal;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech006;Yash Agarwal;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech007;Aarav Jain;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech007;Aarav Jain;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech007;Aarav Jain;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech008;Kabir Gupta;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech008;Kabir Gupta;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech008;Kabir Gupta;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech009;Pooja Rathore;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech009;Pooja Rathore;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech009;Pooja Rathore;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech010;Arjun Saxena;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech010;Arjun Saxena;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech010;Arjun Saxena;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech011;Aditi Jain;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech011;Aditi Jain;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech011;Aditi Jain;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech012;Dev Sharma;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech012;Dev Sharma;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech012;Dev Sharma;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech013;Aditi Jain;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech013;Aditi Jain;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech013;Aditi Jain;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech014;Kavya Joshi;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech014;Kavya Joshi;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech014;Kavya Joshi;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech015;Sanya Agarwal;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech015;Sanya Agarwal;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech015;Sanya Agarwal;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech016;Diya Gupta;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech016;Diya Gupta;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech016;Diya Gupta;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech017;Diya Saxena;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech017;Diya Saxena;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech017;Diya Saxena;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech018;Zara Saxena;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech018;Zara Saxena;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech018;Zara Saxena;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech019;Diya Saxena;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech019;Diya Saxena;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech019;Diya Saxena;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech020;Aditi Mishra;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech020;Aditi Mishra;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech020;Aditi Mishra;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech021;Rahul Jain;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech021;Rahul Jain;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech021;Rahul Jain;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech022;Kavya Sharma;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech022;Kavya Sharma;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech022;Kavya Sharma;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech023;Nikhil Mehta;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech023;Nikhil Mehta;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech023;Nikhil Mehta;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech024;Neha Joshi;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech024;Neha Joshi;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech024;Neha Joshi;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech025;Sanya Jain;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech025;Sanya Jain;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech025;Sanya Jain;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech026;Kabir Gupta;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech026;Kabir Gupta;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech026;Kabir Gupta;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech027;Ananya Choudhary;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech027;Ananya Choudhary;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech027;Ananya Choudhary;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech028;Nikhil Agarwal;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech028;Nikhil Agarwal;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech028;Nikhil Agarwal;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech029;Tanvi Singh;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech029;Tanvi Singh;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech029;Tanvi Singh;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech030;Pooja Sharma;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech030;Pooja Sharma;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech030;Pooja Sharma;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech031;Pooja Verma;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech031;Pooja Verma;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech031;Pooja Verma;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech032;Nikhil Joshi;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech032;Nikhil Joshi;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech032;Nikhil Joshi;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech033;Meera Rathore;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech033;Meera Rathore;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech033;Meera Rathore;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech034;Pooja Jain;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech034;Pooja Jain;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech034;Pooja Jain;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech035;Meera Rathore;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech035;Meera Rathore;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech035;Meera Rathore;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech036;Pooja Joshi;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech036;Pooja Joshi;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech036;Pooja Joshi;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech037;Diya Choudhary;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech037;Diya Choudhary;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech037;Diya Choudhary;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech038;Sanya Sharma;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech038;Sanya Sharma;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech038;Sanya Sharma;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech039;Ishaan Agarwal;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech039;Ishaan Agarwal;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech039;Ishaan Agarwal;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech040;Rahul Mishra;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech040;Rahul Mishra;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech040;Rahul Mishra;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech041;Riya Saxena;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech041;Riya Saxena;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech041;Riya Saxena;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech042;Arjun Mehta;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech042;Arjun Mehta;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech042;Arjun Mehta;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech043;Kavya Joshi;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech043;Kavya Joshi;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech043;Kavya Joshi;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech044;Ishaan Gupta;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech044;Ishaan Gupta;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech044;Ishaan Gupta;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech045;Kavya Mishra;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech045;Kavya Mishra;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech045;Kavya Mishra;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech046;Pooja Joshi;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech046;Pooja Joshi;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech046;Pooja Joshi;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech047;Om Mishra;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech047;Om Mishra;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech047;Om Mishra;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech048;Dev Joshi;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech048;Dev Joshi;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech048;Dev Joshi;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech049;Pooja Singh;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech049;Pooja Singh;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech049;Pooja Singh;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech050;Rohan Mishra;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech050;Rohan Mishra;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech050;Rohan Mishra;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech051;Kavya Verma;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech051;Kavya Verma;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech051;Kavya Verma;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech052;Rahul Joshi;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech052;Rahul Joshi;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech052;Rahul Joshi;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech053;Vihaan Saxena;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech053;Vihaan Saxena;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech053;Vihaan Saxena;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech054;Rahul Gupta;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech054;Rahul Gupta;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech054;Rahul Gupta;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech055;Kabir Singh;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech055;Kabir Singh;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech055;Kabir Singh;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech056;Riya Joshi;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech056;Riya Joshi;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech056;Riya Joshi;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech057;Rahul Verma;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech057;Rahul Verma;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech057;Rahul Verma;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech058;Kabir Jain;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech058;Kabir Jain;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech058;Kabir Jain;FA1201;Computational Finance;Elective
+SES0001-SEMESTER 5;2024BTech059;Arjun Gupta;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech059;Arjun Gupta;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech059;Arjun Gupta;CS1261;Principles of Cloud computing;Elective
+SES0001-SEMESTER 5;2024BTech060;Om Saxena;CS1224;Artificial Intelligence;Core
+SES0001-SEMESTER 5;2024BTech060;Om Saxena;CS1243;Big Data Analytics with Hadoop and Spark;Elective
+SES0001-SEMESTER 5;2024BTech060;Om Saxena;EE1232;Digital Image Processing;Elective
+SES0001-SEMESTER 5;2024BTech007;Backlog Student;AS1109;Calculus and Ordinary Differential Equations;Backlog
+SES0001-SEMESTER 5;2024BTech031;Backlog Student;AS1109;Calculus and Ordinary Differential Equations;Backlog

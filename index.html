@@ -1,258 +1,1049 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLIVER Exam Room Orchestrator</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exam Planner</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600&family=Fira+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F8FAFC;--card:#FFFFFF;--ink:#0F172A;--head:#1E3A8A;--mute:#475569;--line:#DCE3EE;--soft:#EEF2F8;
+  --primary:#1E40AF;--primary-hover:#1E3A8A;--on-primary:#FFFFFF;--accent:#B45309;--accent-bg:#FEF3C7;
+  --ok:#15803D;--ok-bg:#DCFCE7;--bad:#B91C1C;--bad-bg:#FEE2E2;--warn:#92400E;--warn-bg:#FEF3C7;
+  --r:10px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;
+  --font:"Fira Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"Fira Code",ui-monospace,SFMono-Regular,monospace;
+  --shadow:0 1px 2px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.04);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0B1220;--card:#121A2B;--ink:#E5EAF3;--head:#C7D5FF;--mute:#9AA8BF;--line:#26324A;--soft:#18223A;
+  --primary:#7B9BFF;--primary-hover:#9DB4FF;--on-primary:#0B1220;--accent:#F5B04A;--accent-bg:#3A2A10;
+  --ok:#5FD39A;--ok-bg:#12301F;--bad:#FF8A80;--bad-bg:#3A1A1A;--warn:#F5B04A;--warn-bg:#3A2A10;--shadow:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;font:16px/1.5 var(--font);background:var(--bg);color:var(--ink)}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+a{color:var(--primary)}
+.skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;z-index:20;background:var(--card);padding:8px}
+/* top bar */
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.bar{max-width:1240px;margin:0 auto;padding:0 var(--s4);display:flex;align-items:center;gap:var(--s4);min-height:60px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:18px;color:var(--head);display:flex;gap:8px;align-items:center;margin-right:auto}
+.brand .logo{width:30px;height:30px;border-radius:8px;background:var(--primary);color:var(--on-primary);display:grid;place-items:center}
+.mainnav{display:flex;gap:4px}
+.mainnav a{display:flex;gap:8px;align-items:center;padding:10px 14px;border-radius:8px;color:var(--mute);text-decoration:none;font-weight:500;min-height:44px}
+.mainnav a:hover{background:var(--soft);color:var(--ink)}
+.mainnav a.on{background:var(--soft);color:var(--primary)}
+main{max-width:1240px;margin:0 auto;padding:var(--s5) var(--s4) 80px}
+.page{display:none}.page.on{display:block}
+h1{font-size:24px;line-height:1.25;margin:0 0 4px;color:var(--head)}
+h2{font-size:17px;margin:0 0 var(--s3)}
+h3{font-size:13px;margin:var(--s4) 0 var(--s2);color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.lead{color:var(--mute);margin:0 0 var(--s5);max-width:760px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:var(--s5);margin-bottom:var(--s4);box-shadow:var(--shadow)}
+.card>h2:first-child{margin-top:0}
+.muted{color:var(--mute)}.small{font-size:14px}.tiny{font-size:13px}
+.mono{font-family:var(--mono);font-size:14px}
+.row{display:flex;gap:var(--s3);flex-wrap:wrap;align-items:flex-end}.row>*{flex:1;min-width:160px}
+.spacer{flex:1}
+label.f{display:block;font-size:14px;font-weight:500;margin-bottom:6px}
+input,select,textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-height:42px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+input[type=checkbox],input[type=radio]{width:20px;height:20px;min-height:0;padding:0;accent-color:var(--primary);flex:none;margin:2px 0 0;cursor:pointer}
+input.num{width:84px;display:inline-block;padding:6px 8px;min-height:38px}
+select.inline{width:auto;display:inline-block;padding:6px 8px;min-height:38px}
+textarea{min-height:120px;resize:vertical}
+.btn{font:inherit;font-size:15px;font-weight:500;border-radius:8px;padding:9px 16px;min-height:44px;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);display:inline-flex;gap:8px;align-items:center;justify-content:center;text-decoration:none;transition:background .15s,border-color .15s}
+.btn:hover{background:var(--soft)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--on-primary);font-weight:600}
+.btn.primary:hover{background:var(--primary-hover)}
+.btn.link{border:0;background:none;color:var(--primary);padding:6px 8px;min-height:36px}
+.btn.link:hover{text-decoration:underline;background:none}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.55;cursor:progress}
+.nav{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s3);margin-top:var(--s2)}
+.drop{display:flex;flex-direction:column;gap:6px;align-items:center;border:2px dashed var(--line);border-radius:var(--r);padding:var(--s5);text-align:center;cursor:pointer;background:var(--soft);transition:border-color .15s}
+.drop:hover,.drop.over{border-color:var(--primary)}
+.drop input{position:absolute;width:1px;height:1px;opacity:0}
+.drop:focus-within{outline:3px solid var(--primary);outline-offset:2px}
+.drop b{color:var(--primary)}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}.pill.bad{background:var(--bad-bg);color:var(--bad)}.pill.warn{background:var(--warn-bg);color:var(--warn)}.pill.n{background:var(--soft);color:var(--mute)}.pill.blue{background:var(--soft);color:var(--primary)}
+.note{border-radius:8px;padding:12px 14px;margin:var(--s2) 0;display:flex;gap:10px;align-items:flex-start}
+.note>div{flex:1}
+.note.ok{background:var(--ok-bg);color:var(--ok)}.note.bad{background:var(--bad-bg);color:var(--bad)}.note.warn{background:var(--warn-bg);color:var(--warn)}.note.info{background:var(--soft);color:var(--ink)}
+.note ul{margin:6px 0 0;padding-left:20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s3);margin:var(--s3) 0}
+.stat{background:var(--soft);border-radius:8px;padding:10px 14px}.stat b{display:block;font-size:22px;color:var(--head);font-variant-numeric:tabular-nums}.stat span{font-size:14px;color:var(--mute)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;padding:3px;background:var(--soft);gap:3px;flex-wrap:wrap}
+.seg label{display:flex;gap:8px;align-items:center;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:500;min-height:40px}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.seg label:has(input:checked){background:var(--card);color:var(--primary);box-shadow:var(--shadow)}
+.seg label:has(input:focus-visible){outline:3px solid var(--primary)}
+/* stepper */
+.stepper{display:flex;gap:4px;margin:0 0 var(--s5);flex-wrap:wrap;counter-reset:st}
+.stepper a{flex:1;min-width:150px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--mute);border:1px solid var(--line);background:var(--card);min-height:52px}
+.stepper a .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;background:var(--soft);color:var(--mute);flex:none}
+.stepper a.on{border-color:var(--primary);color:var(--ink);font-weight:600}
+.stepper a.on .n{background:var(--primary);color:var(--on-primary)}
+.stepper a.done .n{background:var(--ok);color:#fff}
+.step{display:none}.step.on{display:block}
+/* rules */
+.rule{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.rule:first-of-type{border-top:0;padding-top:4px}
+.rule .body{flex:1}.rule .t{font-weight:600;cursor:pointer}
+.rule .d{color:var(--mute);font-size:14px}
+.rule .opts{margin-top:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:15px}
+.rule.off .opts{opacity:.45}
+.added{display:flex;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin:6px 0;background:var(--card)}
+.added .s{flex:1}
+.added.bad{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{background:var(--soft);border-radius:999px;padding:4px 6px 4px 12px;font-size:14px;display:inline-flex;gap:4px;align-items:center}
+.chip button{border:0;background:none;color:var(--mute);cursor:pointer;font-size:18px;line-height:1;padding:2px 6px;border-radius:50%;min-width:28px;min-height:28px}
+.chip button:hover{background:var(--line)}
+.togglechip{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:6px 14px;cursor:pointer;background:var(--card);font-size:14px;min-height:40px}
+.togglechip:has(input:checked){border-color:var(--primary);background:var(--soft)}
+details>summary{cursor:pointer;color:var(--primary);font-weight:500;min-height:32px;display:list-item}
+/* rooms */
+.roomgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--s3)}
+.room{border:1px solid var(--line);border-radius:var(--r);padding:var(--s3);background:var(--card);display:flex;flex-direction:column;gap:8px;transition:border-color .15s}
+.room:hover{border-color:var(--primary)}
+.room.off{opacity:.62}
+.room .top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.room .name{font-weight:700}
+.mini{display:grid;gap:1px;align-self:flex-start;padding:6px;background:var(--soft);border-radius:6px;max-width:100%;overflow:hidden}
+.mini i{width:6px;height:6px;border-radius:1px;background:var(--mute);opacity:.7}.mini i.g{background:transparent}
+.toggle{display:flex;gap:10px;align-items:center;font-size:15px;cursor:pointer;min-height:36px}
+.seats{display:inline-grid;gap:3px;padding:10px;background:var(--soft);border-radius:8px;max-width:100%;overflow:auto}
+.seat{width:20px;height:20px;border-radius:4px;border:1px solid var(--mute);cursor:pointer;background:var(--card)}
+.seat.x{background:repeating-linear-gradient(45deg,transparent 0 3px,var(--line) 3px 5px);border-style:dashed}
+.seat.gap{border:0;background:transparent;cursor:default}
+.board{font-size:12px;color:var(--mute);letter-spacing:.15em;margin:4px 0 6px}
+/* tables */
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+th{font-size:13px;color:var(--mute);font-weight:600;background:var(--soft);text-transform:uppercase;letter-spacing:.03em}
+tbody tr:hover td{background:color-mix(in srgb,var(--soft) 60%,transparent)}
+td.code,span.code{font-family:var(--mono);font-size:14px;font-weight:600;white-space:nowrap}
+tr.daystart td{border-top:2px solid var(--line)}
+.rolls{font-size:14px;line-height:1.6}
+.datatable{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.datatable th{position:sticky;top:0;z-index:1}
+.datatable td{font-size:14px;white-space:nowrap}
+.datatable td.rn{color:var(--mute);text-align:right}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;margin:6px 0 10px}
+.sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:var(--s3) 0 var(--s4);flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:500;background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;color:var(--mute);cursor:pointer;min-height:44px;display:flex;gap:8px;align-items:center}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{color:var(--primary);border-color:var(--primary);font-weight:600}
+.toolbar{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:flex-end;margin-bottom:var(--s3)}
+/* seat chart (results + room view) */
+.chart{overflow-x:auto;padding:var(--s3);background:var(--soft);border-radius:8px}
+.cin{display:flex;flex-direction:column;align-items:center;width:max-content;margin:0 auto}
+.chart .desk{text-align:center;font-size:12px;letter-spacing:.15em;color:var(--mute);border:1px dashed var(--mute);border-radius:6px;padding:4px 16px;margin:0 auto 12px}
+.crow{display:flex;gap:4px;margin:0 0 4px}
+.cs{width:108px;min-height:44px;border:1px solid var(--line);border-left:5px solid var(--c,var(--line));background:color-mix(in srgb,var(--c,transparent) 14%,var(--card));border-radius:6px;padding:3px 7px;line-height:1.25}
+.cs b{display:block;font-family:var(--mono);font-size:12px;font-weight:600}
+.cs span{display:block;font-size:11px;color:var(--mute)}
+.cs.free{background:transparent;border-style:dashed;border-left-width:1px}
+.cs.kept{background:repeating-linear-gradient(45deg,transparent 0 4px,var(--line) 4px 6px);border-left-width:1px}
+.cs.hit{outline:3px solid var(--accent);outline-offset:1px}
+.aisle{width:28px;flex:none}
+.roomcard{border:1px solid var(--line);border-radius:var(--r);padding:var(--s4);margin:0 0 var(--s4);background:var(--card)}
+.roomcard h2{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+/* dashboard */
+.plans{display:grid;gap:var(--s3)}
+.plan{display:grid;grid-template-columns:1fr auto;gap:var(--s3);align-items:center;border:1px solid var(--line);border-radius:var(--r);padding:var(--s4);background:var(--card);box-shadow:var(--shadow)}
+.plan.current{border-color:var(--primary);border-width:2px}
+.plan .meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--mute);font-size:14px;margin-top:4px}
+.plan .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.empty{text-align:center;padding:48px 16px;color:var(--mute)}
+.empty svg.i{width:40px;height:40px;stroke:var(--primary);margin-bottom:8px}
+.rv{display:grid;grid-template-columns:260px 1fr;gap:var(--s4);align-items:start}
+.rv>*{min-width:0}
+.rvlist{display:flex;flex-direction:column;gap:4px;max-height:70vh;overflow:auto}
+.rvlist button{font:inherit;text-align:left;border:1px solid transparent;background:none;padding:10px 12px;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;gap:8px;min-height:44px;color:var(--ink)}
+.rvlist button:hover{background:var(--soft)}
+.rvlist button.on{background:var(--soft);border-color:var(--primary);font-weight:600}
+#printArea{display:none}
+@media print{
+  body{background:#fff;color:#000;font-size:12px}
+  header,main{display:none!important}
+  #printArea{display:block}
+  #printArea h1{font-size:17px;color:#000}#printArea h2{font-size:14px;margin-top:12px}
+  #printArea tr{page-break-inside:avoid}
+  #printArea th,#printArea td{border:1px solid #999;padding:4px 6px;background:none;color:#000}
+  #printArea .chart{background:none;overflow:visible;padding:0}
+  #printArea .cs{-webkit-print-color-adjust:exact;print-color-adjust:exact;width:94px;min-height:36px;border-color:#888}
+  #printArea .roomcard{border:0;padding:0}
+  .pb{page-break-before:always}
+}
+@media (max-width:760px){.mainnav a span{display:none}.rv{grid-template-columns:1fr}.rvlist{max-height:none;flex-direction:row;flex-wrap:wrap}.plan{grid-template-columns:1fr}.plan .acts{justify-content:flex-start}.stepper a{min-width:calc(50% - 4px)}}
+</style>
 </head>
 <body>
-    <div class="wrapper">
-        <header class="hero">
-            <div>
-                <h1>OLIVER Exam Room Orchestrator</h1>
-                <p>Upload enrollment & room data, configure intelligent allocation, and review AI-powered insights.</p>
-            </div>
-            <div class="hero-metrics">
-                <div class="metric" id="metric-students">
-                    <span class="metric-value">0</span>
-                    <span class="metric-label">Students Parsed</span>
-                </div>
-                <div class="metric" id="metric-rooms">
-                    <span class="metric-value">0</span>
-                    <span class="metric-label">Rooms Parsed</span>
-                </div>
-                <div class="metric" id="metric-capacity">
-                    <span class="metric-value">0</span>
-                    <span class="metric-label">Total Capacity</span>
-                </div>
-            </div>
-        </header>
+<a class="skip" href="#main">Skip to content</a>
+<header><div class="bar">
+  <div class="brand"><span class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg></span>Exam Planner</div>
+  <nav class="mainnav" aria-label="Main">
+    <a href="#/dashboard" data-page="dashboard"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg><span>Dashboard</span></a>
+    <a href="#/plan/1" data-page="plan"><svg class="i" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8M3 10h18M16 19h6M19 16v6"/></svg><span>New plan</span></a>
+    <a href="#/rooms" data-page="roomview"><svg class="i" viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg><span>Room view</span></a>
+  </nav>
+</div></header>
 
-        <main class="content">
-            <nav class="wizard-nav">
-                <div class="wizard-step active" data-step="1">
-                    <span class="wizard-index">1</span>
-                    <span>Upload Data</span>
-                </div>
-                <div class="wizard-step" data-step="2">
-                    <span class="wizard-index">2</span>
-                    <span>Algorithm Setup</span>
-                </div>
-                <div class="wizard-step" data-step="3">
-                    <span class="wizard-index">3</span>
-                    <span>Filters & Schedule</span>
-                </div>
-                <div class="wizard-step" data-step="4">
-                    <span class="wizard-index">4</span>
-                    <span>Results & Insights</span>
-                </div>
-            </nav>
+<main id="main">
+<div id="fileWarning" class="note bad" hidden></div>
 
-            <section class="step active" data-step="1">
-                <div class="grid grid-2">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2>Upload Student Data</h2>
-                            <p>Supports `processed_enrollment.csv` or similarly structured files.</p>
-                        </div>
-                        <div class="card-body">
-                            <label class="upload-tile">
-                                <input type="file" id="enrollment-input" accept=".csv">
-                                <span class="icon">📄</span>
-                                <span>Choose Enrollment CSV</span>
-                            </label>
-                            <button class="btn btn-secondary" id="load-enrollment-sample">Load Sample Students</button>
-                            <div class="preview" id="enrollment-preview"></div>
-                        </div>
-                    </div>
+<!-- ================= DASHBOARD ================= -->
+<section class="page" id="dashboard">
+  <div class="toolbar"><div><h1>Exam plans</h1><p class="lead" style="margin:0">Every plan you make is saved here. Open one to see its schedule and seating, or make a new one.</p></div>
+    <div class="spacer"></div><a class="btn primary" href="#/plan/1"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New exam plan</a></div>
+  <div id="planList" class="plans" style="margin-top:16px"></div>
+</section>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <h2>Upload Room Data</h2>
-                            <p>Use `rooms_config.csv`, `room.csv`, or a compatible layout (layout/rows ignored).</p>
-                        </div>
-                        <div class="card-body">
-                            <label class="upload-tile">
-                                <input type="file" id="rooms-input" accept=".csv">
-                                <span class="icon">🏢</span>
-                                <span>Choose Rooms CSV</span>
-                            </label>
-                            <button class="btn btn-secondary" id="load-rooms-sample">Load Sample Rooms</button>
-                            <div class="preview" id="rooms-preview"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+<!-- ================= NEW PLAN (wizard) ================= -->
+<section class="page" id="plan">
+  <nav class="stepper" aria-label="Steps">
+    <a href="#/plan/1" data-step="1"><span class="n">1</span>Exam &amp; students</a>
+    <a href="#/plan/2" data-step="2"><span class="n">2</span>Rooms</a>
+    <a href="#/plan/3" data-step="3"><span class="n">3</span>Dates &amp; rules</a>
+    <a href="#/plan/4" data-step="4"><span class="n">4</span>Schedule &amp; seating</a>
+  </nav>
 
-            <section class="step" data-step="2">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Algorithm & Mixing Strategy</h2>
-                    </div>
-                    <div class="card-body grid grid-3">
-                        <label class="choice-tile">
-                            <input type="radio" name="algorithm" value="smart" checked>
-                            <span class="choice-title">Smart Randomized Mix</span>
-                            <span class="choice-desc">Shuffle multi-course cohorts for unpredictable seating.</span>
-                        </label>
-                        <label class="choice-tile">
-                            <input type="radio" name="algorithm" value="course-wise">
-                            <span class="choice-title">Course-Wise Split</span>
-                            <span class="choice-desc">Keep rooms dedicated to a single course per slot.</span>
-                        </label>
-                        <label class="choice-tile">
-                            <input type="radio" name="algorithm" value="balanced">
-                            <span class="choice-title">Balanced Utilization</span>
-                            <span class="choice-desc">Fill larger cohorts first to maximize seat usage.</span>
-                        </label>
+  <!-- step 1 -->
+  <div class="step" data-step="1">
+    <div class="card">
+      <h2>Which exam is this?</h2>
+      <div class="row">
+        <div style="flex:0 1 auto"><span class="f" style="display:block;font-size:14px;font-weight:500;margin-bottom:6px">Exam type</span>
+          <div class="seg" role="radiogroup" aria-label="Exam type">
+            <label><input type="radio" name="kind" value="midsem">Mid-semester</label>
+            <label><input type="radio" name="kind" value="endsem" checked>End-semester</label>
+          </div></div>
+        <div><label class="f" for="planName">Plan name</label><input id="planName" placeholder="e.g. End-semester December 2026"></div>
+      </div>
+      <p class="tiny muted" id="kindNote" style="margin:10px 0 0"></p>
+    </div>
+    <div class="card">
+      <h2>Students and their subjects</h2>
+      <label class="drop" id="enrollDrop"><input type="file" id="enrollFile" accept=".csv,.xlsx,.xlsm,.xls,.txt">
+        <svg class="i" viewBox="0 0 24 24" style="width:28px;height:28px;stroke:var(--primary)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        <div><b>Choose the enrollment file</b> or drop it here</div><div class="tiny muted">Excel (.xlsx) or CSV: one row per student per subject, with roll number and subject code</div></label>
+      <p class="small muted" style="margin:12px 0 0">No file handy? <button class="btn link" id="trySample">Try with sample data</button>
+        · <a href="/samples/enrollment_sample.csv" download>sample CSV</a> · <a href="/samples/enrollment_sample.xlsx" download>sample Excel</a>
+        · <a href="/samples/invigilators_sample.csv" download>sample invigilators</a> · <a href="/samples/room_LAB-201.csv" download>sample room layout</a>
+        · <a href="/samples/rules_sample.txt" target="_blank">sample English rules</a></p>
+      <div id="enrollInfo" aria-live="polite"></div>
+      <div id="enrollPreview"></div>
+    </div>
+    <div class="card" id="pickCard" hidden>
+      <h2>Which exams are in this plan?</h2>
+      <p class="small muted" style="margin-top:-6px">Untick semesters or courses that aren't part of this exam. Only ticked courses are scheduled and seated.</p>
+      <div id="semChips" class="chips"></div>
+      <div class="toolbar" style="margin-top:12px">
+        <div style="flex:1;min-width:220px"><label class="f" for="courseFind">Find a course</label><input id="courseFind" placeholder="Code or name"></div>
+        <button class="btn" id="selAll">Select all</button><button class="btn" id="selNone">Select none</button>
+      </div>
+      <div class="datatable" id="courseTable"></div>
+      <p id="pickInfo" class="small" style="margin:10px 0 0"></p>
+    </div>
+    <div class="card">
+      <h2>Invigilators <span class="pill n">optional</span></h2>
+      <p class="small muted" style="margin-top:-6px">A list with a <b>name</b> column and, if you like, an <b>unavailable</b> column with dates such as <code>2026-12-05;2026-12-06</code>. Without it, no duties are assigned.</p>
+      <label class="drop"><input type="file" id="invigFile" accept=".csv,.xlsx,.xlsm,.xls,.txt"><div><b>Choose invigilator file</b> (Excel or CSV)</div></label>
+      <div id="invigInfo" aria-live="polite"></div>
+    </div>
+    <div class="nav"><span></span><a class="btn primary" href="#/plan/2">Next: rooms<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+  </div>
 
-                        <div class="field">
-                            <label for="max-courses" class="field-label">Max Courses Per Room</label>
-                            <input type="number" id="max-courses" class="field-input" min="1" value="3">
-                        </div>
-                        <div class="field">
-                            <label for="seed" class="field-label">Random Seed (optional)</label>
-                            <input type="text" id="seed" class="field-input" placeholder="Leave blank for system random">
-                        </div>
-                        <div class="field">
-                            <label for="slot-capacity-mode" class="field-label">Seat Fill Mode</label>
-                            <select id="slot-capacity-mode" class="field-input">
-                                <option value="greedy" selected>Greedy fill (default)</option>
-                                <option value="strict">Strict (keep leftovers for next room)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </section>
+  <!-- step 2 -->
+  <div class="step" data-step="2">
+    <div class="card">
+      <h2>How should rooms be used?</h2>
+      <div class="seg" role="radiogroup" aria-label="Room use">
+        <label><input type="radio" name="roomuse" value="compact" checked>Fill each room completely before opening the next</label>
+        <label><input type="radio" name="roomuse" value="spread">Spread students evenly across all selected rooms</label>
+      </div>
+      <p class="tiny muted" style="margin:10px 0 0">Filling rooms completely (front row first) uses the fewest rooms and invigilators; only the last room of a session is partly empty. Spreading puts a similar number of students in every selected room.</p>
+    </div>
+    <div class="card">
+      <div class="toolbar">
+        <div><h2 style="margin:0">Rooms</h2><div class="small muted" id="roomSummary"></div></div>
+        <div class="spacer"></div>
+        <label class="btn"><input type="file" id="docxFiles" accept=".docx,.pdf" multiple hidden><svg class="i" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Import Word seat maps</label>
+        <label class="btn"><input type="file" id="layoutFiles" accept=".csv,.txt" multiple hidden>Upload Excel layout</label>
+        <button class="btn" id="addRoom"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add room</button>
+      </div>
+      <div class="toolbar"><button class="btn" id="roomsAll">Use all rooms</button><button class="btn" id="roomsReal">Only rooms with a real layout</button><button class="btn" id="roomsNone">Use none</button></div>
+      <div id="importMsg" aria-live="polite"></div>
+      <div id="roomGrid" class="roomgrid"></div>
+    </div>
+    <div class="card" id="roomEditCard" hidden><div id="roomEdit"></div></div>
+    <div class="nav"><a class="btn" href="#/plan/1"><svg class="i" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</a><a class="btn primary" href="#/plan/3">Next: dates &amp; rules<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+  </div>
 
-            <section class="step" data-step="3">
-                <div class="card card--filters">
-                    <div class="card-header">
-                        <h2>Optional Filters</h2>
-                        <p>Pick a semester to see its courses. Leave everything unchecked to schedule every cohort.</p>
-                    </div>
-                    <div class="card-body filters-body">
-                        <div id="filters-container"></div>
-                        <div class="filters-summary-row">
-                            <div class="filter-summary" id="semester-summary"></div>
-                            <div class="filters-actions">
-                                <button class="btn btn-chip" type="button" id="clear-semesters">Clear Semesters</button>
-                                <button class="btn btn-chip" type="button" id="clear-courses">Clear Courses</button>
-                            </div>
-                        </div>
-                        <div class="filter-summary" id="course-summary"></div>
-                        <div class="filter-note" id="filter-note"></div>
-                    </div>
-                </div>
-
-                <div class="card card--schedule">
-                    <div class="card-header">
-                        <h2>Exam Window & Slots</h2>
-                        <p>Provide the exam window; slots will be generated automatically for every day in the range.</p>
-                    </div>
-                    <div class="card-body">
-                        <div class="grid grid-2 gap-md exam-window-grid">
-                            <div class="field">
-                                <label for="schedule-start" class="field-label">Exam Start Date</label>
-                                <input type="date" id="schedule-start" class="field-input">
-                            </div>
-                            <div class="field">
-                                <label for="schedule-end" class="field-label">Exam End Date</label>
-                                <input type="date" id="schedule-end" class="field-input">
-                            </div>
-                            <div class="field">
-                                <label for="slots-per-day" class="field-label">Slots per Day</label>
-                                <input type="number" id="slots-per-day" class="field-input" min="1" value="2">
-                            </div>
-                        </div>
-                        <div class="slot-config-wrapper">
-                            <div class="slot-config-header">
-                                <div>
-                                    <h3>Daily Slot Templates</h3>
-                                    <p>Labels and times apply to each day between the selected start and end dates.</p>
-                                </div>
-                                <button class="btn btn-chip" type="button" id="add-slot-template">Add Slot</button>
-                            </div>
-                            <div id="slot-config" class="slot-config"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="step" data-step="4">
-                <section class="card" id="results-card" hidden>
-                    <div class="card-header">
-                        <div class="card-header__title">
-                            <h2>Room Allocation Summary</h2>
-                            <p>Detailed per-room placement including slot usage, courses, and semesters.</p>
-                        </div>
-                        <div class="export-group">
-                            <button class="btn btn-secondary" id="export-csv" disabled>Export CSV</button>
-                            <button class="btn btn-secondary" id="export-excel" disabled>Export Excel</button>
-                            <button class="btn btn-secondary" id="export-pdf" disabled>Export PDF</button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="results-container" class="table-responsive"></div>
-                    </div>
-                </section>
-
-                <section class="card" id="analytics-card" hidden>
-                    <div class="card-header">
-                        <h2>AI / ML Analytics</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="insights-grid">
-                            <div class="insight">
-                                <span class="insight-label">Overall Utilization</span>
-                                <span class="insight-value" id="overall-utilization">0%</span>
-                            </div>
-                            <div class="insight">
-                                <span class="insight-label">Unassigned Students</span>
-                                <span class="insight-value" id="unassigned-count">0</span>
-                            </div>
-                            <div class="insight">
-                                <span class="insight-label">High Utilization Rooms</span>
-                                <span class="insight-value" id="high-util-count">0</span>
-                            </div>
-                            <div class="insight">
-                                <span class="insight-label">Low Utilization Rooms</span>
-                                <span class="insight-value" id="low-util-count">0</span>
-                            </div>
-                        </div>
-                        <div class="ai-summary" id="ai-summary"></div>
-                        <div class="chart-grid">
-                            <div>
-                                <h3 class="chart-title">Room Utilization</h3>
-                                <canvas id="utilization-chart"></canvas>
-                            </div>
-                            <div>
-                                <h3 class="chart-title">Course Distribution by Slot</h3>
-                                <canvas id="slot-distribution-chart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </section>
-
-            <div class="step-controls">
-                <button class="btn btn-outline" id="prev-step">Back</button>
-                <button class="btn btn-primary" id="next-step">Next</button>
-            </div>
-        </main>
+  <!-- step 3 -->
+  <div class="step" data-step="3">
+    <div class="card">
+      <h2>Exam period</h2>
+      <div class="row">
+        <div><label class="f" for="calStart">First day</label><input type="date" id="calStart"></div>
+        <div><label class="f" for="calEnd">Last day</label><input type="date" id="calEnd"></div>
+        <div><label class="f" for="calSlots">Sessions per day</label><select id="calSlots"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div>
+        <div><label class="f" for="calTimes">Session times (comma separated)</label><input id="calTimes" value="10:00 AM, 2:30 PM"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <label class="toggle"><input type="checkbox" id="exSat" checked> No exams on Saturdays</label>
+        <label class="toggle"><input type="checkbox" id="exSun" checked> No exams on Sundays</label>
+      </div>
+      <h3>Holidays and half days</h3>
+      <div class="row">
+        <div><label class="f" for="holDate">Holiday (no exams)</label><div style="display:flex;gap:6px"><input type="date" id="holDate" style="min-width:0"><button class="btn" id="addHol">Add</button></div></div>
+        <div><label class="f" for="halfDate">Half day (first session only)</label><div style="display:flex;gap:6px"><input type="date" id="halfDate" style="min-width:0"><button class="btn" id="addHalf">Add</button></div></div>
+      </div>
+      <div class="chips" id="dayChips"></div>
+      <div id="periodInfo" class="small" style="margin-top:10px" aria-live="polite"></div>
     </div>
 
-    <div id="notification-banner" class="notification-banner" role="alert" tabindex="-1" hidden>
-        <span class="notification-message"></span>
-        <button type="button" id="dismiss-notification" aria-label="Dismiss notification">×</button>
+    <div class="card" id="ruleCard">
+      <p class="small muted" style="margin-top:0">Ticked rules are always kept, except those marked “tries to”, which are followed as far as possible.</p>
+      <h2>Timetable</h2><div id="ttRules"></div>
+      <h2 style="margin-top:18px">Seating</h2><div id="seatRules"></div>
+      <h2 style="margin-top:18px">Invigilation</h2><div id="invRules"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="app.js"></script>
+    <div class="card">
+      <h2>Rules for particular exams</h2>
+      <p class="small muted" style="margin-top:-6px">Fix a paper to a date, run a common paper together, keep a lab exam in the lab, and so on.</p>
+      <div class="row"><div><label class="f" for="newType">Add a rule</label><select id="newType"></select></div></div>
+      <div id="newForm" style="margin-top:10px"></div>
+      <div id="specificList" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <h2>Learned from your past exams <span class="pill n">tries to</span></h2>
+      <div id="learnedList" class="muted small">Upload students first.</div>
+    </div>
+
+    <div class="card">
+      <details id="englishBox"><summary>Write rules in plain English (optional)</summary>
+        <p class="small muted">One rule per line, e.g. “CS1133 on 21.09.2026 at 2:30 PM”, “Sem I papers in the morning if possible”, “Physics before Chemistry”. A model on this computer reads them; check the result before planning.</p>
+        <textarea id="english" placeholder="Type rules here, one per line"></textarea>
+        <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn" id="interpret">Read these rules</button><span id="interpretMsg" class="small muted" aria-live="polite"></span></div>
+        <div id="englishList"></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <details id="jsonBox"><summary>Advanced: all rules as data</summary>
+        <p class="small muted">Exactly what the planner receives. Edit only if you know what you're doing; your edits replace the tick boxes for this run.</p>
+        <textarea id="rulesJson" class="mono" style="min-height:220px"></textarea>
+        <label class="toggle small"><input type="checkbox" id="useJson"> Use my edited version</label>
+        <div class="row" style="margin-top:8px"><div style="max-width:260px"><label class="f" for="timeLimit">Planner time limit (seconds)</label><input type="number" id="timeLimit" value="60" min="10"></div></div>
+      </details>
+    </div>
+
+    <div class="nav"><a class="btn" href="#/plan/2"><svg class="i" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</a>
+      <div style="text-align:right"><button class="btn primary" id="solve">Make schedule &amp; seating plan</button><div id="solveMsg" class="small" style="margin-top:8px" aria-live="polite"></div></div></div>
+  </div>
+
+  <!-- step 4 -->
+  <div class="step" data-step="4"><div id="resultBox"></div></div>
+</section>
+
+<!-- ================= ROOM VIEW ================= -->
+<section class="page" id="roomview">
+  <div class="toolbar"><div><h1>Room view</h1><p class="lead" style="margin:0">Each room's seating, session by session: who sits where.</p></div><div class="spacer"></div>
+    <div style="min-width:260px"><label class="f" for="rvPlan">Plan</label><select id="rvPlan"></select></div>
+    <button class="btn" id="rvPrint"><svg class="i" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print this room</button></div>
+  <div id="rvBody" style="margin-top:16px"></div>
+</section>
+</main>
+<div id="printArea"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const PALETTE = ["#2563EB","#DC2626","#059669","#D97706","#7C3AED","#0891B2","#DB2777","#65A30D","#EA580C","#475569"];
+const KINDS = {midsem:{label:"Mid-semester examination", short:"Mid-sem", times:"10:00 AM, 2:30 PM", maxDay:"1", gap:false,
+                 note:"Mid-sem defaults: sessions at 10:00 AM and 2:30 PM, one exam per student per day. You can change any of these in step 3."},
+               endsem:{label:"End-semester examination", short:"End-sem", times:"10:00 AM, 2:30 PM", maxDay:"1", gap:true,
+                 note:"End-sem defaults: sessions at 10:00 AM and 2:30 PM, one exam per student per day, and a day off between a student's exams where possible. You can change any of these in step 3."}};
+const S = {enrollment:"", table:null, colmap:{}, summary:null, selected:new Set(), invig:"", rooms:[], editing:null, holidays:[], halfDays:[], specific:[], english:[], learned:[],
+  learnedOff:new Set(), result:null, plan:null, plans:[], tab:"schedule", slot:null, room:"", find:"", rv:{room:""}};
+const ICON = {print:'<svg class="i" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
+  dl:'<svg class="i" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
+  eye:'<svg class="i" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  trash:'<svg class="i" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
+  alert:'<svg class="i" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
+  door:'<svg class="i" viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg>',
+  cal:'<svg class="i" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg>'};
+const note = (kind, html) => `<div class="note ${kind}">${kind === "ok" ? ICON.check : kind === "info" ? "" : ICON.alert}<div>${html}</div></div>`;
+
+async function api(path, body, method){
+  let r;
+  try { r = await fetch(path, body || method ? {method:method || "POST", headers:{"Content-Type":"application/json"}, body:body ? JSON.stringify(body) : undefined} : {}); }
+  catch { throw new Error("Can't reach the planner. Is it running? Start it with ./start.sh and open http://localhost:8000"); }
+  let j; try { j = await r.json(); } catch { throw new Error(`The planner answered with an error (${r.status}).`); }
+  if (!r.ok) throw new Error(j.error || r.statusText); return j;
+}
+const fileB64 = f => new Promise((ok, no) => { const rd = new FileReader(); rd.onload = () => ok(rd.result.split(",")[1] || ""); rd.onerror = () => no(new Error("Couldn't read the file from disk.")); rd.readAsDataURL(f); });
+function store(k, v){ try { localStorage.setItem("ep." + k, JSON.stringify(v)); } catch {} }
+function load(k, d){ try { const v = localStorage.getItem("ep." + k); return v ? JSON.parse(v) : d; } catch { return d; } }
+function fmtDate(d){ return d ? new Date(d + "T00:00").toLocaleDateString(undefined, {weekday:"short", day:"numeric", month:"short", year:"numeric"}) : ""; }
+const kind = () => document.querySelector("input[name=kind]:checked").value;
+const roomUse = () => document.querySelector("input[name=roomuse]:checked").value;
+
+// ================= routing =================
+function route(){
+  const h = location.hash || "#/dashboard", [, page, step] = h.split("/");
+  const pg = {dashboard:"dashboard", plan:"plan", rooms:"roomview"}[page] || "dashboard";
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === pg));
+  document.querySelectorAll(".mainnav a").forEach(a => a.classList.toggle("on", a.dataset.page === pg));
+  if (pg === "plan"){ const n = String(Math.min(4, Math.max(1, +step || 1)));
+    document.querySelectorAll(".step").forEach(s => s.classList.toggle("on", s.dataset.step === n));
+    if (n === "4") renderResult(); markDone(n); }
+  if (pg === "dashboard") renderDashboard();
+  if (pg === "roomview") renderRoomView();
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+function markDone(current = (location.hash.split("/")[2] || "1")){
+  const done = {1:!!S.summary && S.selected.size > 0, 2:S.rooms.some(r => r.active), 3:!!$("#calStart").value && !!$("#calEnd").value, 4:!!S.result?.ok};
+  document.querySelectorAll(".stepper a").forEach(a => { a.classList.toggle("on", a.dataset.step === current); a.classList.toggle("done", !!done[a.dataset.step] && a.dataset.step !== current); });
+}
+
+// ================= dashboard =================
+async function refreshPlans(){ try { S.plans = await api("/api/plans"); } catch (e) { S.plans = []; $("#planList").innerHTML = note("bad", esc(e.message)); throw e; } }
+async function renderDashboard(){
+  try { await refreshPlans(); } catch { return; }
+  const cur = load("currentPlan", null);
+  if (!S.plans.length){ $("#planList").innerHTML = `<div class="card empty">${ICON.cal}<h2 style="color:var(--ink)">No exam plans yet</h2><p>Make your first plan: upload students, pick rooms, set dates and rules.</p>
+    <a class="btn primary" href="#/plan/1">New exam plan</a> <button class="btn" id="dashSample">Try with sample data</button></div>`;
+    $("#dashSample").onclick = () => { location.hash = "#/plan/1"; setTimeout(() => $("#trySample").click(), 50); }; return; }
+  $("#planList").innerHTML = S.plans.map(p => `<div class="plan ${p.id === cur ? "current" : ""}">
+    <div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="margin:0">${esc(p.name)}</h2>
+      ${p.kind ? `<span class="pill blue">${esc(KINDS[p.kind]?.short || p.kind)}</span>` : ""}${p.id === cur ? `<span class="pill warn">Current</span>` : ""}
+      ${p.ok ? `<span class="pill ok">${ICON.check}All rules checked</span>` : `<span class="pill bad">Has problems</span>`}</div>
+      <div class="meta"><span>${esc(fmtDate(p.start))} – ${esc(fmtDate(p.end))}</span><span>${p.exams ?? "-"} exams</span><span>${(p.students ?? 0).toLocaleString()} students</span><span>${p.rooms} rooms</span><span>made ${esc(new Date(p.created).toLocaleString())}</span></div></div>
+    <div class="acts"><button class="btn primary" data-open="${p.id}">${ICON.eye}Schedule &amp; seating</button><button class="btn" data-rv="${p.id}">${ICON.door}Room view</button>
+      <button class="btn danger" data-del="${p.id}" aria-label="Delete ${esc(p.name)}">${ICON.trash}</button></div></div>`).join("");
+  $("#planList").querySelectorAll("[data-open]").forEach(b => b.onclick = async () => { await openPlan(b.dataset.open); location.hash = "#/plan/4"; });
+  $("#planList").querySelectorAll("[data-rv]").forEach(b => b.onclick = async () => { await openPlan(b.dataset.rv); location.hash = "#/rooms"; });
+  $("#planList").querySelectorAll("[data-del]").forEach(b => b.onclick = async () => { const p = S.plans.find(x => x.id === b.dataset.del);
+    if (!confirm(`Delete the plan “${p.name}”? This can't be undone.`)) return;
+    await api(`/api/plans/${p.id}`, null, "DELETE"); if (load("currentPlan") === p.id){ store("currentPlan", null); S.result = null; S.plan = null; } renderDashboard(); });
+}
+async function openPlan(id){
+  const p = await api(`/api/plans/${id}`); S.plan = p; S.result = p.result; S.slot = null; S.room = ""; S.find = ""; S.tab = "schedule"; S.rv.room = ""; store("currentPlan", id);
+}
+
+// ================= step 1: exam + students =================
+function applyKind(){ const k = KINDS[kind()]; $("#kindNote").textContent = k.note;
+  if (!$("#planName").dataset.touched){ const d = $("#calStart").value ? new Date($("#calStart").value + "T00:00") : new Date();
+    $("#planName").value = `${k.short} ${d.toLocaleDateString(undefined, {month:"long", year:"numeric"})}`; } }
+document.querySelectorAll("input[name=kind]").forEach(r => r.onchange = () => { applyKind(); presetRules(); store("kind", kind()); });
+$("#planName").oninput = () => { $("#planName").dataset.touched = "1"; };
+function presetRules(){ const k = KINDS[kind()];
+  $("#calTimes").value = k.times; const rows = {}; document.querySelectorAll("#ruleCard .rule").forEach(r => rows[r.dataset.k] = r);
+  if (rows.maxDay){ rows.maxDay.querySelector(":scope > input").checked = true; rows.maxDay.querySelector("[data-v=n]").value = k.maxDay; rows.maxDay.classList.remove("off"); }
+  if (rows.gap){ rows.gap.querySelector(":scope > input").checked = k.gap; rows.gap.classList.toggle("off", !k.gap); }
+  persistRules(); periodInfo(); }
+
+function dropZone(label, input){ label.addEventListener("dragover", e => { e.preventDefault(); label.classList.add("over"); });
+  label.addEventListener("dragleave", () => label.classList.remove("over"));
+  label.addEventListener("drop", e => { e.preventDefault(); label.classList.remove("over"); input.files = e.dataTransfer.files; input.dispatchEvent(new Event("change")); }); }
+document.querySelectorAll(".drop").forEach(l => dropZone(l, l.querySelector("input")));
+
+function dataTable(id, cols, rows, highlight = new Set()){
+  const wrap = document.getElementById(id); let q = "";
+  const draw = () => {
+    const idx = rows.map((r, i) => i), hit = q ? idx.filter(i => rows[i].some(v => String(v).toLowerCase().includes(q))) : idx, shown = hit.slice(0, 500);
+    wrap.querySelector(".cnt").textContent = q ? `${hit.length.toLocaleString()} matching rows${hit.length > 500 ? " (first 500 shown)" : ""}`
+      : `${rows.length.toLocaleString()} rows${rows.length > 500 ? " (first 500 shown; search to find others)" : ""}`;
+    wrap.querySelector(".datatable").innerHTML = `<table><thead><tr><th>#</th>${cols.map((c, i) => `<th style="${highlight.has(i) ? "color:var(--primary)" : ""}">${esc(c || `Column ${i + 1}`)}</th>`).join("")}</tr></thead>
+      <tbody>${shown.map(i => `<tr><td class="rn">${i + 1}</td>${cols.map((_, c) => `<td style="${highlight.size && !highlight.has(c) ? "color:var(--mute)" : ""}">${esc(rows[i][c])}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  };
+  wrap.innerHTML = `<div class="toolbar" style="margin:8px 0;align-items:center"><input class="search" placeholder="Search roll number, name, code…" aria-label="Search the file" style="max-width:340px"><span class="cnt small muted"></span></div><div class="datatable"></div>`;
+  wrap.querySelector(".search").oninput = e => { q = e.target.value.trim().toLowerCase(); draw(); };
+  draw();
+}
+const FIELDS = [["roll", "Roll number", true, /roll/i], ["code", "Subject code", true, /(subject|course|paper)\s*code|^code$/i],
+  ["sname", "Subject name", false, /(subject|course|paper)\s*name|^subject$|^course$/i], ["student", "Student name", false, /student\s*name|^name$/i],
+  ["sem", "Semester", false, /semester|session|^sem$/i], ["kind", "Subject type", false, /type|category/i]];
+function guessColumns(cols, rows){
+  const sample = rows.slice(0, 200), share = (i, re) => sample.filter(r => re.test(r[i] || "")).length / Math.max(1, sample.length), map = {};
+  for (const [k, , , re] of FIELDS){ const i = cols.findIndex(c => re.test(c)); if (i >= 0 && !Object.values(map).includes(i)) map[k] = i; }
+  if (map.roll === undefined){ const i = cols.findIndex((c, i) => share(i, /^\d{2,4}[A-Za-z]+\d{2,4}$/) > 0.8); if (i >= 0) map.roll = i; }
+  if (map.code === undefined){ const i = cols.findIndex((c, i) => i !== map.roll && share(i, /^[A-Z]{2,4}\s?\d{3,4}[A-Z]?$/) > 0.8); if (i >= 0) map.code = i; }
+  return map;
+}
+const cell = (r, k) => S.colmap[k] === undefined ? "" : (r[S.colmap[k]] || "").trim();
+function buildEnrollment(onlySelected){
+  const q = v => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+  return ["Student Roll Number,Subject Code,Subject Name,Student Name,Student Session,Subject Type",
+    ...S.table.rows.filter(r => cell(r, "roll") && cell(r, "code") && (!onlySelected || S.selected.has(cell(r, "code"))))
+      .map(r => ["roll", "code", "sname", "student", "sem", "kind"].map(k => q(cell(r, k))).join(","))].join("\n");
+}
+function renderPreview(){
+  const t = S.table, m = S.colmap; if (!t){ $("#enrollPreview").innerHTML = ""; return; }
+  const opts = sel => `<option value="">(none)</option>` + t.columns.map((c, i) => `<option value="${i}" ${sel === i ? "selected" : ""}>${esc(c || `Column ${i + 1}`)}</option>`).join("");
+  $("#enrollPreview").innerHTML = `<h3>Which column is which?</h3><p class="small muted" style="margin-top:-4px">Guessed from the headings. Change any that are wrong; the two marked * are needed.</p>
+    <div class="row">${FIELDS.map(([k, lab, req]) => `<div><label class="f" for="map_${k}">${lab}${req ? " *" : ""}</label><select id="map_${k}" data-map="${k}">${opts(m[k])}</select></div>`).join("")}</div>
+    <h3>Your file</h3><div id="enrollTable"></div>`;
+  dataTable("enrollTable", t.columns, t.rows, new Set(Object.values(m)));
+  $("#enrollPreview").querySelectorAll("[data-map]").forEach(sel => sel.onchange = () => { if (sel.value === "") delete S.colmap[sel.dataset.map]; else S.colmap[sel.dataset.map] = +sel.value; applyEnrollment(S.table.name, true); });
+}
+async function applyEnrollment(name, keepSelection){
+  renderPreview();
+  const m = S.colmap;
+  if (m.roll === undefined || m.code === undefined){ S.summary = null; S.enrollment = ""; $("#pickCard").hidden = true;
+    $("#enrollInfo").innerHTML = note("warn", `Loaded ${esc(name)}, but I couldn't tell which column holds the <b>${m.roll === undefined ? "roll number" : "subject code"}</b>. Pick it below.`); markDone(); return; }
+  $("#enrollInfo").innerHTML = `<p class="muted">Counting students…</p>`;
+  try { S.enrollment = buildEnrollment(false); await refreshSummary();
+    if (!keepSelection || !S.selected.size) S.selected = new Set(S.summary.exams.map(e => e.code));
+    else S.selected = new Set(S.summary.exams.map(e => e.code).filter(c => S.selected.has(c)));
+    $("#enrollInfo").innerHTML = note("ok", `${esc(name)} loaded. Check the table below, then choose which exams are in this plan.`) + `<div id="enrollStats"></div>`;
+    renderPicker();
+  } catch (err) { S.summary = null; $("#enrollInfo").innerHTML = note("bad", esc(err.message)); }
+  renderSpecific(); periodInfo(); markDone();
+}
+async function loadEnrollmentFile(name, b64){
+  $("#enrollInfo").innerHTML = `<p class="muted">Reading ${esc(name)}…</p>`; $("#enrollPreview").innerHTML = ""; $("#pickCard").hidden = true;
+  try { const t = await api("/api/table", {name, data:b64}); S.table = {...t, name}; S.colmap = guessColumns(t.columns, t.rows); await applyEnrollment(name, false); }
+  catch (err) { S.table = null; S.summary = null; $("#enrollInfo").innerHTML = note("bad", `Couldn't read ${esc(name)}: ${esc(err.message)}`); markDone(); }
+}
+$("#enrollFile").onchange = async e => { const f = e.target.files[0]; if (!f) return;
+  try { await loadEnrollmentFile(f.name, await fileB64(f)); } catch (err) { $("#enrollInfo").innerHTML = note("bad", esc(err.message)); } e.target.value = ""; };
+async function refreshSummary(){ if (!S.enrollment) return;
+  S.summary = await api("/api/summary", {enrollment:S.enrollment, calendar:{start:$("#calStart").value}}); S.learned = S.summary.learned; renderLearned(); }
+
+// which exams are in this plan
+function selectedStats(){
+  const rolls = new Set(), per = {}; let maxPer = 0;
+  S.table.rows.forEach(r => { const c = cell(r, "code"), rn = cell(r, "roll"); if (rn && S.selected.has(c)){ rolls.add(rn); per[rn] = (per[rn] || 0) + 1; } });
+  Object.values(per).forEach(n => maxPer = Math.max(maxPer, n));
+  const ex = S.summary.exams.filter(e => S.selected.has(e.code)), big = [...ex].sort((a, b) => b.size - a.size)[0];
+  return {students:rolls.size, exams:ex.length, maxPer, big};
+}
+function renderPicker(){
+  const x = S.summary; $("#pickCard").hidden = false;
+  const sems = [...new Set(x.exams.map(e => e.semester ?? "?"))].sort((a, b) => (a === "?") - (b === "?") || a - b);
+  $("#semChips").innerHTML = sems.map(s => { const ex = x.exams.filter(e => (e.semester ?? "?") === s), on = ex.filter(e => S.selected.has(e.code)).length;
+    return `<label class="togglechip"><input type="checkbox" data-sem="${s}" ${on === ex.length ? "checked" : ""}>${s === "?" ? "No semester" : "Semester " + s} <span class="muted">${on}/${ex.length}</span></label>`; }).join("")
+    + ["Core", "Elective"].filter(k => x.exams.some(e => e.kind === k)).map(k => { const ex = x.exams.filter(e => e.kind === k), on = ex.filter(e => S.selected.has(e.code)).length;
+      return `<label class="togglechip"><input type="checkbox" data-kindsel="${k}" ${on === ex.length ? "checked" : ""}>All ${k.toLowerCase()} <span class="muted">${on}/${ex.length}</span></label>`; }).join("");
+  document.querySelectorAll("[data-sem]").forEach(c => { const ex = x.exams.filter(e => String(e.semester ?? "?") === c.dataset.sem); c.indeterminate = !c.checked && ex.some(e => S.selected.has(e.code));
+    c.onchange = () => { ex.forEach(e => c.checked ? S.selected.add(e.code) : S.selected.delete(e.code)); selectionChanged(); }; });
+  document.querySelectorAll("[data-kindsel]").forEach(c => { const ex = x.exams.filter(e => e.kind === c.dataset.kindsel); c.indeterminate = !c.checked && ex.some(e => S.selected.has(e.code));
+    c.onchange = () => { ex.forEach(e => c.checked ? S.selected.add(e.code) : S.selected.delete(e.code)); selectionChanged(); }; });
+  const q = $("#courseFind").value.trim().toLowerCase(), list = x.exams.filter(e => !q || `${e.code} ${e.name}`.toLowerCase().includes(q));
+  $("#courseTable").innerHTML = `<table><thead><tr><th style="width:44px"><span class="sr" style="position:absolute;left:-999px">Include</span></th><th>Code</th><th>Course</th><th>Semester</th><th>Type</th><th>Students</th></tr></thead><tbody>
+    ${list.map(e => `<tr><td><input type="checkbox" data-course="${esc(e.code)}" aria-label="Include ${esc(e.code)}" ${S.selected.has(e.code) ? "checked" : ""}></td><td class="code">${esc(e.code)}</td><td>${esc(e.name)}</td><td>${e.semester ?? "-"}</td><td>${esc(e.kind || "-")}</td><td>${e.size}</td></tr>`).join("")}</tbody></table>`;
+  $("#courseTable").querySelectorAll("[data-course]").forEach(c => c.onchange = () => { c.checked ? S.selected.add(c.dataset.course) : S.selected.delete(c.dataset.course); selectionChanged(); });
+  const st = selectedStats();
+  $("#pickInfo").innerHTML = S.selected.size ? `Including <b>${st.exams}</b> of ${x.exams.length} exams · <b>${st.students.toLocaleString()}</b> students` : `<span style="color:var(--bad)">No exams selected. Tick at least one.</span>`;
+  $("#enrollStats") && ($("#enrollStats").innerHTML = `<div class="stats"><div class="stat"><b>${st.students.toLocaleString()}</b><span>students in this plan</span></div><div class="stat"><b>${st.exams}</b><span>exams in this plan</span></div>
+    <div class="stat"><b>${st.maxPer}</b><span>most exams for one student</span></div><div class="stat"><b>${st.big ? esc(st.big.code) : "-"}</b><span>largest exam (${st.big ? st.big.size : 0} students)</span></div></div>`);
+}
+let selTimer;
+function selectionChanged(){ renderPicker(); periodInfo(); markDone(); clearTimeout(selTimer); }
+$("#courseFind").oninput = () => renderPicker();
+$("#selAll").onclick = () => { S.summary.exams.forEach(e => S.selected.add(e.code)); selectionChanged(); };
+$("#selNone").onclick = () => { S.selected.clear(); selectionChanged(); };
+
+async function loadInvigilators(name, b64){
+  try { const t = await api("/api/table", {name, data:b64});
+    const ni = Math.max(0, t.columns.findIndex(c => /name/i.test(c))), ui = t.columns.findIndex(c => /unavail|leave|absent|not available/i.test(c));
+    const people = t.rows.filter(r => r[ni]);
+    S.invig = "name,unavailable\n" + people.map(r => `"${r[ni].replace(/"/g, '""')}","${ui >= 0 ? (r[ui] || "").replace(/"/g, "") : ""}"`).join("\n");
+    $("#invigInfo").innerHTML = note("ok", `${esc(name)}: ${people.length} invigilators${ui < 0 ? " (no ‘unavailable’ column, so everyone counts as available)" : ""}.`) + `<div id="invigTable"></div>`;
+    dataTable("invigTable", t.columns, t.rows, new Set([ni, ui].filter(i => i >= 0)));
+  } catch (err) { S.invig = ""; $("#invigInfo").innerHTML = note("bad", `Couldn't read ${esc(name)}: ${esc(err.message)}`); }
+}
+$("#invigFile").onchange = async e => { const f = e.target.files[0]; if (!f) return; await loadInvigilators(f.name, await fileB64(f)); e.target.value = ""; };
+$("#trySample").onclick = async () => {
+  const get = async n => { const r = await fetch("/samples/" + n); if (!r.ok) throw new Error("sample missing: " + n); const b = new Uint8Array(await r.arrayBuffer());
+    let s = ""; b.forEach(x => s += String.fromCharCode(x)); return btoa(s); };
+  try { if (!$("#calStart").value){ $("#calStart").value = "2026-12-14"; $("#calEnd").value = "2026-12-21"; periodInfo(); }
+    await loadEnrollmentFile("enrollment_sample.csv", await get("enrollment_sample.csv")); await loadInvigilators("invigilators_sample.csv", await get("invigilators_sample.csv"));
+    if (!$("#english").value) $("#english").value = await (await fetch("/samples/rules_sample.txt")).text();
+    applyKind();
+  } catch (err) { $("#enrollInfo").innerHTML = note("bad", esc(err.message)); }
+};
+
+// ================= step 2: rooms =================
+const seatCount = l => (l.match(/S/g) || []).length;
+function miniMap(layout){ const rows = layout.split("\n"), w = Math.max(1, ...rows.map(r => r.length));
+  let h = `<div class="mini" aria-hidden="true" style="grid-template-columns:repeat(${w},6px)">`;
+  rows.forEach(r => { for (let i = 0; i < w; i++){ const c = r[i] || " "; h += `<i class="${"Sx-".includes(c) ? "" : "g"}"></i>`; } }); return h + "</div>"; }
+let saveTimer;
+function saveRooms(){ clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await api("/api/rooms", S.rooms); } catch (e) { $("#importMsg").innerHTML = note("bad", "Couldn't save rooms: " + esc(e.message)); } }, 400); }
+function renderRooms(){
+  const on = S.rooms.filter(r => r.active), seats = on.reduce((a, r) => a + seatCount(r.layout), 0), noLay = S.rooms.filter(r => r.placeholder).length;
+  const big = S.summary && S.selected.size ? selectedStats().big : null;
+  $("#roomSummary").innerHTML = `<b>${on.length}</b> of ${S.rooms.length} rooms selected · <b>${seats.toLocaleString()}</b> seats` + (noLay ? ` · <span class="pill warn">${noLay} without a real layout</span>` : "")
+    + (big && big.size > seats ? ` · <span style="color:var(--bad)">largest exam (${big.size}) needs more seats</span>` : "");
+  $("#roomGrid").innerHTML = S.rooms.map((r, i) => `<div class="room ${r.active ? "" : "off"}">
+    <div class="top"><span class="name">${esc(r.id)}</span>${r.placeholder ? `<span class="pill warn">No layout</span>` : `<span class="pill ok">Real layout</span>`}</div>
+    <div class="small muted">${seatCount(r.layout)} seats${r.building ? " · " + esc(r.building) : ""}</div>
+    ${miniMap(r.layout)}
+    <div class="top"><label class="toggle"><input type="checkbox" data-use="${i}" ${r.active ? "checked" : ""}> Use</label><button class="btn link" data-edit="${i}">Edit layout</button></div></div>`).join("");
+  $("#roomGrid").querySelectorAll("[data-use]").forEach(c => c.onchange = () => { S.rooms[+c.dataset.use].active = c.checked; saveRooms(); renderRooms(); markDone(); });
+  $("#roomGrid").querySelectorAll("[data-edit]").forEach(b => b.onclick = () => { S.editing = +b.dataset.edit; renderEditor(); $("#roomEditCard").scrollIntoView({behavior:"smooth"}); });
+  renderEditor();
+}
+$("#roomsAll").onclick = () => { S.rooms.forEach(r => r.active = true); saveRooms(); renderRooms(); markDone(); };
+$("#roomsReal").onclick = () => { S.rooms.forEach(r => r.active = !r.placeholder); saveRooms(); renderRooms(); markDone(); };
+$("#roomsNone").onclick = () => { S.rooms.forEach(r => r.active = false); saveRooms(); renderRooms(); markDone(); };
+document.querySelectorAll("input[name=roomuse]").forEach(r => r.onchange = () => store("roomuse2", roomUse()));
+function seatGrid(layout, paint, px = 20){
+  const rows = layout.split("\n"), w = Math.max(1, ...rows.map(r => r.length));
+  let h = `<div class="board">FRONT · TEACHER'S DESK</div><div class="seats" style="grid-template-columns:repeat(${w},${px}px)">`;
+  rows.forEach((r, ri) => { let n = 0, prev = " "; for (let ci = 0; ci < w; ci++){ let ch = r[ci] || " ";
+    if (ch === "-" && (prev === "S" || prev === "x")) ch = prev;
+    else { if (ch === "S" || ch === "x") n++; prev = ch === "-" ? " " : ch; }
+    h += paint(ch, ri, ci, `R${ri + 1}-${n}`); } });
+  return h + "</div>";
+}
+function renderEditor(){
+  const r = S.rooms[S.editing]; $("#roomEditCard").hidden = !r; if (!r) return;
+  $("#roomEdit").innerHTML = `<div class="toolbar"><h2 style="margin:0">Edit ${esc(r.id)}</h2><div class="spacer"></div><button class="btn" id="closeEdit">Done</button></div>
+    <div class="row"><div><label class="f" for="rid">Room name</label><input id="rid" value="${esc(r.id)}"></div><div><label class="f" for="rb">Building</label><input id="rb" value="${esc(r.building || "")}"></div></div>
+    <p class="small muted">${seatCount(r.layout)} seats. Click a seat to switch it: seat → keep empty → aisle. Changes save automatically.</p>
+    ${seatGrid(r.layout, (ch, ri, ci) => `<div class="seat ${ch === "S" ? "" : ch === "x" ? "x" : "gap"}" data-r="${ri}" data-c="${ci}" title="${ch === "S" ? "seat" : ch === "x" ? "kept empty" : "aisle"}"></div>`)}
+    <details style="margin-top:12px"><summary>Edit as text</summary>
+      <p class="small muted">One line per row, front row first. <b>S</b> seat · <b>x</b> keep empty · <b>-</b> the seat to its left is wider · space = aisle.</p>
+      <textarea id="rl" class="mono" style="min-height:200px">${esc(r.layout)}</textarea></details>
+    <p><button class="btn link danger" id="delRoom">Delete this room</button></p>`;
+  const changed = () => { r.placeholder = false; r.active = true; saveRooms(); renderRooms(); };
+  $("#closeEdit").onclick = () => { S.editing = null; renderEditor(); };
+  $("#rid").onchange = e => { r.id = e.target.value.trim() || r.id; saveRooms(); renderRooms(); };
+  $("#rb").onchange = e => { r.building = e.target.value; saveRooms(); renderRooms(); };
+  $("#rl").onchange = e => { r.layout = e.target.value.replace(/[ \t]+$/gm, ""); changed(); };
+  $("#delRoom").onclick = () => { if (confirm(`Delete room ${r.id}?`)){ S.rooms.splice(S.editing, 1); S.editing = null; saveRooms(); renderRooms(); } };
+  $("#roomEdit").querySelectorAll(".seat").forEach(d => d.onclick = () => {
+    const rows = r.layout.split("\n"), ri = +d.dataset.r, ci = +d.dataset.c, line = (rows[ri] || "").padEnd(ci + 1, " ");
+    if (line[ci] === "-") return;
+    const next = {S:"x", x:" ", " ":"S"}[line[ci]] ?? "S";
+    rows[ri] = (line.slice(0, ci) + next + line.slice(ci + 1)).replace(/\s+$/, ""); r.layout = rows.join("\n"); changed(); });
+}
+$("#addRoom").onclick = () => { S.rooms.push({id:`ROOM-${S.rooms.length + 1}`, building:"", layout:"SS SS\nSS SS\nSS SS", active:true}); S.editing = S.rooms.length - 1; saveRooms(); renderRooms(); $("#roomEditCard").scrollIntoView({behavior:"smooth"}); };
+$("#layoutFiles").onchange = async e => {
+  for (const f of e.target.files){
+    const text = (await f.text()).replace(/^﻿/, "").replace(/\r/g, "");
+    const c1 = c => { c = c.trim().toLowerCase(); return ["s", "1", "seat"].includes(c) ? "S" : ["x", "0"].includes(c) ? "x" : " "; };
+    const layout = (f.name.toLowerCase().endsWith(".csv") ? text.split("\n").map(l => l.split(",").map(c1).join("")) : text.split("\n"))
+      .map(l => l.replace(/\s+$/, "")).join("\n").replace(/\n+$/, "");
+    const id = f.name.replace(/\.[^.]+$/, ""), old = S.rooms.find(r => r.id === id);
+    if (old) Object.assign(old, {layout, placeholder:false, active:true}); else S.rooms.push({id, building:"", layout, active:true});
+    S.editing = S.rooms.findIndex(r => r.id === id);
+  }
+  e.target.value = ""; saveRooms(); renderRooms(); $("#importMsg").innerHTML = note("ok", "Layout uploaded."); markDone();
+};
+$("#docxFiles").onchange = async e => {
+  const files = [...e.target.files]; if (!files.length) return;
+  $("#importMsg").innerHTML = `<p class="muted">Reading ${files.length} file(s)…</p>`;
+  try { const payload = await Promise.all(files.map(async f => ({name:f.name, data:await fileB64(f)})));
+    const res = await api("/api/import", {files:payload}); S.rooms = byReadiness(res.rooms); renderRooms(); markDone();
+    $("#importMsg").innerHTML = note("ok", `Imported ${res.saved.map(esc).join(", ")}.<ul>${res.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>`);
+    refreshSummary().catch(() => {});
+  } catch (err) { $("#importMsg").innerHTML = note("bad", "Import failed: " + esc(err.message)); }
+  e.target.value = "";
+};
+const normRoom = r => ({...r, active: r.active ?? !r.placeholder});
+const byReadiness = rooms => rooms.map(normRoom).sort((a, b) => (!!a.placeholder - !!b.placeholder) || a.id.localeCompare(b.id, undefined, {numeric:true}));
+
+// ================= step 3: dates & rules =================
+const RULES = {
+  tt: [
+    {k:"maxDay", on:true, t:"Limit exams per student per day", d:"A student never has more than this many exams on one day.",
+      o:`at most <select class="inline" data-v="n" aria-label="exams per day"><option>1</option><option>2</option><option>3</option></select> per day`,
+      c:v => ({type:"max_exams_per_day", params:{n:+v.n}, text:`At most ${v.n} exam(s) per student per day`})},
+    {k:"b2b", on:false, t:"No exams in back-to-back sessions", d:"A student never has two papers in consecutive sessions of the same day.",
+      o:`<select class="inline" data-v="hard" aria-label="how strict"><option value="1">never allowed</option><option value="0">tries to avoid</option></select>`,
+      c:v => ({type:"no_back_to_back", params:{hard:v.hard === "1"}, text:"No back-to-back exams"})},
+    {k:"gap", on:false, t:"Days off between a student's exams", d:"Gives students time to prepare between papers.",
+      o:`at least <input class="num" type="number" min="1" max="7" value="1" data-v="days" aria-label="days"> day(s) apart, <select class="inline" data-v="hard" aria-label="how strict"><option value="0">tries to</option><option value="1">always</option></select>`,
+      c:v => ({type:"min_gap_days", params:{days:+v.days, hard:v.hard === "1"}, text:`${v.days} day(s) between exams`})},
+    {k:"early", on:false, t:"Big exams early", d:"Puts the largest papers in the first days so marking can start.",
+      o:`the <input class="num" type="number" min="1" max="30" value="5" data-v="n" aria-label="how many"> largest exams`,
+      c:v => ({type:"prefer_early", params:{largest:+v.n, weight:3}, text:`Largest ${v.n} exams early`})},
+  ],
+  seat: [
+    {k:"spacing", on:true, t:"Keep students of the same exam apart", d:"Different papers alternate, so neighbours never write the same exam.",
+      o:`<label class="toggle"><input type="checkbox" data-v="side" checked> side by side</label><label class="toggle"><input type="checkbox" data-v="front"> in front / behind</label>`,
+      c:v => ({type:"seat_spacing", params:{directions:[...(v.side ? ["side"] : []), ...(v.front ? ["front"] : [])]}, text:"Same-exam students not next to each other"}),
+      off:() => ({type:"seat_spacing", params:{directions:[]}, text:"Students may sit next to anyone"})},
+    {k:"fill", on:false, t:"Don't fill rooms completely", d:"Leaves spare seats in every room.",
+      o:`use at most <input class="num" type="number" min="30" max="100" value="90" data-v="p" aria-label="percent"> % of seats`,
+      c:v => ({type:"room_fill", params:{max_fraction:+v.p / 100}, text:`Rooms at most ${v.p}% full`})},
+    {k:"mix", on:true, t:"Limit different exams in one room", d:"Fewer papers per room is easier for invigilators.",
+      o:`at most <input class="num" type="number" min="1" max="8" value="4" data-v="n" aria-label="exams per room"> different exams per room`,
+      c:v => ({type:"max_exams_per_room", params:{n:+v.n}, text:`At most ${v.n} exams per room`})},
+  ],
+  inv: [
+    {k:"invig", on:true, t:"Invigilator duties", d:"Used only if you uploaded an invigilator list.",
+      o:`1 per <input class="num" type="number" min="5" value="30" data-v="per" aria-label="students per invigilator"> students, at least <input class="num" type="number" min="1" value="1" data-v="min" aria-label="minimum per room"> per room, at most <input class="num" type="number" min="1" value="2" data-v="day" aria-label="duties per day"> duties per person per day`,
+      c:v => ({type:"invigilation", params:{per_students:+v.per, min_per_room:+v.min, max_per_day:+v.day}, text:"Invigilation"})},
+  ],
+};
+const ALL_RULES = [...RULES.tt, ...RULES.seat, ...RULES.inv];
+function ruleRow(r){ return `<div class="rule ${r.on ? "" : "off"}" data-k="${r.k}"><input type="checkbox" id="r_${r.k}" ${r.on ? "checked" : ""}>
+  <div class="body"><label for="r_${r.k}" class="t">${r.t}</label><div class="d">${r.d}</div><div class="opts">${r.o}</div></div></div>`; }
+function renderRules(){
+  $("#ttRules").innerHTML = RULES.tt.map(ruleRow).join(""); $("#seatRules").innerHTML = RULES.seat.map(ruleRow).join(""); $("#invRules").innerHTML = RULES.inv.map(ruleRow).join("");
+  const saved = load("rules", null);
+  if (!saved) presetRules();
+  else document.querySelectorAll("#ruleCard .rule").forEach(row => { const s = saved[row.dataset.k]; if (!s) return;
+    row.querySelector(":scope > input").checked = s.on; row.classList.toggle("off", !s.on);
+    row.querySelectorAll("[data-v]").forEach(el => { if (el.dataset.v in s.v){ if (el.type === "checkbox") el.checked = s.v[el.dataset.v]; else el.value = s.v[el.dataset.v]; } }); });
+  document.querySelectorAll("#ruleCard .rule").forEach(row => row.addEventListener("change", () => { row.classList.toggle("off", !row.querySelector(":scope > input").checked); persistRules(); }));
+  renderTypes(); renderSpecific(); renderDays();
+}
+function ruleValues(row){ const v = {}; row.querySelectorAll("[data-v]").forEach(el => v[el.dataset.v] = el.type === "checkbox" ? el.checked : el.value); return v; }
+function persistRules(){ const s = {}; document.querySelectorAll("#ruleCard .rule").forEach(row => s[row.dataset.k] = {on:row.querySelector(":scope > input").checked, v:ruleValues(row)}); store("rules", s); }
+
+function renderDays(){
+  $("#dayChips").innerHTML = S.holidays.map((d, i) => `<span class="chip">Holiday: ${esc(fmtDate(d))}<button data-h="${i}" aria-label="Remove holiday ${esc(d)}">×</button></span>`).join("")
+    + S.halfDays.map((d, i) => `<span class="chip">Half day: ${esc(fmtDate(d))}<button data-hd="${i}" aria-label="Remove half day ${esc(d)}">×</button></span>`).join("");
+  $("#dayChips").querySelectorAll("[data-h]").forEach(b => b.onclick = () => { S.holidays.splice(+b.dataset.h, 1); renderDays(); });
+  $("#dayChips").querySelectorAll("[data-hd]").forEach(b => b.onclick = () => { S.halfDays.splice(+b.dataset.hd, 1); renderDays(); });
+  periodInfo(); store("days", {h:S.holidays, hd:S.halfDays});
+}
+$("#addHol").onclick = () => { const d = $("#holDate").value; if (d && !S.holidays.includes(d)) S.holidays.push(d); renderDays(); };
+$("#addHalf").onclick = () => { const d = $("#halfDate").value; if (d && !S.halfDays.includes(d)) S.halfDays.push(d); renderDays(); };
+function calendar(){ return {start:$("#calStart").value, end:$("#calEnd").value, slots_per_day:+$("#calSlots").value,
+  slot_times:$("#calTimes").value.split(",").map(s => s.trim()).filter(Boolean), exclude_weekdays:[...($("#exSat").checked ? [5] : []), ...($("#exSun").checked ? [6] : [])]}; }
+function examDays(c){ const out = []; if (!c.start || !c.end) return out;
+  for (let d = new Date(c.start + "T00:00"); d <= new Date(c.end + "T00:00"); d.setDate(d.getDate() + 1)){
+    const wd = (d.getDay() + 6) % 7, iso = d.toLocaleDateString("en-CA"); if (!c.exclude_weekdays.includes(wd) && !S.holidays.includes(iso)) out.push(iso); } return out; }
+function periodInfo(){ const c = calendar(); store("cal", c); markDone(); const box = $("#periodInfo");
+  if (!c.start || !c.end){ box.innerHTML = ""; return; }
+  if (c.end < c.start){ box.innerHTML = note("bad", "The last day is before the first day."); return; }
+  const days = examDays(c), sessions = days.length * c.slots_per_day - S.halfDays.filter(d => days.includes(d)).length * (c.slots_per_day - 1);
+  const st = S.summary && S.selected.size ? selectedStats() : null, maxDay = +($("#ruleCard [data-k=maxDay] [data-v=n]")?.value || 2);
+  let msg = `<b>${days.length}</b> exam days (${esc(fmtDate(days[0]))} to ${esc(fmtDate(days[days.length - 1]))}), <b>${sessions}</b> sessions.`;
+  const seatsSel = S.rooms.filter(r => r.active).reduce((a, r) => a + seatCount(r.layout), 0);
+  const need = S.summary ? S.summary.exams.filter(e => S.selected.has(e.code)).reduce((a, e) => a + e.size, 0) : 0;
+  if (st && seatsSel){ msg += ` Selected rooms: <b>${seatsSel.toLocaleString()}</b> seats per session, <b>${(seatsSel * sessions).toLocaleString()}</b> over the period; students need <b>${need.toLocaleString()}</b> exam seats.`;
+    if (st.big && st.big.size > seatsSel) msg = note("bad", msg + ` Room shortage: ${esc(st.big.code)} alone has ${st.big.size} students but the selected rooms hold ${seatsSel}. Select more rooms.`);
+    else if (need > 0.85 * seatsSel * sessions) msg = note("warn", msg + ` Very tight: add rooms or days, or some sessions will be completely full.`); }
+  if (st && sessions < st.maxPer) msg = note("bad", msg + ` Too few: one student has ${st.maxPer} exams.`);
+  else if (st && days.length * maxDay < st.maxPer) msg = note("warn", msg + ` With at most ${maxDay} exam(s) a day, a student with ${st.maxPer} exams needs ${Math.ceil(st.maxPer / maxDay)} days.`);
+  box.innerHTML = msg;
+}
+["#calStart", "#calEnd", "#calSlots", "#calTimes", "#exSat", "#exSun"].forEach(id => $(id).addEventListener("change", () => { periodInfo(); if (id === "#calStart"){ applyKind(); refreshSummary().catch(() => {}); } }));
+
+const examLabel = c => { const e = S.summary?.exams.find(x => x.code === c); return e ? `${e.code} ${e.name}` : c; };
+const slotName = n => (calendar().slot_times[n - 1] || `session ${n}`);
+const TYPES = {
+  fix_exam:{label:"Hold an exam on a set date / session", f:["exam", "date?", "slot?"], say:p => `${examLabel(p.exam)} on ${p.date ? fmtDate(p.date) : "any day"}${p.slot ? ", " + slotName(p.slot) : ""}`},
+  forbid_exam:{label:"Keep an exam off a date / session", f:["exam", "date?", "slot?"], say:p => `${examLabel(p.exam)} not on ${p.date ? fmtDate(p.date) : "any day"}${p.slot ? ", " + slotName(p.slot) : ""}`},
+  same_slot:{label:"Same time for several exams (common paper)", f:["exams"], say:p => `Same time: ${p.exams.map(examLabel).join(", ")}`},
+  different_day:{label:"Exams on different days", f:["exams"], say:p => `Different days: ${p.exams.map(examLabel).join(", ")}`},
+  order:{label:"One exam before another", f:["first", "then"], say:p => `${examLabel(p.first)} before ${examLabel(p.then)}`},
+  prefer_slot:{label:"Prefer a session (morning / afternoon)", f:["exams", "slot"], say:p => `Prefer ${slotName(p.slot)} for ${p.exams.map(examLabel).join(", ")}`},
+  prefer_late:{label:"Towards the end of the period", f:["exams"], say:p => `Late in the period: ${p.exams.map(examLabel).join(", ")}`},
+  allow_adjacent:{label:"Let an exam's students sit side by side", f:["exams"], say:p => `May sit side by side: ${p.exams.map(examLabel).join(", ")}`},
+  exam_rooms:{label:"Only in certain rooms", f:["exam", "rooms"], say:p => `${examLabel(p.exam)} only in ${p.rooms.join(", ")}`},
+  room_unavailable:{label:"Room not available", f:["room", "date?", "slot?"], say:p => `${p.room} unavailable${p.date ? " on " + fmtDate(p.date) : ""}${p.slot ? ", " + slotName(p.slot) : ""}`},
+  student_rooms:{label:"Seat certain students in certain rooms", f:["students", "rooms"], say:p => `${p.students.join(", ")} in ${p.rooms.join(" / ")}`},
+};
+function renderTypes(){ $("#newType").innerHTML = `<option value="">Choose a kind of rule…</option>` + Object.entries(TYPES).map(([k, t]) => `<option value="${k}">${t.label}</option>`).join(""); $("#newForm").innerHTML = ""; }
+$("#newType").onchange = () => renderNewForm($("#newType").value);
+function examOptions(){ return (S.summary?.exams || []).filter(e => S.selected.has(e.code)).map(e => `<option value="${esc(e.code)}">${esc(e.code)} · ${esc(e.name)} (${e.size})</option>`).join(""); }
+function renderNewForm(type){
+  if (!type){ $("#newForm").innerHTML = ""; return; }
+  if (!S.summary && TYPES[type].f.some(f => /exam|first|then/.test(f))){ $("#newForm").innerHTML = note("warn", "Upload the students file first (step 1), so you can pick exams."); return; }
+  const rooms = S.rooms.filter(r => r.active).map(r => `<option>${esc(r.id)}</option>`).join(""), slots = calendar().slot_times.map((t, i) => `<option value="${i + 1}">${esc(t)}</option>`).join("");
+  const field = f => { const opt = f.endsWith("?"), k = f.replace("?", ""), lab = {exam:"Exam", exams:"Exams", first:"First exam", then:"Then", date:"Date", slot:"Session", room:"Room", rooms:"Rooms", students:"Roll numbers"}[k] + (opt ? " (optional)" : "");
+    const inner = {exam:`<select id="nf_exam" data-f="exam"><option value=""></option>${examOptions()}</select>`, first:`<select id="nf_first" data-f="first"><option value=""></option>${examOptions()}</select>`,
+      then:`<select id="nf_then" data-f="then"><option value=""></option>${examOptions()}</select>`, date:`<input id="nf_date" type="date" data-f="date">`,
+      slot:`<select id="nf_slot" data-f="slot">${opt ? `<option value="">any</option>` : ""}${slots}</select>`, room:`<select id="nf_room" data-f="room">${rooms}</select>`,
+      exams:`<select id="nf_exams" data-f="pick"><option value="">Add an exam…</option>${examOptions()}</select><div class="chips" data-f="exams"></div>`,
+      rooms:`<select id="nf_rooms" data-f="pickroom"><option value="">Add a room…</option>${rooms}</select><div class="chips" data-f="rooms"></div>`,
+      students:`<input id="nf_students" data-f="students" placeholder="e.g. 2024BTech013, 2025BTech120">`}[k];
+    return `<div><label class="f" for="nf_${k}">${lab}</label>${inner}</div>`; };
+  $("#newForm").innerHTML = `<div class="row">${TYPES[type].f.map(field).join("")}</div><div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn primary" id="addSpecific">Add rule</button><span id="newMsg" class="small" aria-live="polite"></span></div>`;
+  const picked = {exams:[], rooms:[]};
+  const chips = k => { const box = $(`#newForm [data-f="${k}"]`); box.innerHTML = picked[k].map((c, i) => `<span class="chip">${esc(k === "exams" ? examLabel(c) : c)}<button data-i="${i}" aria-label="Remove ${esc(c)}">×</button></span>`).join("");
+    box.querySelectorAll("button").forEach(b => b.onclick = () => { picked[k].splice(+b.dataset.i, 1); chips(k); }); };
+  const pick = $('#newForm [data-f="pick"]'); if (pick) pick.onchange = () => { if (pick.value && !picked.exams.includes(pick.value)) picked.exams.push(pick.value); pick.value = ""; chips("exams"); };
+  const pickr = $('#newForm [data-f="pickroom"]'); if (pickr) pickr.onchange = () => { if (pickr.value && !picked.rooms.includes(pickr.value)) picked.rooms.push(pickr.value); pickr.value = ""; chips("rooms"); };
+  const fail = m => $("#newMsg").innerHTML = `<span style="color:var(--bad)">${m}</span>`;
+  $("#addSpecific").onclick = () => {
+    const p = {}, val = k => $(`#newForm [data-f="${k}"]`)?.value;
+    for (const f of TYPES[type].f){ const k = f.replace("?", ""), opt = f.endsWith("?");
+      if (k === "exams" || k === "rooms") p[k] = [...picked[k]];
+      else if (k === "students") p[k] = (val(k) || "").split(/[\s,;]+/).filter(Boolean);
+      else if (k === "slot"){ if (val(k)) p[k] = +val(k); }
+      else if (val(k)) p[k] = val(k);
+      const empty = p[k] === undefined || (Array.isArray(p[k]) && !p[k].length);
+      if (!opt && empty) return fail("Please fill in every field that isn't optional."); }
+    if (["same_slot", "different_day"].includes(type) && p.exams.length < 2) return fail("Pick at least two exams.");
+    if (["fix_exam", "forbid_exam"].includes(type) && !p.date && !p.slot) return fail("Pick a date, a session, or both.");
+    if (type === "order" && p.first === p.then) return fail("Pick two different exams.");
+    S.specific.push({type, params:p, text:TYPES[type].say(p)}); renderSpecific(); renderNewForm(type);
+  };
+}
+const ruleExams = c => [c.params.exam, c.params.first, c.params.then, ...(c.params.exams || [])].filter(Boolean);
+function renderSpecific(){
+  $("#specificList").innerHTML = S.specific.map((c, i) => { const out = S.summary && ruleExams(c).some(e => !S.selected.has(e));
+    return `<div class="added ${out ? "bad" : ""}"><span class="s">${esc(TYPES[c.type] ? TYPES[c.type].say(c.params) : c.text)}${out ? `<br><span class="tiny">Not used: an exam in this rule isn't in this plan.</span>` : ""}</span><button class="btn link" data-x="${i}">Remove</button></div>`; }).join("");
+  $("#specificList").querySelectorAll("[data-x]").forEach(b => b.onclick = () => { S.specific.splice(+b.dataset.x, 1); renderSpecific(); });
+  store("specific", S.specific);
+}
+function renderLearned(){
+  if (!S.learned.length){ $("#learnedList").innerHTML = `<span class="muted small">No history yet. Import past seating plans on the Rooms step to teach the planner your office's habits.</span>`; return; }
+  $("#learnedList").innerHTML = S.learned.map(c => `<div class="rule"><input type="checkbox" id="l_${c.id}" data-l="${c.id}" ${S.learnedOff.has(c.id) ? "" : "checked"}>
+    <div class="body"><label for="l_${c.id}" class="t" style="font-weight:500">${esc(c.text.replace(/^learned: /, ""))}</label>${c.params?.exams ? `<div class="d">${c.params.exams.length} exams: ${c.params.exams.slice(0, 8).map(esc).join(", ")}${c.params.exams.length > 8 ? "…" : ""}</div>` : ""}</div></div>`).join("");
+  $("#learnedList").querySelectorAll("[data-l]").forEach(c => c.onchange = () => { c.checked ? S.learnedOff.delete(c.dataset.l) : S.learnedOff.add(c.dataset.l); store("learnedOff", [...S.learnedOff]); });
+}
+let interpreted = {};
+$("#interpret").onclick = async () => {
+  if (!S.enrollment) return $("#interpretMsg").textContent = "Upload the students file first.";
+  if (!$("#english").value.trim()) return $("#interpretMsg").textContent = "Write at least one rule.";
+  $("#interpret").disabled = true; $("#interpretMsg").textContent = "Reading… (the first time takes about a minute)";
+  try { const rules = await api("/api/interpret", {text:$("#english").value, enrollment:buildEnrollment(true), rooms:S.rooms, calendar:calendar()});
+    interpreted = {}; rules.forEach(r => (interpreted[r.text] ||= []).push({type:r.type, params:r.params}));
+    S.english = rules.map(r => ({...r, use:r.type !== "unsupported"})); renderEnglish();
+    const bad = rules.filter(r => r.type === "unsupported").length;
+    $("#interpretMsg").textContent = `Found ${rules.length} rule(s)` + (bad ? `; ${bad} couldn't be understood (in red). Rephrase them or add them with the form above.` : ". Check each one below.");
+  } catch (e) { $("#interpretMsg").textContent = "Couldn't read the rules: " + e.message; }
+  $("#interpret").disabled = false;
+};
+function describe(c){ if (TYPES[c.type]) try { return TYPES[c.type].say(c.params); } catch {}
+  const p = c.params; return {max_exams_per_day:`At most ${p.n} exam(s) per student per day`, no_back_to_back:"No back-to-back exams", min_gap_days:`${p.days} day(s) between a student's exams${p.hard === false ? " (tries to)" : ""}`,
+    holiday:`Holiday: ${(p.dates || []).map(fmtDate).join(", ")}`, day_slots:`${fmtDate(p.date)}: only ${p.slots} session(s)`, prefer_early:p.largest ? `Largest ${p.largest} exams early` : `Early: ${(p.exams || []).map(examLabel).join(", ")}`,
+    room_fill:`Rooms at most ${Math.round(p.max_fraction * 100)}% full${p.room ? " (" + p.room + ")" : ""}`, seat_spacing:"Same-exam students kept apart", max_exams_per_room:`At most ${p.n} exams per room`, invigilation:"Invigilation rule"}[c.type] || c.type; }
+function renderEnglish(){
+  $("#englishList").innerHTML = S.english.map((c, i) => c.type === "unsupported"
+    ? `<div class="added bad"><span class="s"><b>Not understood:</b> “${esc(c.text)}”<br><span class="tiny">${esc(c.params.reason || "")}</span></span></div>`
+    : `<div class="added"><input type="checkbox" data-e="${i}" aria-label="Use this rule" ${c.use ? "checked" : ""}><span class="s">${esc(describe(c))}<br><span class="tiny muted">from “${esc(c.text)}”</span></span></div>`).join("");
+  $("#englishList").querySelectorAll("[data-e]").forEach(cb => cb.onchange = () => S.english[+cb.dataset.e].use = cb.checked);
+}
+function compile(){
+  const out = [], inPlan = c => !S.summary || ruleExams(c).every(e => S.selected.has(e));
+  document.querySelectorAll("#ruleCard .rule").forEach(row => { const r = ALL_RULES.find(x => x.k === row.dataset.k);
+    if (row.querySelector(":scope > input").checked) out.push(r.c(ruleValues(row))); else if (r.off) out.push(r.off()); });
+  out.push({type:"room_use", params:{mode:roomUse()}, text:roomUse() === "spread" ? "Spread students evenly across all selected rooms" : "Fill each room completely before opening the next"});
+  if (S.holidays.length) out.push({type:"holiday", params:{dates:[...S.holidays]}, text:"Holidays"});
+  S.halfDays.forEach(d => out.push({type:"day_slots", params:{date:d, slots:1}, text:`Half day ${d}`}));
+  out.push(...S.specific.filter(inPlan).map(c => ({...c})));
+  out.push(...S.english.filter(c => c.use && c.type !== "unsupported" && inPlan(c)).map(({use, ...c}) => c));
+  S.learned.filter(c => !S.learnedOff.has(c.id)).forEach(c => { const p = {...c.params};
+    if (p.exams){ p.exams = p.exams.filter(e => S.selected.has(e)); if (!p.exams.length) return; }
+    out.push({...c, params:p}); });
+  return out.map((c, i) => ({...c, id:String(c.id || "").startsWith("learned") ? c.id : `r${i + 1}`}));
+}
+$("#jsonBox").addEventListener("toggle", e => { if (e.target.open && !$("#useJson").checked) $("#rulesJson").value = JSON.stringify(compile(), null, 1); });
+function saveCorrections(rules){
+  const byText = {}; rules.filter(r => r.text && interpreted[r.text]).forEach(r => (byText[r.text] ||= []).push({type:r.type, params:r.params}));
+  const changed = Object.entries(byText).filter(([t, rs]) => JSON.stringify(rs) !== JSON.stringify(interpreted[t])).map(([text, rules]) => ({text, rules}));
+  if (changed.length) api("/api/corrections", changed).catch(() => {});
+}
+$("#solve").onclick = async () => {
+  const cal = calendar(), msg = m => $("#solveMsg").innerHTML = m, bad = m => msg(`<span style="color:var(--bad)">${m}</span>`);
+  if (!S.summary) return bad("Step 1: upload the students file first.");
+  if (!S.selected.size) return bad("Step 1: tick at least one exam to include.");
+  if (!cal.start || !cal.end) return bad("Pick the first and last day of the exams.");
+  if (cal.end < cal.start) return bad("The last day is before the first day.");
+  const rooms = S.rooms.filter(r => r.active); if (!rooms.length) return bad("Step 2: select at least one room.");
+  let rules = compile();
+  if ($("#useJson").checked){ try { rules = JSON.parse($("#rulesJson").value); saveCorrections(rules); } catch { return bad("The edited rules aren't valid. Untick “Use my edited version” or fix them."); } }
+  $("#solve").disabled = true; const t0 = Date.now();
+  const tick = setInterval(() => msg(`Planning… ${Math.round((Date.now() - t0) / 1000)}s (a full end-sem usually takes under a minute)`), 500);
+  try { const res = await api("/api/solve", {enrollment:buildEnrollment(true), rooms, constraints:rules, calendar:cal, invigilators:S.invig, time_limit:+$("#timeLimit").value, use_profile:false});
+    res.calendar = cal; res.kind = kind(); res.roomsSelected = rooms.map(r => r.id); res.roomUse = roomUse();
+    clearInterval(tick); S.result = res; S.slot = null; S.room = ""; S.find = ""; S.tab = "schedule";
+    if (res.ok){ const meta = await api("/api/plans", {name:$("#planName").value || KINDS[kind()].short, kind:kind(), result:res, rules});
+      S.plan = {...meta, result:res}; store("currentPlan", meta.id); msg(""); }
+    else { S.plan = null; msg(""); }
+    location.hash = "#/plan/4"; renderResult();
+  } catch (e) { clearInterval(tick); bad(esc(e.message)); }
+  $("#solve").disabled = false; markDone();
+};
+
+// ================= step 4 / results =================
+function compress(rolls){
+  const groups = {}; rolls.forEach(r => { const m = r.match(/^(.*?)(\d+)$/); const k = m ? m[1] : r; (groups[k] ||= []).push(m ? {n:+m[2], r} : {n:NaN, r}); });
+  const out = [];
+  Object.keys(groups).sort().forEach(k => { const g = groups[k].sort((a, b) => a.n - b.n); let i = 0;
+    while (i < g.length){ let j = i; while (j + 1 < g.length && g[j + 1].n === g[j].n + 1) j++;
+      out.push(j - i >= 2 ? `${g[i].r} to ${g[j].r}` : g.slice(i, j + 1).map(x => x.r).join(", ")); i = j + 1; } });
+  return out.join(", ");
+}
+const slotsWithExams = R => R.slots.filter(s => s.exams.length);
+function colorMap(R){ const c = {}; R.slots.forEach(s => s.exams.forEach((e, i) => c[e] = PALETTE[i % PALETTE.length])); return c; }
+function scheduleTable(R){
+  let html = `<table><thead><tr><th>Date</th><th>Time</th><th>Course code</th><th>Course name</th><th>Students</th></tr></thead><tbody>`, last = "";
+  for (const s of slotsWithExams(R)) s.exams.forEach((e, i) => { const newDay = i === 0 && s.date !== last; last = s.date;
+    html += `<tr class="${newDay ? "daystart" : ""}"><td>${newDay ? esc(fmtDate(s.date)) : ""}</td><td>${i === 0 ? esc(s.time) : ""}</td><td class="code">${esc(e)}</td><td>${esc(R.exams[e].name)}</td><td>${R.exams[e].size}</td></tr>`; });
+  return html + "</tbody></table>";
+}
+function slotTable(R, s){
+  const rooms = R.seating[String(s.id)] || {};
+  let html = `<table><thead><tr><th>Room</th><th>Course</th><th>Roll numbers</th><th>Students</th><th>Invigilators</th></tr></thead><tbody>`;
+  Object.entries(rooms).forEach(([rid, seats]) => { const by = {}; seats.forEach(x => (by[x.exam] ||= []).push(x.roll)); const ex = Object.keys(by), inv = (R.invigilators[`${s.id}|${rid}`] || []).join(", ");
+    ex.forEach((e, i) => html += `<tr class="${i === 0 ? "daystart" : ""}">${i === 0 ? `<td rowspan="${ex.length}" class="code">${esc(rid)}<div class="tiny muted">${seats.length} students</div></td>` : ""}<td class="code">${esc(e)}</td>
+      <td class="rolls">${esc(compress(by[e]))}</td><td>${by[e].length}</td>${i === 0 ? `<td rowspan="${ex.length}">${esc(inv) || "-"}</td>` : ""}</tr>`); });
+  return html + "</tbody></table>";
+}
+function seatChart(layout, at, color, find = ""){
+  let h = `<div class="chart"><div class="cin"><div class="desk">FRONT · TEACHER'S DESK · BOARD</div>`;
+  layout.split("\n").forEach((line, ri) => {
+    const r = line.replace(/^\s+/, ""); let n = 0, i = 0;
+    h += `<div class="crow">`;
+    while (i < r.length){
+      const ch = r[i];
+      if (ch === "S" || ch === "x"){
+        n++; let j = i + 1; while (r[j] === "-") j++;
+        const label = `R${ri + 1}-${n}`, p = at[label];
+        if (ch === "x") h += `<div class="cs kept" title="${label}: kept empty"><span>${label}</span></div>`;
+        else if (p) h += `<div class="cs ${find && p.roll.toLowerCase() === find ? "hit" : ""}" style="--c:${color[p.exam]}" title="${esc(p.roll)} ${esc(p.name)} · ${esc(p.exam)} · seat ${label}"><b>${esc(p.roll)}</b><span>${esc(p.exam)} · ${label}</span></div>`;
+        else h += `<div class="cs free" title="${label}: empty"><span>${label}</span></div>`;
+        i = j;
+      } else { let j = i; while (j < r.length && r[j] !== "S" && r[j] !== "x") j++; h += `<div class="aisle"></div>`; i = j; }
+    }
+    h += `</div>`;
+  });
+  return h + `</div></div>`;
+}
+function roomCard(R, s, rid, color, find = ""){
+  const seats = (R.seating[String(s.id)] || {})[rid] || [], at = {}, by = {};
+  seats.forEach(x => { at[x.label] = x; by[x.exam] = (by[x.exam] || 0) + 1; });
+  const inv = (R.invigilators[`${s.id}|${rid}`] || []).join(", "), cap = seatCount(R.rooms[rid].layout), pct = cap ? Math.round(100 * seats.length / cap) : 0;
+  return `<div class="roomcard"><h2>${esc(rid)} <span class="small muted">${esc(fmtDate(s.date))}, ${esc(s.time)}</span>
+      <span class="pill ${pct >= 80 ? "ok" : pct >= 50 ? "blue" : "warn"}">${seats.length} of ${cap} seats · ${pct}% full</span></h2>
+    <div class="legend">${Object.entries(by).map(([e, n]) => `<span><span class="sw" style="background:${color[e]}"></span><b>${esc(e)}</b> ${esc(R.exams[e].name)} (${n})</span>`).join("")}${inv ? `<span class="muted">Invigilators: ${esc(inv)}</span>` : ""}</div>
+    ${seatChart(R.rooms[rid].layout, at, color, find)}</div>`;
+}
+function renderResult(){
+  const R = S.result, box = $("#resultBox"), list = xs => `<ul>${xs.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  if (!R){ box.innerHTML = `<div class="card empty">${ICON.cal}<h2 style="color:var(--ink)">Nothing planned yet</h2><p>Fill in the first three steps and press “Make schedule &amp; seating plan”, or open a saved plan from the dashboard.</p><a class="btn" href="#/dashboard">Go to dashboard</a></div>`; return; }
+  if (!R.ok){ box.innerHTML = `<h1>No valid plan yet</h1>${note("bad", `<b>Here's what's stopping it:</b>${list(R.errors)}`)}
+    ${R.problems?.length ? note("warn", `<b>Rules that were skipped:</b>${list(R.problems)}`) : ""}<div class="nav"><a class="btn primary" href="#/plan/3">Change dates or rules</a><a class="btn" href="#/plan/2">Add or select rooms</a></div>`; return; }
+  const st = R.stats, used = slotsWithExams(R), roomsUsed = new Set(Object.values(R.seating).flatMap(r => Object.keys(r)));
+  const days = [...new Set(used.map(s => s.date))], allDays = examDays({...R.calendar, exclude_weekdays:R.calendar.exclude_weekdays || [5, 6]});
+  const unusedRooms = (R.roomsSelected || []).filter(r => !roomsUsed.has(r));
+  const worst = Math.max(...Object.keys(st.students_by_max_exams_per_day).map(Number));
+  const title = S.plan?.name || "Exam plan";
+  box.innerHTML = `<div class="toolbar"><div><h1>${esc(title)}</h1>
+      <div class="muted">${esc(KINDS[R.kind]?.label || "Examination")} · ${esc(fmtDate(R.calendar.start))} to ${esc(fmtDate(R.calendar.end))}${S.plan?.id ? ` · <span class="pill ok">${ICON.check}Saved to dashboard</span>` : ""}</div></div>
+      <div class="spacer"></div><button class="btn" id="printSchedule">${ICON.print}Print schedule</button><button class="btn" id="printSeating">${ICON.print}Print seating plan</button>
+      <a class="btn" href="#/rooms">${ICON.door}Room view</a></div>
+    ${R.violations.length ? note("bad", `<b>${R.violations.length} problems found by the final check.</b> Don't publish this plan.${list(R.violations.slice(0, 20))}`)
+      : note("ok", "Every rule checked on the final plan: no clashes, no one over the daily limit, every student has exactly one seat.")}
+    <div class="stats"><div class="stat"><b>${st.exams}</b><span>exams</span></div><div class="stat"><b>${st.students.toLocaleString()}</b><span>students</span></div>
+      <div class="stat"><b>${days.length} / ${allDays.length || st.days}</b><span>exam days used</span></div><div class="stat"><b>${roomsUsed.size}${R.roomsSelected ? " / " + R.roomsSelected.length : ""}</b><span>rooms used</span></div>
+      <div class="stat"><b>${worst}</b><span>most exams for anyone in a day</span></div></div>
+    ${unusedRooms.length ? note("info", `Never needed (every session fitted in other rooms): ${unusedRooms.map(esc).join(", ")}.`) : ""}
+    ${(R.checks || []).map(c => note(c.level === "warn" ? "warn" : "info", `<b>${esc(c.title)}</b> (${c.items.length})${list(c.items.slice(0, 6))}${c.items.length > 6 ? `<details><summary>Show all ${c.items.length}</summary>${list(c.items.slice(6))}</details>` : ""}`)).join("")}
+    ${R.warnings.length ? note("warn", `<b>Please note:</b>${list(R.warnings)}`) : ""}
+    ${R.problems.length ? note("warn", `<b>Rules that were skipped:</b>${list(R.problems)}`) : ""}
+    ${R.learned?.length ? `<details class="small" style="margin:8px 0"><summary>Habits from past exams that were applied (${R.learned.length})</summary>${list(R.learned.map(t => t.replace(/^learned: /, "")))}</details>` : ""}
+    <div class="tabs" role="tablist"><button data-t="schedule" role="tab">Exam schedule</button><button data-t="seating" role="tab">Seating plan</button><button data-t="student" role="tab">Find a student</button><button data-t="invig" role="tab">Invigilation</button></div>
+    <div id="tabBody"></div>`;
+  box.querySelectorAll(".tabs button").forEach(b => { b.classList.toggle("on", b.dataset.t === S.tab); b.setAttribute("aria-selected", b.dataset.t === S.tab); b.onclick = () => { S.tab = b.dataset.t; renderResult(); }; });
+  $("#printSchedule").onclick = () => printOut("schedule"); $("#printSeating").onclick = () => printOut("seating");
+  const body = $("#tabBody"), color = colorMap(R);
+  if (S.tab === "schedule"){
+    body.innerHTML = `<div class="toolbar"><div class="small muted" style="align-self:center">One row per exam, in date order.</div><div class="spacer"></div><button class="btn" id="dlSchedule">${ICON.dl}Download for Excel</button></div><div class="scroll">${scheduleTable(R)}</div>`;
+    $("#dlSchedule").onclick = () => download("exam-schedule", [["Date", "Time", "Course code", "Course name", "Students"], ...used.flatMap(s => s.exams.map(e => [s.date, s.time, e, R.exams[e].name, R.exams[e].size]))]);
+  } else if (S.tab === "seating"){
+    if (S.slot === null || !used.some(s => s.id === S.slot)) S.slot = used[0]?.id;
+    const s = R.slots.find(x => x.id === S.slot), roomIds = Object.keys(R.seating[String(s.id)] || {});
+    if (S.room && !roomIds.includes(S.room)) S.room = "";
+    body.innerHTML = `<div class="toolbar">
+        <div style="min-width:280px"><label class="f" for="slotPick">Session</label><select id="slotPick">${used.map(x => `<option value="${x.id}" ${x.id === S.slot ? "selected" : ""}>${esc(fmtDate(x.date))}, ${esc(x.time)}: ${x.exams.map(esc).join(", ")}</option>`).join("")}</select></div>
+        <div style="min-width:160px"><label class="f" for="roomPick">Room</label><select id="roomPick"><option value="">All ${roomIds.length} rooms</option>${roomIds.map(r => `<option ${r === S.room ? "selected" : ""}>${esc(r)}</option>`).join("")}</select></div>
+        <div style="min-width:220px"><label class="f" for="seatFind">Highlight a roll number</label><input id="seatFind" placeholder="e.g. 2025BTech006" value="${esc(S.find || "")}"></div>
+        <div class="spacer"></div><button class="btn" id="dlSeating">${ICON.dl}Download all sessions for Excel</button></div>
+      <div id="roomCards">${roomIds.filter(r => !S.room || r === S.room).map(r => roomCard(R, s, r, color, (S.find || "").toLowerCase())).join("")}</div>
+      <details style="margin-top:6px"><summary>Notice-board list for this session (room, course, roll ranges)</summary><div class="scroll" style="margin-top:8px">${slotTable(R, s)}</div></details>`;
+    $("#slotPick").onchange = e => { S.slot = +e.target.value; renderResult(); };
+    $("#roomPick").onchange = e => { S.room = e.target.value; renderResult(); };
+    $("#seatFind").oninput = e => { S.find = e.target.value.trim(); $("#roomCards").innerHTML = roomIds.filter(r => !S.room || r === S.room).map(r => roomCard(R, s, r, color, S.find.toLowerCase())).join("");
+      document.querySelector(".cs.hit")?.scrollIntoView({block:"center", inline:"center"}); };
+    $("#dlSeating").onclick = () => download("seating-plan", [["Date", "Time", "Room", "Seat", "Roll number", "Name", "Course code"],
+      ...used.flatMap(x => Object.entries(R.seating[String(x.id)] || {}).flatMap(([rid, seats]) => seats.map(p => [x.date, x.time, rid, p.label, p.roll, p.name, p.exam])))]);
+  } else if (S.tab === "student"){
+    body.innerHTML = `<div class="row"><div style="max-width:360px"><label class="f" for="rollq">Roll number</label><input id="rollq" placeholder="e.g. 2025BTech006" autocomplete="off"></div></div><div id="rollOut" style="margin-top:12px"></div>`;
+    $("#rollq").oninput = e => findStudent(e.target.value.trim()); $("#rollq").focus();
+  } else {
+    const rows = used.flatMap(x => Object.keys(R.seating[String(x.id)] || {}).map(rid => [x.date, x.time, rid, (R.invigilators[`${x.id}|${rid}`] || []).join(", ")]));
+    body.innerHTML = `<div class="toolbar"><div class="spacer"></div><button class="btn" id="dlInv">${ICON.dl}Download for Excel</button></div><div class="scroll"><table><thead><tr><th>Date</th><th>Time</th><th>Room</th><th>Invigilators</th></tr></thead><tbody>
+      ${rows.map(r => `<tr><td>${esc(fmtDate(r[0]))}</td><td>${esc(r[1])}</td><td class="code">${esc(r[2])}</td><td>${esc(r[3]) || `<span class="muted">none assigned</span>`}</td></tr>`).join("")}</tbody></table></div>`;
+    $("#dlInv").onclick = () => download("invigilation", [["Date", "Time", "Room", "Invigilators"], ...rows]);
+  }
+}
+function findStudent(q){
+  const R = S.result, rows = []; if (q.length < 3){ $("#rollOut").innerHTML = ""; return; }
+  for (const s of R.slots) for (const [rid, seats] of Object.entries(R.seating[String(s.id)] || {}))
+    for (const x of seats) if (x.roll.toLowerCase() === q.toLowerCase()) rows.push({s, rid, x});
+  $("#rollOut").innerHTML = rows.length ? `<p><b>${esc(rows[0].x.roll)}</b> ${esc(rows[0].x.name)}</p><div class="scroll"><table><thead><tr><th>Date</th><th>Time</th><th>Course</th><th>Room</th><th>Seat</th></tr></thead><tbody>
+    ${rows.map(({s, rid, x}) => `<tr><td>${esc(fmtDate(s.date))}</td><td>${esc(s.time)}</td><td><span class="code">${esc(x.exam)}</span> ${esc(R.exams[x.exam].name)}</td><td>${esc(rid)}</td><td>${esc(x.label)} <button class="btn link" data-show="${s.id}|${esc(rid)}|${esc(x.roll)}">show in room</button></td></tr>`).join("")}</tbody></table></div>`
+    : `<p class="muted">No exams found for “${esc(q)}”.</p>`;
+  $("#rollOut").querySelectorAll("[data-show]").forEach(b => b.onclick = () => { const [sid, rid, roll] = b.dataset.show.split("|");
+    S.slot = +sid; S.room = rid; S.find = roll; S.tab = "seating"; renderResult(); document.querySelector(".cs.hit")?.scrollIntoView({block:"center", inline:"center"}); });
+}
+function printOut(kindOf){
+  const R = S.result, color = colorMap(R), head = `<h1>${esc(KINDS[R.kind]?.label || "Examination")}: ${kindOf === "schedule" ? "Exam schedule" : "Seating plan"}</h1><p>${esc(S.plan?.name || "")} · ${esc(fmtDate(R.calendar.start))} to ${esc(fmtDate(R.calendar.end))}</p>`;
+  $("#printArea").innerHTML = head + (kindOf === "schedule" ? scheduleTable(R)
+    : slotsWithExams(R).map((s, i) => `<div class="${i ? "pb" : ""}"><h2>${esc(fmtDate(s.date))}, ${esc(s.time)}</h2>${slotTable(R, s)}</div>`
+        + Object.keys(R.seating[String(s.id)] || {}).map(rid => `<div class="pb">${roomCard(R, s, rid, color)}</div>`).join("")).join(""));
+  window.print();
+}
+function download(name, rows){
+  const q = v => `"${String(v).replace(/"/g, '""')}"`, a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["﻿" + rows.map(r => r.map(q).join(",")).join("\r\n")], {type:"text/csv"})); a.download = `${name}.csv`; a.click();
+}
+
+// ================= room view =================
+async function renderRoomView(){
+  try { await refreshPlans(); } catch { return; }
+  if (!S.plans.length){ $("#rvPlan").innerHTML = ""; $("#rvBody").innerHTML = `<div class="card empty">${ICON.door}<h2 style="color:var(--ink)">No plans yet</h2><p>Make a plan first; then every room's seating shows here.</p><a class="btn primary" href="#/plan/1">New exam plan</a></div>`; return; }
+  const cur = load("currentPlan", null) || S.plans[0].id;
+  if (!S.result || S.plan?.id !== cur) { try { await openPlan(S.plans.some(p => p.id === cur) ? cur : S.plans[0].id); } catch {} }
+  $("#rvPlan").innerHTML = S.plans.map(p => `<option value="${p.id}" ${p.id === S.plan?.id ? "selected" : ""}>${esc(p.name)} (${esc(fmtDate(p.start))})</option>`).join("");
+  $("#rvPlan").onchange = async e => { await openPlan(e.target.value); renderRoomView(); };
+  const R = S.result, color = colorMap(R), used = slotsWithExams(R);
+  const roomSessions = {}; used.forEach(s => Object.keys(R.seating[String(s.id)] || {}).forEach(rid => (roomSessions[rid] ||= []).push(s)));
+  const rooms = Object.keys(roomSessions).sort((a, b) => a.localeCompare(b, undefined, {numeric:true}));
+  if (!rooms.includes(S.rv.room)) S.rv.room = rooms[0];
+  $("#rvBody").innerHTML = `<div class="rv"><div class="card" style="padding:12px"><h2 style="font-size:15px;margin:4px 8px 8px">Rooms in this plan</h2><div class="rvlist">${rooms.map(r => `<button data-rv="${esc(r)}" class="${r === S.rv.room ? "on" : ""}"><span>${esc(r)}</span><span class="muted tiny">${roomSessions[r].length} session${roomSessions[r].length > 1 ? "s" : ""}</span></button>`).join("")}</div></div>
+    <div id="rvRoom">${roomSessions[S.rv.room].map(s => roomCard(R, s, S.rv.room, color)).join("")}</div></div>`;
+  $("#rvBody").querySelectorAll("[data-rv]").forEach(b => b.onclick = () => { S.rv.room = b.dataset.rv; renderRoomView(); });
+  $("#rvPrint").onclick = () => { $("#printArea").innerHTML = `<h1>${esc(S.rv.room)}: seating by session</h1><p>${esc(S.plan?.name || "")}</p>` + roomSessions[S.rv.room].map((s, i) => `<div class="${i ? "pb" : ""}">${roomCard(R, s, S.rv.room, color)}</div>`).join(""); window.print(); };
+}
+
+// ================= start =================
+(async function boot(){
+  if (location.protocol === "file:"){ $("#fileWarning").hidden = false; $("#fileWarning").innerHTML = `${ICON.alert}<div><b>This page was opened as a file, so it can't work.</b> Start the planner with <code>./start.sh</code> (in the project folder) and use <b>http://localhost:8000</b>.</div>`; return; }
+  const cal = load("cal", null);
+  if (cal){ $("#calStart").value = cal.start || ""; $("#calEnd").value = cal.end || ""; $("#calSlots").value = String(cal.slots_per_day || 2);
+    if (cal.slot_times?.length) $("#calTimes").value = cal.slot_times.join(", ");
+    $("#exSat").checked = (cal.exclude_weekdays || [5, 6]).includes(5); $("#exSun").checked = (cal.exclude_weekdays || [5, 6]).includes(6); }
+  const k = load("kind", "endsem"); document.querySelector(`input[name=kind][value=${k}]`).checked = true;
+  const ru = load("roomuse2", "compact"); document.querySelector(`input[name=roomuse][value=${ru}]`).checked = true;
+  const days = load("days", {h:[], hd:[]}); S.holidays = days.h || []; S.halfDays = days.hd || [];
+  S.specific = load("specific", []); S.learnedOff = new Set(load("learnedOff", []));
+  renderRules(); applyKind();
+  try { S.rooms = byReadiness(await api("/api/rooms")); renderRooms(); }
+  catch (e) { $("#fileWarning").hidden = false; $("#fileWarning").innerHTML = `${ICON.alert}<div><b>${esc(e.message)}</b></div>`; }
+  const cur = load("currentPlan", null);
+  if (cur) { try { await openPlan(cur); } catch { store("currentPlan", null); } }
+  route();
+})();
+</script>
 </body>
 </html>
-

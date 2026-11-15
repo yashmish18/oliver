@@ -1,0 +1,205 @@
+[
+ {
+  "id": "EB1-007",
+  "building": "EB1",
+  "layout": "SS S-S- SS\nSS S-S- SS\nSS S-S- SS\nSS SS-S SS\nSS SS-S SS\nS- SS-S S-",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB1-009",
+  "building": "EB1",
+  "layout": "                    S-S-\nS-S-- S---S---S---- SS-S\nSS--S S--S--S---S-- SS-S\nSS--S S--S--S---S-- SS-S\nSS--S S-S-S--S---S- SS-S\nSS--S S-S-S--S---S- SS-S\n      S-S-S--S---S-\nS--S- S--------S--- S-S-",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB1-101",
+  "building": "EB1",
+  "layout": "S-S- S--- S-S-\nS-S- S--- S-S-\nS-S- S--- S-S-\nS-S- S-S- S-S-\nS-S- SS-S S-S-\nS-S- SS-S S-S-\nS--- SS-S S---",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB1-102",
+  "building": "EB1",
+  "layout": "S-S- S--- S-S-\nS-S- S--- S-S-\nS-S- S-S- S-S-\nS-S- S-S- S-S-\nS-S- SS-S S-S-\nS-S- SS-S S-S-\nS--- SS-S S---",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB1-103",
+  "building": "EB1",
+  "layout": "S-S- S--- S-S-\nS-S- S--- S-S-\nS-S- S-S- S-S-\nS-S- S-S- S-S-\nS-S- SS-S S-S-\nS-S- SS-S S-S-\nS--- SS-S S---",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB1-104",
+  "building": "EB1",
+  "layout": "S-S- S--- S-S-\nS-S- S--- S-S-\nS-S- S-S- S-S-\nS-S- S-S- S-S-\nS-S- SS-S S-S-\nS-S- SS-S S-S-\nS--- SS-S S---",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB2-004",
+  "building": "EB2",
+  "layout": "S-       S--\nSS S---- SS-\nSS S-S-- SS-\nSS SS-S- S-S\nSS SS-S- S-S\nS- SS-S- S--",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB2-104",
+  "building": "EB2",
+  "layout": "SS S--- S-S-\nSS S-S- S---\nSS S-S- SS-S\nSS SS-S S-S-\nSS SS-S S-S-\nS- SS-S S---",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB2-105",
+  "building": "EB2",
+  "layout": "SS S--- SS\nSS S-S- SS\nSS S-S- SS\nSS SS-S SS\nSS SS-S SS\nS- SS-S S-",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB2-106",
+  "building": "EB2",
+  "layout": "SS S--- SS\nSS S--- SS\nSS S-S- SS\nSS S-S- SS\nSS SS-S SS\nSS SS-S SS\nS- SS-S S-",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB2-202",
+  "building": "EB2",
+  "layout": "SS      SS\nSS S--- SS\nSS S--- SS\nSS S-S- SS\nSS SS-S SS\nSS SS-S SS\nS- SS-S S-",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB2-204",
+  "building": "EB2",
+  "layout": "SS S--- SS\nSS S--- SS\nSS S-S- SS\nSS SS-S SS\nSS SS-S SS\nS- SS-S S-",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB2-205",
+  "building": "EB2",
+  "layout": "S- S--- S-\nSS S-S- SS\nSS S-S- SS\nSS SS-S SS\nSS SS-S SS\nS- SS-S S-",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB2-206",
+  "building": "EB2",
+  "layout": "S- S--- S-\nSS S--- SS\nSS S-S- SS\nSS S-S- SS\nSS SS-S SS\nSS SS-S S-\nS- SS-S S-",
+  "placeholder": false,
+  "source": "Word seat map",
+  "active": true
+ },
+ {
+  "id": "EB1-Amphi",
+  "building": "EB1",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SS",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "EB2-005",
+  "building": "EB2",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "EB2-006",
+  "building": "EB2",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSS",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "IM-004",
+  "building": "IM",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nS",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "IM-105",
+  "building": "IM",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS S",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "IM-106",
+  "building": "IM",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nS",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "IM-Amphi",
+  "building": "IM",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SS",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "TB-101",
+  "building": "TB",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nS",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "TB-104",
+  "building": "TB",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS S",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "TB-107",
+  "building": "TB",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS S",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "TB-109",
+  "building": "TB",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS S",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "TB-110",
+  "building": "TB",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS S",
+  "placeholder": true,
+  "active": true
+ },
+ {
+  "id": "TB-114",
+  "building": "TB",
+  "layout": "SSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SSS\nSSS SS",
+  "placeholder": true,
+  "active": true
+ }
+]

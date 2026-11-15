@@ -1,54 +1,100 @@
-# Oliver: Autonomous University Exam Planner & Seating Optimizer
+# Oliver: Intelligent Exam Scheduling, Invigilation and Seating Allocation Agent
 
-> **A local-first, privacy-preserving AI engine for automated university exam timetabling, 2D room-level seating allocation, and invigilation staffing.**
-> Powered by Google OR-Tools CP-SAT constraint programming and a locally fine-tuned Qwen2.5-0.5B LoRA model. Zero external API calls. 100% offline.
+> **PS-05 submission.** Oliver is an agent that builds clash-free exam timetables, places students seat by seat with same-course students kept apart, assigns invigilators, and explains in plain English why a set of rules can't be met. Rules and last-minute changes are typed in English. Everything runs offline on one machine (OR-Tools CP-SAT plus a local Qwen2.5-0.5B LoRA model), so student data never leaves the campus.
 
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [System Architecture](#system-architecture)
-  - [Two-Stage Solving Pipeline](#two-stage-solving-pipeline)
-  - [Room Filling Guarantees](#room-filling-guarantees)
-  - [Feedback Loops and Infeasible Cuts](#feedback-loops-and-infeasible-cuts)
-  - [Minimal Unsatisfiable Core Diagnosis](#minimal-unsatisfiable-core-diagnosis)
-- [2D Physical Room Layout Engine](#2d-physical-room-layout-engine)
-  - [Layout Grid Syntax](#layout-grid-syntax)
-  - [Cheating Prevention & Spatial Separation](#cheating-prevention--spatial-separation)
-- [Constraint Vocabulary (VOCAB)](#constraint-vocabulary-vocab)
-- [AI Natural Language Rule Reader (`rule_model.py`)](#ai-natural-language-rule-reader-rule_modelpy)
-  - [Architecture & Extraction Strategy](#architecture--extraction-strategy)
-  - [Training & Evaluation](#training--evaluation)
-  - [Continuous Active Learning](#continuous-active-learning)
-- [Historical Data Mining & Profile Extraction (`history.py`)](#historical-data-mining--profile-extraction-historypy)
-- [Web Interface & Workflow](#web-interface--workflow)
-  - [Step 1: Exam & Enrollment Ingestion](#step-1-exam--enrollment-ingestion)
-  - [Step 2: Room Configuration & Layout Design](#step-2-room-configuration--layout-design)
-  - [Step 3: Calendar, Rules & Learned Habits](#step-3-calendar-rules--learned-habits)
-  - [Step 4: Interactive Schedule, Seating Maps & Export](#step-4-interactive-schedule-seating-maps--export)
-  - [Room View & Plan Dashboard](#room-view--plan-dashboard)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Running the Application](#running-the-application)
-- [Comprehensive Test Suite](#comprehensive-test-suite)
-- [REST API Reference](#rest-api-reference)
-- [Directory Structure](#directory-structure)
-- [Privacy, Security & Offline Guarantee](#privacy-security--offline-guarantee)
-- [License](#license)
+**Repository:** https://github.com/yashmish18/oliver
 
 ---
 
-## Overview
+## Problem Statement (PS-05)
 
-Scheduling university semester examinations is an NP-hard combinatorial optimization challenge with hundreds of competing physical, pedagogical, and administrative constraints:
-- **Timetabling**: Preventing course clashes for enrolled students, balancing daily cognitive workload, respecting department-specific scheduling preferences, and enforcing gap days between difficult papers.
-- **Seating Arrangement**: Assigning students to exact physical seats within non-uniform architectural rooms (amphitheaters, computer labs, tiered lecture halls), preventing same-course students from sitting adjacent to each other, and honoring room-mix limits.
-- **Invigilation Duty**: Staffing qualified faculty members fairly across sessions and rooms while enforcing duty limits and availability windows.
+| Field | Detail |
+| :--- | :--- |
+| **Domain** | Examinations and Academic Operations |
+| **Problem** | Making exam timetables, assigning invigilators, allocating students to venues and drawing seating plans by hand is slow and error-prone. Besides clashes and room capacity, seating must keep students of the same course apart to reduce collusion. Last-minute changes make it harder still. |
+| **Objective** | An agentic AI system that generates clash-free timetables, assigns invigilators, allocates students to venues, and produces seat-level plans that maximise separation between students of the same course. It must accept natural-language changes, validate constraints, explain conflicts, and publish plans only after administrator approval. |
+| **Suggested stack** | LLM, Google OR-Tools, Python, FastAPI, React, PostgreSQL or CSV mock data, PDF/Excel export libraries |
+| **Expected outcome** | A validated timetable, balanced invigilation, efficient venue use, and seating plans that keep same-course students apart. |
 
-**Oliver** automates this entire operational pipeline. It replaces brittle manual spreadsheets with an exact constraint programming engine (OR-Tools CP-SAT) paired with a local natural language processing model that interprets English rules entered by exam administrators.
+---
+
+## Our Solution at a Glance
+
+| Field | Detail |
+| :--- | :--- |
+| **Agent loop** | English rules → **local LLM** turns them into typed constraints → **CP-SAT timetable** → **CP-SAT seating** per session → seating failures are sent back as cuts and the timetable is re-solved → an **independent verifier** re-checks every rule on the finished plan → plain-language findings → saved to the dashboard |
+| **Clash-free by construction** | No student ever has two exams in one slot (hard constraint). Per-day limits, gaps, back-to-back and ordering rules can be switched on. |
+| **Same-course separation** | Students of the same course are **never** seated side by side (and optionally never front-to-back either), using each room's real 2D layout with its aisles, benches and blocked seats. Different papers are interleaved seat by seat. |
+| **Conflict explanation** | When rules contradict each other, the solver names the **smallest set of your rules** that can't all hold, for example "[c2] CC1101 first morning; [c3] nothing for CC1101 on Dec 1". |
+| **Natural-language changes** | Type "IM-Amphi is reserved for convocation on 12 December" or "Applied Physics must be on 3rd December", press **Interpret**, check the parsed rule and regenerate. Corrections are saved as training data. |
+| **Privacy** | No cloud APIs. The LLM, the solver and the data stay on the local machine. |
+
+---
+
+## Deliverables
+
+Status is stated honestly: ✅ done, ⚠️ partly done (the gap is described).
+
+| # | Deliverable (PS-05) | Status | Where it lives | What it does |
+| :-: | :--- | :-: | :--- | :--- |
+| 1 | **Timetable generation agent** | ✅ | `scheduler.py` → `solve_timetable`, `run` | CP-SAT model over (exam × slot). Hard: one exam per student per slot, room capacity, user rules. Soft: spread each student's exams, use the whole period, keep the busiest day light, fill rooms completely. Re-solves with *seating cuts* until every session can be seated. |
+| 2 | **Invigilation allocation engine** | ✅ | `scheduler.py` → `assign_invigilators` | Staffs every room in every session (1 per N students, a minimum per room). Respects leave dates and a per-day duty cap, and gives each duty to the least-loaded free invigilator, so totals stay balanced. Shortfalls are reported, never hidden. |
+| 3 | **Venue allocation module** | ✅ | `scheduler.py` → `allocate_rooms`, `room_capacity` | Decides how many students of each paper go to each room. Opens the **fewest rooms** (fewer invigilators). `compact` fills rooms one after another; `spread` shares students evenly. Handles fill limits, rooms out of use, papers tied to rooms, students pinned to rooms, and a cap on papers per room. |
+| 4 | **Seat-level seating planner** | ✅ | `scheduler.py` → `place_in_room`, `assign_rolls`, `_seat_joint` | Exact seat for every student on the room's real 2D grid. No two same-course students are adjacent; front rows fill first; roll numbers run in order within each room, as in the office's printed plans. |
+| 5 | **Conflict detection and explanation** | ✅ | `scheduler.py` → `minimal_core`, `validate`, `validate_rules`, `room_checks` | Pre-checks ("CS1139 has 370 students but only 360 spaced seats exist"), minimal unsatisfiable core of contradicting rules, an independent verifier on every plan, and room-use findings. |
+| 6 | **Natural-language editing interface** | ✅ | `rule_model.py`, `index.html` (step 3), `POST /api/interpret` | A fine-tuned Qwen2.5-0.5B LoRA reads English into one of 23 rule types. Course names, rooms and dates resolve to exact codes, and the admin ticks which parsed rules to apply. A last-minute change is a new sentence followed by **Generate** again. ⚠️ Regenerating re-solves the whole plan; it does not yet keep the unchanged parts of a published plan fixed. |
+| 7 | **Approval dashboard** | ⚠️ | `index.html` (Dashboard, Room view), `/api/plans` | Saved plans with a verified / has-problems badge, a full schedule, seating and invigilation view per plan, and a per-room view for building coordinators. ⚠️ **Not built yet:** an explicit *Approve → Publish* step that locks a plan and gates exports on approval. |
+| 8 | **PDF / Excel exports** | ✅ | `index.html` → `printOut`, `download` | Print-ready **PDF** of the schedule, every session's seating and each room's door chart (browser print to PDF). **Excel-ready CSV** (UTF-8 with BOM, opens directly in Excel) for the schedule, seat-by-seat plan and invigilation roster. |
+
+### Stack: suggested vs used
+
+| Suggested | Used | Why |
+| :--- | :--- | :--- |
+| LLM | Qwen2.5-0.5B-Instruct + LoRA, run locally (`rule_model.py`) | Student data stays on campus; runs on a laptop CPU or GPU |
+| Google OR-Tools | OR-Tools CP-SAT (`scheduler.py`) | Exact solver that can also explain infeasibility |
+| Python | Python 3.10+ | |
+| FastAPI | Python standard-library HTTP server (`server.py`) | Zero extra dependencies; same JSON REST API (see [REST API Reference](#rest-api-reference)) |
+| React | Single-file vanilla JS single-page app (`index.html`) | No build step; opens instantly from `./start.sh` |
+| PostgreSQL or CSV mock data | CSV / XLSX uploads, JSON files under `data/` | Matches what exam offices already have |
+| PDF/Excel export libraries | Browser print to PDF, CSV for Excel | No server-side rendering dependencies |
+
+---
+
+## Expected Outcome: Measured Results
+
+Measured on the **real end-term data in this repo**: `End Term Date Sheet Draft.csv`, 1,201 students, 72 exams, 40 slots over 20 days, 27 campus rooms (`rooms.json`; 13 still use placeholder layouts until their real seat maps are imported, and the UI warns about this).
+
+| Outcome (PS-05) | Result |
+| :--- | :--- |
+| **Validated timetable** | 0 rule violations from the independent verifier, and 0 students with two exams in a slot. Every student (all 1,201) has **at most one exam per day**. Solves in about 100 s. |
+| **Seating that keeps same-course students apart** | 0 same-course neighbours in any room (checked seat by seat by `validate`) |
+| **Efficient venue utilisation** | Empty seats in opened rooms cut from **1,771 to 215**. Room-sessions cut from **161 to 127** (see [Room Filling Guarantees](#room-filling-guarantees)) |
+| **Balanced invigilation** | Least-loaded assignment under daily caps and leave dates. Any shortfall is reported per room and session. |
+| **Robustness** | 200 random universities with irregular rooms and random rules: every solved plan had 0 violations, and every impossible case got a plain-English reason (`test_scenarios.py`) |
+
+---
+
+## Quick Start (for the jury)
+
+```bash
+git clone https://github.com/yashmish18/oliver.git && cd oliver
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+./start.sh                       # opens http://localhost:8000
+```
+
+**Two-minute demo:**
+1. **Dashboard → Try with sample data** loads 260 students and 15 courses.
+2. **Rooms:** pick rooms, and click one to see or edit its seat grid.
+3. **Rules:** tick common rules, or type English such as `No exams on 8 January` or `EB2-105 is being painted, keep it out`, then press **Interpret**. Tick and untick the parsed rules.
+4. **Generate:** see the schedule, every room's seat map colour-coded by course, the invigilation roster, student lookup and room findings. Print to PDF or download CSV.
+5. Add a contradicting rule (pin a paper to a day, then forbid that day) and regenerate. The agent names the two conflicting rules.
+
+> The English rule reader needs its LoRA weights once: `python rule_model.py train`. They are not stored in git. Everything else, including all tick-box rules, works without them.
+
+---
+
+## Architecture Overview
 
 ```mermaid
 flowchart TD
@@ -99,34 +145,7 @@ flowchart TD
 
 ---
 
-## Key Features
-
-1. **Two-Stage Constraint Optimization**:
-   - **Global Timetable Optimization**: Simultaneously balances student exam spread over the full calendar duration, minimizing peak daily examination stress and eliminating exam double-bookings.
-   - **Fine-Grained 2D Seating Allocation**: Seats each exam session seat-by-seat inside actual physical rooms, respecting architectural benches, aisles, and irregular rows.
-2. **Cheating Prevention by Construction**:
-   - Same-exam students are strictly prevented from sitting horizontally adjacent to each other (or front-to-back when enabled).
-   - Configurable room-mixing bounds limit how many distinct course exams can share an individual room to prevent proctor confusion.
-3. **Local Natural Language Rule Understanding**:
-   - Administrators can type rules in plain English: *"Keep at least 2 days gap between Discrete Math and Data Structures"*, *"Do not schedule core engineering papers on Friday afternoon"*, or *"Reserve EB1-101 exclusively for accessibility students"*.
-   - A fine-tuned local small language model (**Qwen2.5-0.5B-Instruct** with LoRA) translates free-form text directly into typed constraint objects.
-4. **Automated Conflict Diagnosis (Minimal Unsatisfiable Core)**:
-   - When an administrator inputs mutually exclusive rules (e.g., paper A before paper B, but paper B fixed on day 1), the solver doesn't just crash. It isolates the exact minimal conflicting rule subset and displays it in plain language.
-5. **Historical Pattern Mining (`history.py`)**:
-   - Ingests legacy Microsoft Word (`.docx`) seat-map templates and past examination PDFs.
-   - Automatically learns historical university customs (e.g., which semesters sit morning vs. afternoon, standard capacity buffers, row spacing conventions).
-6. **Invigilation Duty Allocation**:
-   - Distributes proctoring duties evenly across faculty members, enforcing configurable student-to-proctor ratios and daily duty caps.
-7. **Single-Page Application (SPA) Web Dashboard**:
-   - Fully interactive frontend built with clean, reactive vanilla web standards:
-     - 4-step wizard for configuring, solving, and inspecting plans.
-     - Interactive 2D visual room layout editor.
-     - Student seat lookup search engine.
-     - CSS print-optimized outputs for notice-board seating sheets and admit-card generation.
-8. **100% Local & Confidential**:
-   - Student roll numbers, grades, and faculty records never leave your local infrastructure.
-
----
+# Technical Details
 
 ## System Architecture
 

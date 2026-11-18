@@ -136,6 +136,19 @@ def t_rooms_filled_completely():
         empty = sum(caps[sl["id"]][k]["usable"] - len(v) for k, v in rs.items())
         assert empty < 48, (sl["date"], sl["slot"], sl["exams"], f"{empty} empty seats in {len(rs)} rooms")
 
+def t_semesters_by_session():
+    """'Semester 1 always in the morning, semester 3 always in the afternoon': both sessions used, rule re-checked."""
+    sem = {}
+    for l in ENR.splitlines()[1:]:
+        f = l.split(","); sem.setdefault(f[0], set()).add(f[3])
+    am, pm = sorted(sem["SEMESTER 1"] - sem["SEMESTER 3"]), sorted(sem["SEMESTER 3"] - sem["SEMESTER 1"])
+    r = ok(solve(ENR, ROOMS, [{"type": "prefer_slot", "params": {"exams": am, "slot": 1, "hard": True}, "text": "sem 1 mornings"},
+                              {"type": "prefer_slot", "params": {"exams": pm, "slot": 2, "hard": True}, "text": "sem 3 afternoons"}]))
+    assert all(slot_of(r, e)["slot"] == 1 for e in am) and all(slot_of(r, e)["slot"] == 2 for e in pm)
+    bad = solve(ENR, ROOMS, [{"type": "prefer_slot", "params": {"exams": am, "slot": 1, "hard": True}, "text": "sem 1 mornings"},
+                             {"type": "fix_exam", "params": {"exam": am[0], "slot": 2}, "text": "first paper in the afternoon"}])
+    assert not bad["ok"] and any("sem 1 mornings" in e for e in bad["errors"]) and any("first paper" in e for e in bad["errors"]), bad["errors"]
+
 def t_weekends_skipped():
     r = ok(solve(ENR, ROOMS, []))
     import datetime as dt
@@ -232,6 +245,109 @@ def t_theatre_layout():
     assert len(seats) == 3 + 5 + 6 + 8
     pairs = s.adjacent_pairs(seats, ["side"])
     assert all(seats[a]["row"] == seats[b]["row"] for a, b in pairs)
+
+
+# ---------------- exact maths ----------------
+def t_spaced_capacity_is_exact():
+    """alpha(G) of a star is its leaves; greedy-in-index-order picks the centre and gets 1."""
+    assert s.spaced_capacity(3, [(0, 1), (0, 2)]) == 2
+    seats = s.parse_layout({"layout": "SS-S\nSSSS"})          # a 2-wide bench over two seats: odd cycle with front adjacency
+    pairs = s.adjacent_pairs(seats, ["side", "front"])
+    assert s.spaced_capacity(len(seats), pairs) == 3
+
+def t_gini():
+    assert s.gini([3, 3, 3]) == 0 and abs(s.gini([0, 0, 0, 4]) - 0.75) < 1e-9
+
+def t_invigilation_balanced():
+    """CP-SAT invigilation: loads differ by at most one when nobody is on leave (min L_max, then min deviation)."""
+    r = ok(solve(ENR, ROOMS, [], inv="name,unavailable\n" + "\n".join(f"P{k}," for k in range(7))))
+    inv = r["metrics"]["invigilation"]
+    assert inv["max"] - inv["min"] <= 1, inv
+
+
+# ---------------- rescheduling: repair a published plan, disturb nothing else ----------------
+INV8 = "name,unavailable\n" + "\n".join(f"P{k}," for k in range(8))
+_BASE = {}
+
+def base_plan():
+    if not _BASE:
+        _BASE["r"] = ok(solve(ENR, ROOMS, [], inv=INV8))
+    return {"id": "base", "result": dict(_BASE["r"], calendar=CAL)}
+
+def resched(changes, freeze=None):
+    r = s.reschedule(base_plan(), changes, freeze, time_limit=10, log=lambda *_: None)
+    return ok(r)
+
+def sittings(r):
+    S = {x["id"]: x for x in r["slots"]}
+    return {(x["roll"], x["exam"]): (S[int(sid)]["date"], S[int(sid)]["slot"], rid, x["label"])
+            for sid, rs in r["seating"].items() for rid, v in rs.items() for x in v}
+
+def t_reschedule_noop_changes_nothing():
+    r = resched([])
+    d = r["diff"]
+    assert d["exams_moved"] == 0 and d["stability"] == 1.0 and d["duties_added"] == d["duties_removed"] == 0, d
+
+def t_reschedule_exam_moves_alone():
+    """An exam that can't be at its slot moves; every other exam keeps its slot, and sessions it neither left nor joined keep every seat."""
+    b = base_plan()["result"]
+    at = slot_of(b, A)
+    r = resched([{"type": "forbid_exam", "params": {"exam": A, "date": at["date"], "slot": at["slot"]}, "text": "A can't run then"}])
+    d = r["diff"]
+    assert [m["exam"] for m in d["moved"]] == [A], d["moved"]
+    to = slot_of(r, A)
+    old, new = sittings(b), sittings(r)
+    for k, v in old.items():
+        if (v[0], v[1]) not in {(at["date"], at["slot"]), (to["date"], to["slot"])}:
+            assert new[k] == v, (k, v, new[k])
+
+def t_reschedule_room_lost_keeps_timetable():
+    """A room closes for one session: no exam moves; only students in that room change room, others keep their seat."""
+    b = base_plan()["result"]
+    sl = next(x for x in b["slots"] if b["seating"].get(str(x["id"])))
+    rid = next(iter(b["seating"][str(sl["id"])]))
+    r = resched([{"type": "room_unavailable", "params": {"room": rid, "date": sl["date"], "slot": sl["slot"]}, "text": "room closed"}])
+    d = r["diff"]
+    assert d["exams_moved"] == 0, d["moved"]
+    assert rid not in r["seating"][str(sl["id"])]
+    displaced = {x["roll"] for x in b["seating"][str(sl["id"])][rid]}
+    old, new = sittings(b), sittings(r)
+    assert all(new[k] == v for k, v in old.items() if (v[0], v[1]) != (sl["date"], sl["slot"]))
+    assert d["students_affected"] <= 2 * len(displaced), (d["students_affected"], len(displaced))
+
+def t_reschedule_holiday_moves_only_that_day():
+    b = base_plan()["result"]
+    day = next(x["date"] for x in b["slots"] if x["exams"])
+    on_day = {e for x in b["slots"] if x["date"] == day for e in x["exams"]}
+    r = resched([{"type": "holiday", "params": {"dates": [day]}, "text": "campus closed"}])
+    assert {m["exam"] for m in r["diff"]["moved"]} == on_day, (r["diff"]["moved"], on_day)
+
+def t_reschedule_freeze_keeps_past():
+    """Sessions before the freeze date already happened: nothing in them changes and nothing moves into them."""
+    b = base_plan()["result"]
+    used = sorted({x["date"] for x in b["slots"] if x["exams"]})
+    freeze, later = used[len(used) // 2], used[-1]
+    r = resched([{"type": "holiday", "params": {"dates": [later]}, "text": "closed"}], freeze)
+    old, new = sittings(b), sittings(r)
+    assert all(new[k] == v for k, v in old.items() if v[0] < freeze)
+    assert all(v[0] >= freeze for k, v in new.items() if old[k] != v)
+
+def t_reschedule_invigilator_leave():
+    b = base_plan()["result"]
+    name = next(n for v in b["invigilators"].values() for n in v)
+    mine = sum(v.count(name) for v in b["invigilators"].values())
+    r = resched([{"type": "invigilator_unavailable", "params": {"name": name, "dates": [x["date"] for x in b["slots"]]}, "text": "on leave"}])
+    d = r["diff"]
+    assert d["exams_moved"] == 0 and d["stability"] == 1.0
+    assert d["duties_removed"] == mine and d["duties_added"] == mine, (d, mine)
+    assert not any(name in v for v in r["invigilators"].values())
+
+def t_reschedule_conflict_named():
+    b = base_plan()["result"]
+    at = slot_of(b, A)
+    r = s.reschedule(base_plan(), [{"type": "fix_exam", "params": {"exam": A, "date": at["date"]}, "text": "A stays"},
+                                   {"type": "forbid_exam", "params": {"exam": A, "date": at["date"]}, "text": "A must go"}], time_limit=10, log=lambda *_: None)
+    assert not r["ok"] and any("A must go" in e for e in r["errors"]), r["errors"]
 
 
 TESTS = [v for k, v in list(globals().items()) if k.startswith("t_")]

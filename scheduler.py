@@ -5,7 +5,7 @@ Stage 2  students -> seats     CP-SAT per slot, on each room's drawn layout
 If stage 2 can't seat a slot, that exam combination is banned and stage 1 re-runs.
 validate() re-checks every hard rule on the final output, independently of the solvers.
 """
-import csv, io, math, re, datetime as dt
+import csv, functools, io, math, re, datetime as dt
 from collections import Counter, defaultdict
 from ortools.sat.python import cp_model
 
@@ -23,7 +23,7 @@ VOCAB = {
     "order":              "first:code, then:code - `first` is held in an earlier slot than `then`",
     "prefer_early":       "exams?:[code], largest?:int, weight?:int - soft: schedule these (or the `largest` N exams) early",
     "prefer_late":        "exams?:[code], weight?:int - soft: schedule these late",
-    "prefer_slot":        "exams:[code], slot:int, weight?:int - soft: hold these exams in this slot of the day (1 = morning)",
+    "prefer_slot":        "exams:[code], slot:int, weight?:int, hard?:bool - hold these exams in this session of the day (1 = morning); hard = always, else as far as possible",
     "max_exams_per_room": "n:int - at most n different exams share one room in a slot",
     "room_use":           "mode:spread|compact - spread students over all selected rooms, or fill as few rooms as possible",
     "adjacent_when_needed": "(no params) - exams too big to space out may sit side by side instead of failing",
@@ -34,6 +34,7 @@ VOCAB = {
     "exam_rooms":         "exam:code, rooms:[id] - exam may only use these rooms",
     "student_rooms":      "students:[roll], rooms:[id] - these students must sit in these rooms (accessibility etc.)",
     "invigilation":       "per_students:int, min_per_room:int, max_per_day:int - invigilator staffing rule",
+    "invigilator_unavailable": "name:str, dates:[YYYY-MM-DD] - this invigilator can't take duties on these dates",
 }
 SOFT_TYPES = {"prefer_early", "prefer_late"}
 
@@ -102,16 +103,71 @@ def adjacent_pairs(seats, directions):
     return pairs
 
 
-def spaced_capacity(n_seats, pairs):
-    # ponytail: greedy independent set; exact on rows (paths), close on grids. Stage-2 cuts catch the gap.
-    taken, banned = 0, set()
+@functools.lru_cache(maxsize=4096)
+def _alpha(n_seats, pairs):
+    taken, banned = 0, set()                          # greedy in seat order: a valid lower bound and a warm start
     nbr = defaultdict(set)
     for a, b in pairs:
         nbr[a].add(b); nbr[b].add(a)
+    pick = []
     for i in range(n_seats):
         if i not in banned:
-            taken += 1; banned |= nbr[i]
+            taken += 1; banned |= nbr[i]; pick.append(i)
+    if all(b == a + 1 for a, b in pairs):
+        return taken                                   # rows of side neighbours = paths in seat order: greedy is optimal (sum ceil(k/2))
+    m = cp_model.CpModel()
+    v = [m.NewBoolVar("") for _ in range(n_seats)]
+    for a, b in pairs:
+        m.AddBoolOr([v[a].Not(), v[b].Not()])
+    for i in pick:
+        m.AddHint(v[i], 1)
+    m.Maximize(sum(v))
+    solver = cp_model.CpSolver()
+    solver.parameters.max_time_in_seconds = 3
+    solver.parameters.num_workers = 1
+    if solver.Solve(m) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        return max(taken, int(solver.ObjectiveValue()))
     return taken
+
+
+def spaced_capacity(n_seats, pairs):
+    """Most seats ONE exam can use in a room = alpha(G), the maximum independent set of the seat-adjacency graph
+    (same-exam students may not occupy both ends of an edge). Side-only adjacency makes G a union of paths, where
+    greedy is exact; with front/back adjacency, benches spanning two seats create odd cycles, so it is solved
+    exactly with CP-SAT (a room has at most a few hundred seats: milliseconds, cached per layout)."""
+    return _alpha(n_seats, tuple(sorted(tuple(sorted(p)) for p in pairs)))
+
+
+class _Snapshot:
+    """Variable values from one solve, so a later phase that finds nothing better can't lose them."""
+    def __init__(self, solver, m):
+        self.vals = [solver.Value(m.GetIntVarFromProtoIndex(i)) for i in range(len(m.Proto().variables))]
+    def Value(self, v):
+        return self.vals[v.Index()]
+
+
+def lex_minimize(m, objectives, time_limit, workers=8):
+    """Lexicographic optimisation: minimise f1; then f2 subject to f1 <= f1*; then f3 ... Each phase is warm-started
+    from the previous optimum (solution hint), so it starts feasible. Returns (status, values, [f1*, f2*, ...])."""
+    solver, snap, best, status = cp_model.CpSolver(), None, [], cp_model.UNKNOWN
+    solver.parameters.num_workers = workers
+    per = max(1.0, time_limit / len(objectives))
+    for k, f in enumerate(objectives):
+        m.Minimize(f)
+        solver.parameters.max_time_in_seconds = per
+        st = solver.Solve(m)
+        if st not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+            if k == 0:
+                return st, None, best
+            break                                          # keep the previous phase's solution
+        status, snap = st, _Snapshot(solver, m)
+        best.append(int(round(solver.ObjectiveValue())))
+        if k + 1 < len(objectives):
+            m.Add(f <= best[-1])
+            m.ClearHints()
+            for i, val in enumerate(snap.vals):
+                m.AddHint(m.GetIntVarFromProtoIndex(i), val)
+    return status, snap, best
 
 
 def build_slots(cal, cons):
@@ -161,7 +217,12 @@ def check_constraints(cons, exams, rooms):
 EMPTY_SEAT_WEIGHT = 3      # per seat left empty only because a paper sits alone in its session
 
 
-def solve_timetable(exams, students, slots, rooms, cons, cuts=(), time_limit=60, diagnose=False):
+MOVE_BASE = 10             # administrative cost of moving any exam (re-announcing, re-printing), in student units
+
+
+def solve_timetable(exams, students, slots, rooms, cons, cuts=(), time_limit=60, diagnose=False, baseline=None, frozen=()):
+    """baseline = {exam: {"t": slot index it had (None if that slot no longer exists), "date", "slot"}} turns this into
+    a minimal-perturbation repair of a published timetable (see reschedule). frozen = slot indices already held."""
     m = cp_model.CpModel()
     E, T = sorted(exams), range(len(slots))
     size = {e: len(exams[e]["students"]) for e in E}
@@ -249,6 +310,11 @@ def solve_timetable(exams, students, slots, rooms, cons, cuts=(), time_limit=60,
 
     for c in by_type["prefer_slot"]:
         w, sl = int(c["params"].get("weight", 1)), int(c["params"]["slot"])
+        if c["params"].get("hard"):                     # e.g. "Semester 1 and 3 always in the morning session"
+            l = lit(c)
+            for e in c["params"]["exams"]:
+                m.Add(sum(x[e, t] for t in T if slots[t]["slot"] != sl) == 0).OnlyEnforceIf(l)
+            continue
         for e in c["params"]["exams"]:
             obj.append(w * size[e] * sum(x[e, t] for t in T if slots[t]["slot"] != sl))
 
@@ -301,6 +367,36 @@ def solve_timetable(exams, students, slots, rooms, cons, cuts=(), time_limit=60,
     for d in dl:
         m.Add(sum(size[e] * on_day(e, d) for e in E) <= busiest)
     obj.append(busiest)
+
+    if baseline and not diagnose:
+        # Minimal perturbation. Phase 1 minimises the people disturbed, D1 = sum_e (n_e + K) * moved_e.
+        # Phase 2, holding D1 at its optimum, minimises D2 = sum_e n_e * |shift_e| (shift in sessions; moving EARLIER
+        # costs double: students lose preparation time) together with the usual student-welfare objective.
+        frozen = set(frozen)
+        S = max(Counter(s["date"] for s in slots).values())
+        d1, d2 = [], []
+        for e in E:
+            b = baseline.get(e)
+            if b is None:
+                continue                                    # a new exam: anywhere is fine
+            t0 = b["t"]
+            if t0 is not None and t0 in frozen:
+                m.Add(x[e, t0] == 1); continue              # already held
+            for t in frozen:
+                m.Add(x[e, t] == 0)                         # nothing moves into the past
+            if t0 is not None:
+                m.AddHint(x[e, t0], 1)
+                d1.append((size[e] + MOVE_BASE) * x[e, t0].Not())
+            old = dt.date.fromisoformat(b["date"])
+            for t in T:
+                shift = (dt.date.fromisoformat(slots[t]["date"]) - old).days * S + slots[t]["slot"] - b["slot"]
+                if shift:
+                    d2.append(size[e] * (2 * -shift if shift < 0 else shift) * x[e, t])
+        status, sol, _ = lex_minimize(m, [sum(d1), sum(obj) + sum(d2)], time_limit)
+        if sol is not None:
+            return {e: next(t for t in T if sol.Value(x[e, t])) for e in E}, "OPTIMAL" if status == cp_model.OPTIMAL else "FEASIBLE"
+        return None, "INFEASIBLE" if status == cp_model.INFEASIBLE else "UNKNOWN"
+
     m.Minimize(sum(obj))
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = time_limit
@@ -315,7 +411,7 @@ def solve_timetable(exams, students, slots, rooms, cons, cuts=(), time_limit=60,
     return None, solver.StatusName(status)
 
 
-SWITCHED = {"no_back_to_back", "min_gap_days", "fix_exam", "forbid_exam", "same_slot", "different_day", "order", "max_exams_per_day"}
+SWITCHED = {"no_back_to_back", "min_gap_days", "fix_exam", "forbid_exam", "same_slot", "different_day", "order", "max_exams_per_day", "prefer_slot"}
 
 
 def minimal_core(core, exams, students, slots, rooms, cons, cuts):
@@ -362,27 +458,30 @@ def student_room_rules(cons):
     return allowed
 
 
-def seat_slot(codes, exams, caps, cons, time_limit=6, workers=8):
+def seat_slot(codes, exams, caps, cons, time_limit=6, workers=8, prev=None):
     """Returns {room_id: [(seat_idx, roll, exam)]} or None if this exam mix can't be seated.
     Two small problems instead of one big one: (1) how many students of each exam go in each room,
-    (2) which seats they take inside each room. Falls back to the all-at-once model if (2) can't follow (1)."""
-    alloc = allocate_rooms(codes, exams, caps, cons, workers)
+    (2) which seats they take inside each room. Falls back to the all-at-once model if (2) can't follow (1).
+    prev = this session's previous seating {room: [(seat_idx, roll, exam)]}: re-seat with as few changes as possible."""
+    prev = {rid: v for rid, v in (prev or {}).items() if rid in caps}
+    alloc = allocate_rooms(codes, exams, caps, cons, workers, prev)
     if alloc is not None:
         allow_adj = {e for c in cons if c["type"] == "allow_adjacent" for e in c["params"]["exams"]}
         placed = {}
         for rid, counts in alloc.items():
-            placed[rid] = place_in_room(caps[rid], counts, allow_adj)
+            placed[rid] = place_in_room(caps[rid], counts, allow_adj, {i: e for i, _, e in prev.get(rid, [])})
             if placed[rid] is None:
                 break
         else:
-            out = assign_rolls(placed, codes, exams, caps, cons)
+            out = assign_rolls(placed, codes, exams, caps, cons, prev)
             if out is not None:
                 return out
     return _seat_joint(codes, exams, caps, cons, time_limit, workers)
 
 
-def allocate_rooms(codes, exams, caps, cons, workers=8):
-    """{room: {exam: how many}}. Both modes use the fewest rooms; compact fills them one after another, spread evenly."""
+def allocate_rooms(codes, exams, caps, cons, workers=8, prev=None):
+    """{room: {exam: how many}}. Lexicographic: (1) fewest rooms open (rooms stay full), (2) with a previous seating,
+    most students left in the room they had, (3) compact fills rooms one after another / spread shares evenly."""
     m = cp_model.CpModel()
     allow_adj = {e for c in cons if c["type"] == "allow_adjacent" for e in c["params"]["exams"]}
     exam_rooms = {c["params"]["exam"]: set(c["params"]["rooms"]) for c in cons if c["type"] == "exam_rooms"}
@@ -413,6 +512,12 @@ def allocate_rooms(codes, exams, caps, cons, workers=8):
     for (e, rms), k in groups.items():
         m.Add(sum(v for (q, f), v in n.items() if f == e and q in rms) >= k)
     splits = sum(b.values())
+    # kept[r,e] <= min(n[r,e], students of e who sat in r before): students who need not change room
+    had = Counter((rid, e) for rid, v in (prev or {}).items() for _, _, e in v)
+    kept = []
+    for (rid, e), k in had.items():
+        if (rid, e) in n:
+            v = m.NewIntVar(0, k, ""); m.Add(v <= n[rid, e]); kept.append(v)
     # Both modes open the FEWEST rooms first (never a handful of students in every selected room).
     # spread: then share students evenly over those rooms; compact: fill them one after another.
     if mode == "spread":
@@ -420,24 +525,24 @@ def allocate_rooms(codes, exams, caps, cons, workers=8):
         for rid in order:
             if caps[rid]["usable"]:
                 m.Add(100 * load[rid] <= fill * caps[rid]["usable"])
-        m.Minimize(1_000_000 * sum(y.values()) + 1000 * fill + splits)
+        tail = 1000 * fill + splits
     else:                                                    # empty seats only in the last room opened
         slack = sum((len(order) - k) * (caps[rid]["usable"] * y[rid] - load[rid]) for k, rid in enumerate(order))
-        m.Minimize(1_000_000 * sum(y.values()) + 20 * splits + slack)
-    solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 10
-    solver.parameters.num_workers = workers
-    if solver.Solve(m) not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        tail = 20 * splits + slack
+    objs = [sum(y.values())] + ([-sum(kept)] if kept else []) + [tail]
+    status, sol, _ = lex_minimize(m, objs, 10, workers)
+    if sol is None:
         return None
     out = defaultdict(dict)
     for (rid, e), v in n.items():
-        if solver.Value(v):
-            out[rid][e] = solver.Value(v)
+        if sol.Value(v):
+            out[rid][e] = sol.Value(v)
     return dict(out)
 
 
-def place_in_room(room, counts, allow_adj):
-    """Seats for given counts in one room: same exam never adjacent (unless allowed), front rows first."""
+def place_in_room(room, counts, allow_adj, prev=None):
+    """Seats for given counts in one room: same exam never adjacent (unless allowed), front rows first.
+    prev = {seat_idx: exam} from an earlier seating: keep each seat's paper where possible (dominant term)."""
     m = cp_model.CpModel()
     seats = room["seats"]
     z = {(i, e): m.NewBoolVar("") for i in range(len(seats)) for e in counts}
@@ -448,7 +553,12 @@ def place_in_room(room, counts, allow_adj):
         if e not in allow_adj:
             for a, c in room["pairs"]:
                 m.AddBoolOr([z[a, e].Not(), z[c, e].Not()])
-    m.Minimize(sum(seats[i]["row"] * v for (i, e), v in z.items()))
+    front = sum(seats[i]["row"] * v for (i, e), v in z.items())
+    same = [z[i, e] for i, e in (prev or {}).items() if (i, e) in z]
+    big = 1 + len(seats) * (1 + max((s["row"] for s in seats), default=0))   # one kept seat outweighs any row order
+    m.Minimize(front - big * sum(same) if same else front)
+    for v in same:
+        m.AddHint(v, 1)
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = 5
     solver.parameters.num_workers = 1
@@ -457,23 +567,43 @@ def place_in_room(room, counts, allow_adj):
     return [(i, e) for (i, e), v in z.items() if solver.Value(v)]
 
 
-def assign_rolls(placed, codes, exams, caps, cons):
+def assign_rolls(placed, codes, exams, caps, cons, prev=None):
     """Students onto the placed seats: pinned students in their rooms first, everyone else in roll-number order,
-    room by room and front to back, so each room gets a continuous roll range like the office's plans."""
+    room by room and front to back, so each room gets a continuous roll range like the office's plans.
+    With prev, a student keeps their old seat if it still holds their paper, else their old room, else roll order."""
     allowed = student_room_rules(cons)
-    key = lambda rid, i: (rid, caps[rid]["seats"][i]["row"], caps[rid]["seats"][i]["col"])
+    old = {(roll, e): (rid, i) for rid, v in (prev or {}).items() for i, roll, e in v}
+    key = lambda t: (t[0], caps[t[0]]["seats"][t[1]]["row"], caps[t[0]]["seats"][t[1]]["col"])
     out = defaultdict(list)
     for e in codes:
-        free = sorted(((rid, i) for rid, ps in placed.items() for i, q in ps if q == e), key=lambda t: key(*t))
+        free = sorted(((rid, i) for rid, ps in placed.items() for i, q in ps if q == e), key=key)
         for roll in sorted(exams[e]["students"] & set(allowed)):
-            k = next((k for k, (rid, _) in enumerate(free) if rid in allowed[roll]), None)
-            if k is None:
+            ks = [k for k, (rid, _) in enumerate(free) if rid in allowed[roll]]
+            if not ks:
                 return None
+            k = next((k for k in ks if free[k] == old.get((roll, e))), ks[0])
             rid, i = free.pop(k); out[rid].append((i, roll, e))
         rest = sorted(r for r in exams[e]["students"] if r not in allowed)
         if len(rest) != len(free):
             return None
-        for (rid, i), roll in zip(free, rest):
+        left, open_ = [], set(free)
+        for roll in rest:                                  # 1. same seat
+            o = old.get((roll, e))
+            if o in open_:
+                open_.discard(o); out[o[0]].append((o[1], roll, e))
+            else:
+                left.append(roll)
+        by_room = defaultdict(list)
+        for t in sorted(open_, key=key):
+            by_room[t[0]].append(t)
+        rest2 = []
+        for roll in left:                                  # 2. same room
+            o = old.get((roll, e))
+            if o and by_room[o[0]]:
+                rid, i = by_room[o[0]].pop(0); out[rid].append((i, roll, e))
+            else:
+                rest2.append(roll)
+        for (rid, i), roll in zip(sorted((t for v in by_room.values() for t in v), key=key), rest2):   # 3. roll order
             out[rid].append((i, roll, e))
     return out
 
@@ -557,14 +687,15 @@ def _seat_joint(codes, exams, caps, cons, time_limit=6, workers=8):
     return out
 
 
-def seat_all(by_slot, exams, caps, cons):
-    """Slots are independent; CP-SAT releases the GIL while solving, so threads run them truly in parallel."""
+def seat_all(by_slot, exams, caps, cons, seat=None):
+    """Slots are independent; CP-SAT releases the GIL while solving, so threads run them truly in parallel.
+    seat(t, codes) overrides how one slot is seated (rescheduling keeps or minimally changes old seating)."""
     import os
     from concurrent.futures import ThreadPoolExecutor
     threads = max(1, (os.cpu_count() or 2) // 2)
-    job = lambda t: (t, seat_slot(by_slot[t], exams, caps[t], cons, workers=2))
+    seat = seat or (lambda t, codes: seat_slot(codes, exams, caps[t], cons, workers=2))
     with ThreadPoolExecutor(threads) as pool:
-        return list(pool.map(job, list(by_slot)))
+        return list(pool.map(lambda t: (t, seat(t, by_slot[t])), list(by_slot)))
 
 
 def rooms_needed(sizes, cap, allow_adj):
@@ -637,26 +768,70 @@ def room_checks(result, caps, cons):
     return out
 
 
-def assign_invigilators(seating, slots, invigilators, cons):
+def assign_invigilators(seating, slots, invigilators, cons, prev=None, time_limit=40):
+    """Invigilation as an assignment problem, solved lexicographically with CP-SAT.
+    Variables y[p,k] = 1 if person p staffs room-session k. Hard: one room per person per session, at most
+    max_per_day duties per person per day, nobody on leave. Each room-session k needs
+    need_k = max(min_per_room, ceil(students_k / per_students)); short_k = need_k - sum_p y[p,k] >= 0.
+    Objectives in order: (1) total shortfall; (2) duties changed versus `prev` (rescheduling only);
+    (3) L_max = the busiest person's load; (4) -L_min, the lightest load among people free on every exam day
+    (max-min fairness); (5) mean absolute deviation from the mean load,
+    sum_p |P*load_p - total|, which is the fairness measure the Gini coefficient in plan_metrics reports.
+    prev = {"date|slot|room": [names]} from the plan being repaired."""
     rule = next((c["params"] for c in cons if c["type"] == "invigilation"), {})
     per, low, per_day = int(rule.get("per_students", 30)), int(rule.get("min_per_room", 1)), int(rule.get("max_per_day", 2))
     if not invigilators:
         return {}, ["No invigilator list uploaded, so no invigilation duties were assigned."]
-    load, day_load, out, warn = Counter(), Counter(), {}, []
-    for s in slots:
-        busy = set()
-        for rid, seats in seating.get(s["id"], {}).items():
-            need, got = max(low, math.ceil(len(seats) / per)), []
-            # ponytail: greedy least-loaded; swap for a CP model if fairness complaints come in
-            for p in sorted(invigilators, key=lambda p: load[p["name"]]):
-                if len(got) == need:
-                    break
-                if p["name"] in busy or s["date"] in p["unavailable"] or day_load[p["name"], s["date"]] >= per_day:
-                    continue
-                got.append(p["name"]); busy.add(p["name"]); load[p["name"]] += 1; day_load[p["name"], s["date"]] += 1
-            if len(got) < need:
-                warn.append(f"{s['date']} slot {s['slot']} room {rid}: needs {need} invigilators, only {len(got)} available")
-            out[f"{s['id']}|{rid}"] = got
+    leave = defaultdict(set)
+    for c in cons:
+        if c["type"] == "invigilator_unavailable":
+            leave[c["params"]["name"].strip()] |= set(c["params"].get("dates", []))
+    names = [p["name"] for p in invigilators]
+    warn = [f"Invigilator unavailability given for {n!r}, who isn't on the invigilator list" for n in leave if n not in names]
+    off = {p["name"]: set(p["unavailable"]) | leave[p["name"]] for p in invigilators}
+    jobs = [(s, rid, max(low, math.ceil(len(v) / per))) for s in slots for rid, v in seating.get(s["id"], {}).items()]
+    if not jobs:
+        return {}, warn
+    m = cp_model.CpModel()
+    y = {(p, k): m.NewBoolVar("") for p in names for k, (s, _, _) in enumerate(jobs) if s["date"] not in off[p]}
+    by_slot, by_day = defaultdict(list), defaultdict(list)
+    for (p, k), v in y.items():
+        by_slot[p, jobs[k][0]["id"]].append(v); by_day[p, jobs[k][0]["date"]].append(v)
+    for vs in by_slot.values():
+        m.AddAtMostOne(vs)
+    for vs in by_day.values():
+        if len(vs) > per_day:
+            m.Add(sum(vs) <= per_day)
+    short = []
+    for k, (_, _, need) in enumerate(jobs):
+        got = [y[p, k] for p in names if (p, k) in y]
+        m.Add(sum(got) <= need)
+        short.append(need - sum(got))
+    load = {p: sum(v for (q, _), v in y.items() if q == p) for p in names}
+    total = sum(need for *_, need in jobs) - sum(short)
+    P, top = len(names), len(jobs)
+    lmax, lmin = m.NewIntVar(0, top, "lmax"), m.NewIntVar(0, top, "lmin")
+    exam_days = {s["date"] for s, _, _ in jobs}
+    dev = []
+    for p in names:
+        m.Add(load[p] <= lmax)
+        if not off[p] & exam_days:
+            m.Add(load[p] >= lmin)
+        d = m.NewIntVar(0, P * top, ""); m.Add(d >= P * load[p] - total); m.Add(d >= total - P * load[p]); dev.append(d)
+    objs = [sum(short)]
+    if prev:
+        key = lambda s, rid: f"{s['date']}|{s['slot']}|{rid}"
+        objs.append(sum(1 - y[p, k] for k, (s, rid, _) in enumerate(jobs) for p in prev.get(key(s, rid), []) if (p, k) in y))
+    objs += [lmax, -lmin, sum(dev)]
+    status, sol, _ = lex_minimize(m, objs, time_limit, workers=8)
+    if sol is None:
+        return {}, warn + [f"Invigilation could not be planned ({status})."]
+    out = {}
+    for k, (s, rid, need) in enumerate(jobs):
+        got = [p for p in names if (p, k) in y and sol.Value(y[p, k])]
+        if len(got) < need:
+            warn.append(f"{s['date']} slot {s['slot']} room {rid}: needs {need} invigilators, only {len(got)} available")
+        out[f"{s['id']}|{rid}"] = got
     return out, warn
 
 
@@ -726,6 +901,8 @@ def validate_rules(result, exams, students, cons):
             errs.append(f"{tag}: {p['exam']} is at {at[p['exam']]['date']} slot {at[p['exam']]['slot']}")
         elif t == "forbid_exam" and match(p, at[p["exam"]]):
             errs.append(f"{tag}: {p['exam']} landed on a forbidden slot")
+        elif t == "prefer_slot" and p.get("hard"):
+            errs += [f"{tag}: {e} is in session {at[e]['slot']}" for e in p["exams"] if at[e]["slot"] != int(p["slot"])]
         elif t == "same_slot" and len({at[e]["id"] for e in p["exams"]}) > 1:
             errs.append(f"{tag}: not in one slot")
         elif t == "different_day" and len({at[e]["date"] for e in p["exams"]}) < len(p["exams"]):
@@ -742,6 +919,9 @@ def validate_rules(result, exams, students, cons):
                 errs.append(f"{tag}: also seated in {sorted(bad)}")
         elif t == "student_rooms":
             errs += [f"{tag}: {r} sat in {rid} for {e}" for r in p["students"] for e, rid in where.get(r, {}).items() if rid not in p["rooms"]]
+        elif t == "invigilator_unavailable":
+            errs += [f"{tag}: {p['name']} has a duty on {S[int(k.split('|')[0])]['date']}" for k, names in result.get("invigilators", {}).items()
+                     if p["name"].strip() in names and S[int(k.split("|")[0])]["date"] in p.get("dates", [])]
         elif t in ("no_back_to_back", "min_gap_days") and p.get("hard", True):
             only = set(p.get("exams") or exams)
             for roll, st in students.items():
@@ -756,7 +936,8 @@ def validate_rules(result, exams, students, cons):
 
 # ---------------- orchestration ----------------
 
-def run(enrollment_text, rooms, constraints, calendar, invigilators_text="", time_limit=60, log=print, profile=None):
+def _prepare(enrollment_text, rooms, constraints, calendar, profile=None):
+    """Parse, check and pre-validate. Returns (ctx, None) or (None, failed result)."""
     exams, students = load_enrollment(enrollment_text)
     learned = []
     if profile:                                          # habits learned from past exams (history.py)
@@ -768,13 +949,13 @@ def run(enrollment_text, rooms, constraints, calendar, invigilators_text="", tim
     cons, problems = check_constraints(constraints, exams, rooms)
     slots = build_slots(calendar, cons)
     if not slots:
-        return {"ok": False, "errors": ["calendar has no exam slots"], "problems": problems}
+        return None, {"ok": False, "errors": ["calendar has no exam slots"], "problems": problems}
 
     caps = room_capacity(rooms, slots, cons)
     allow_adj = {e for c in cons if c["type"] == "allow_adjacent" for e in c["params"]["exams"]}
     best_u = max(sum(r["usable"] for r in c.values()) for c in caps)
     best_s = max(sum(r["spaced"] for r in c.values()) for c in caps)
-    if any(c["type"] == "adjacent_when_needed" for c in cons):
+    if any(c["type"] == "adjacent_when_needed" for c in cons) and not any(c["id"] == "learned-adjacent-exams" for c in cons):
         big = sorted(e for e, ex in exams.items() if best_s < len(ex["students"]) <= best_u and e not in allow_adj)
         if big:
             cons.append({"id": "learned-adjacent-exams", "type": "allow_adjacent", "params": {"exams": big},
@@ -796,12 +977,18 @@ def run(enrollment_text, rooms, constraints, calendar, invigilators_text="", tim
     if worst > len(slots):
         errors.append(f"a student has {worst} exams but there are only {len(slots)} slots")
     if errors:
-        return {"ok": False, "errors": errors, "problems": problems}
+        return None, {"ok": False, "errors": errors, "problems": problems}
+    return {"exams": exams, "students": students, "cons": cons, "problems": problems, "slots": slots, "caps": caps,
+            "rooms": rooms, "learned": learned}, None
 
+
+def _solve_loop(ctx, time_limit, log, baseline=None, frozen=(), seat=None):
+    """Timetable -> seating -> cuts, until every session can be seated. Returns (assign, by_slot, seating, rounds) or a failed result."""
+    exams, students, slots, rooms, cons, caps, problems = (ctx[k] for k in ("exams", "students", "slots", "rooms", "cons", "caps", "problems"))
     cuts = []
     for rnd in range(8):
         log(f"timetable round {rnd + 1} ({len(cuts)} seating cuts)")
-        assign, status = solve_timetable(exams, students, slots, rooms, cons, cuts, time_limit)
+        assign, status = solve_timetable(exams, students, slots, rooms, cons, cuts, time_limit, baseline=baseline, frozen=frozen)
         if assign is None:
             if status == "INFEASIBLE":
                 _, core = solve_timetable(exams, students, slots, rooms, cons, cuts, time_limit, diagnose=True)
@@ -809,6 +996,9 @@ def run(enrollment_text, rooms, constraints, calendar, invigilators_text="", tim
                 names = {c["id"]: c.get("text") or f"{c['type']} {c['params']}" for c in cons}
                 if core:
                     msg = ["These rules can't all hold together:"] + [f"  - [{k}] {names[k]}" for k in core]
+                elif baseline and frozen:
+                    msg = ["No repair fits: the sessions already held are fixed and the remaining sessions can't take every "
+                           "displaced exam. Add a day or a room, or relax a rule."]
                 else:
                     cal = [names[c["id"]] for c in cons if c["type"] in ("holiday", "day_slots")]
                     msg = [f"No timetable fits in {len(slots)} slots on {len({x['date'] for x in slots})} days with these rooms, even ignoring "
@@ -820,24 +1010,24 @@ def run(enrollment_text, rooms, constraints, calendar, invigilators_text="", tim
         for e, t in assign.items():
             by_slot[t].append(e)
         seating, new_cuts = {}, []
-        for t, seated in seat_all(by_slot, exams, caps, cons):
-            codes = by_slot[t]
+        for t, seated in seat_all(by_slot, exams, caps, cons, seat):
             if seated is None:
-                new_cuts.append(frozenset(codes))
+                new_cuts.append(frozenset(by_slot[t]))
             else:
                 seating[t] = seated
         if not new_cuts:
-            break
+            return assign, by_slot, seating, rnd + 1
         cuts += new_cuts
         # ponytail: cut bans the whole mix in every slot; per-slot cuts if room availability differs a lot by day
-    else:
-        return {"ok": False, "errors": ["could not find a seatable timetable after 8 rounds"], "problems": problems}
+    return {"ok": False, "errors": ["could not find a seatable timetable after 8 rounds"], "problems": problems}
 
-    invig, warn = assign_invigilators(seating, slots, load_invigilators(invigilators_text), cons)
+
+def _result(ctx, assign, by_slot, seating, rounds, invig, warn):
+    exams, students, slots, rooms, cons, caps = (ctx[k] for k in ("exams", "students", "slots", "rooms", "cons", "caps"))
     result = {
-        "ok": True, "problems": problems, "warnings": warn, "learned": [c["text"] for c in learned],
+        "ok": True, "problems": ctx["problems"], "warnings": warn, "learned": [c["text"] for c in ctx["learned"]],
         "slots": [dict(s, exams=sorted(by_slot.get(s["id"], []))) for s in slots],
-        "exams": {e: {"name": x["name"], "size": len(x["students"])} for e, x in exams.items()},
+        "exams": {e: {"name": x["name"], "size": len(x["students"]), "semester": x.get("semester")} for e, x in exams.items()},
         "rooms": {r["id"]: {"layout": r["layout"], "building": r.get("building", "")} for r in rooms},
         "seating": {str(t): {rid: [{"seat": i, "label": caps[t][rid]["seats"][i]["label"], "roll": roll,
                                     "name": students[roll]["name"], "exam": e} for i, roll, e in sorted(v)]
@@ -855,6 +1045,232 @@ def run(enrollment_text, rooms, constraints, calendar, invigilators_text="", tim
     for st in students.values():
         per_day[max(Counter(day_of[assign[e]] for e in st["exams"]).values())] += 1
     result["stats"] = {"students": len(students), "exams": len(exams), "slots": len(slots),
-                       "days": len({s["date"] for s in slots}), "rounds": rnd + 1,
+                       "days": len({s["date"] for s in slots}), "rounds": rounds,
                        "students_by_max_exams_per_day": dict(sorted(per_day.items()))}
+    result["metrics"] = plan_metrics(result, caps, cons)
     return result
+
+
+def run(enrollment_text, rooms, constraints, calendar, invigilators_text="", time_limit=60, log=print, profile=None):
+    ctx, failed = _prepare(enrollment_text, rooms, constraints, calendar, profile)
+    if failed:
+        return failed
+    out = _solve_loop(ctx, time_limit, log)
+    if isinstance(out, dict):
+        return out
+    assign, by_slot, seating, rounds = out
+    people = load_invigilators(invigilators_text)
+    invig, warn = assign_invigilators(seating, ctx["slots"], people, ctx["cons"])
+    result = _result(ctx, assign, by_slot, seating, rounds, invig, warn)
+    result["metrics"]["invigilation"] = _duty_stats(invig, people)
+    # everything needed to repair this plan later without the original files
+    result["inputs"] = {"enrollment": enrollment_text, "rooms": rooms, "constraints": ctx["cons"], "calendar": calendar,
+                        "invigilators": invigilators_text}
+    return result
+
+
+# ---------------- rescheduling: repair a published plan with the fewest changes ----------------
+
+def _inputs_from_result(plan):
+    """Plans saved before inputs were stored: rebuild them from the plan itself (every student is in the seating)."""
+    r = plan["result"]
+    rows = {(x["roll"], x["exam"]): x["name"] for rs in r["seating"].values() for v in rs.values() for x in v}
+    q = lambda v: f'"{v}"' if "," in v else v
+    enr = "Student Roll Number,Subject Code,Subject Name,Student Name\n" + "\n".join(
+        f"{roll},{e},{q(r['exams'][e]['name'])},{q(name)}" for (roll, e), name in sorted(rows.items()))
+    names = sorted({n for v in r.get("invigilators", {}).values() for n in v})
+    return {"enrollment": enr, "rooms": [dict(id=k, **v) for k, v in r["rooms"].items()], "constraints": plan.get("rules", []),
+            "calendar": r["calendar"], "invigilators": ("name,unavailable\n" + "\n".join(f"{q(n)}," for n in names)) if names else ""}
+
+
+def _session_ok(prev, cap, codes, exams, cons, allow_adj):
+    """Can an old session's seating stand unchanged under the new rules and rooms?"""
+    mix = min([int(c["params"]["n"]) for c in cons if c["type"] == "max_exams_per_room"] or [99])
+    exam_rooms = {c["params"]["exam"]: set(c["params"]["rooms"]) for c in cons if c["type"] == "exam_rooms"}
+    pins = student_room_rules(cons)
+    seated = Counter()
+    for rid, v in prev.items():
+        if rid not in cap or len(v) > cap[rid]["usable"] or len({e for *_, e in v}) > mix:
+            return False
+        at = {i: e for i, _, e in v}
+        if any(at.get(a) == at.get(b) and a in at and at[a] not in allow_adj for a, b in cap[rid]["pairs"]):
+            return False
+        for i, roll, e in v:
+            if (e in exam_rooms and rid not in exam_rooms[e]) or (roll in pins and rid not in pins[roll]) or i >= len(cap[rid]["seats"]):
+                return False
+            seated[e] += 1
+    return set(seated) == set(codes) and all(seated[e] == len(exams[e]["students"]) for e in codes)
+
+
+def reschedule(plan, changes, freeze_before=None, time_limit=60, log=print):
+    """Repair a published plan after a disruption (a room lost, a holiday declared, an exam that must move,
+    an invigilator on leave ...) while disturbing as little of it as possible.
+
+    Timetable (CP-SAT, lexicographic):  min D1 = sum_e (n_e + K) * [exam e moved]      (people disturbed)
+                                         then, holding D1*, min D2 + welfare            (how far, and how kind, the moves are)
+    Seating, per session:  unchanged exams and still-valid rooms  ->  kept seat for seat;
+                           otherwise re-seated: fewest rooms, then most students kept in their room, then in their seat.
+    Invigilation:          shortfall, then duties changed, then the busiest load, then fairness.
+    Sessions before freeze_before are already held: fixed, and nothing moves into them.
+    Every hard rule (old and new) is re-checked on the repaired plan by the same independent validator."""
+    old = plan["result"]
+    inp = old.get("inputs") or _inputs_from_result(plan)
+    base = [dict(c) for c in inp["constraints"]]
+    chg = [dict(c, id=c.get("id") or f"change{i + 1}") for i, c in enumerate(changes)]
+    ctx, failed = _prepare(inp["enrollment"], inp["rooms"], base + chg, inp["calendar"])
+    if failed:
+        return failed
+    exams, slots, caps, cons = ctx["exams"], ctx["slots"], ctx["caps"], ctx["cons"]
+    allow_adj = {e for c in cons if c["type"] == "allow_adjacent" for e in c["params"]["exams"]}
+    idx = {(s["date"], s["slot"]): s["id"] for s in slots}
+    baseline = {e: {"t": idx.get((s["date"], s["slot"])), "date": s["date"], "slot": s["slot"]}
+                for s in old["slots"] for e in s["exams"] if e in exams}
+    frozen = {s["id"] for s in slots if freeze_before and s["date"] < freeze_before}
+    prev = {}
+    for s in old["slots"]:
+        t = idx.get((s["date"], s["slot"]))
+        if t is not None:
+            prev[t] = {rid: [(x["seat"], x["roll"], x["exam"]) for x in v] for rid, v in old["seating"].get(str(s["id"]), {}).items()}
+
+    def seat(t, codes):
+        p = prev.get(t, {})
+        if p and (t in frozen or _session_ok(p, caps[t], codes, exams, cons, allow_adj)):
+            return {rid: list(v) for rid, v in p.items()}           # this session is untouched
+        return seat_slot(codes, exams, caps[t], cons, workers=2, prev=p)
+
+    out = _solve_loop(ctx, time_limit, log, baseline=baseline, frozen=frozen, seat=seat)
+    if isinstance(out, dict):
+        return out
+    assign, by_slot, seating, rounds = out
+    old_slot = {s["id"]: s for s in old["slots"]}
+    prev_inv = defaultdict(list)
+    for k, names in old.get("invigilators", {}).items():
+        sid, rid = k.split("|", 1)
+        s = old_slot[int(sid)]
+        prev_inv[f"{s['date']}|{s['slot']}|{rid}"] = names
+    people = load_invigilators(inp.get("invigilators", ""))
+    invig, warn = assign_invigilators(seating, slots, people, cons, prev=prev_inv)
+    result = _result(ctx, assign, by_slot, seating, rounds, invig, warn)
+    result["metrics"]["invigilation"] = _duty_stats(invig, people)
+    result["inputs"] = dict(inp, constraints=cons)
+    for k in ("calendar", "kind", "roomsSelected", "roomUse"):
+        if k in old:
+            result[k] = old[k]
+    result["changes"] = [c.get("text") or f"{c['type']} {c['params']}" for c in chg]
+    result["freeze_before"] = freeze_before
+    result["diff"] = plan_diff(old, result)
+    return result
+
+
+# ---------------- measuring a plan ----------------
+
+def gini(xs):
+    """Gini coefficient G = sum_i sum_j |x_i - x_j| / (2 n^2 mean): 0 = perfectly equal, 1 = one person does everything.
+    Computed in O(n log n) from the sorted values: G = (2 sum_i i*x_(i)) / (n sum x) - (n + 1) / n."""
+    xs = sorted(xs)
+    n, tot = len(xs), sum(xs)
+    if not n or not tot:
+        return 0.0
+    return 2 * sum((i + 1) * v for i, v in enumerate(xs)) / (n * tot) - (n + 1) / n
+
+
+def _duty_stats(invig, people):
+    load = Counter({p["name"]: 0 for p in people})
+    for names in invig.values():
+        load.update(names)
+    xs = list(load.values())
+    if not xs:
+        return None
+    mu = sum(xs) / len(xs)
+    return {"people": len(xs), "duties": sum(xs), "min": min(xs), "max": max(xs), "mean": round(mu, 2),
+            "sd": round(math.sqrt(sum((v - mu) ** 2 for v in xs) / len(xs)), 2), "gini": round(gini(xs), 3),
+            "load": dict(sorted(load.items(), key=lambda kv: (-kv[1], kv[0])))}
+
+
+def plan_metrics(result, caps, cons):
+    """Measured quality of a finished plan (shown on the dashboard)."""
+    slots = {s["id"]: s for s in result["slots"]}
+    seated = usable = rs_count = mixed = 0
+    by_day, by_room = defaultdict(lambda: [0, 0]), defaultdict(lambda: [0, 0])
+    same_adj = diff_adj = allowed_adj = 0
+    allow = {e for c in cons if c["type"] == "allow_adjacent" for e in c["params"]["exams"]}
+    sittings = defaultdict(list)                       # roll -> [(day, slot)]
+    for sid, rs in result["seating"].items():
+        s = slots[int(sid)]
+        for rid, v in rs.items():
+            cap = caps[int(sid)][rid]
+            seated += len(v); usable += cap["usable"]; rs_count += 1
+            mixed += len({x["exam"] for x in v}) > 1
+            by_day[s["date"]][0] += len(v); by_day[s["date"]][1] += cap["usable"]
+            by_room[rid][0] += len(v); by_room[rid][1] += cap["usable"]
+            at = {x["seat"]: x["exam"] for x in v}
+            for a, b in cap["pairs"]:
+                if a in at and b in at:
+                    if at[a] != at[b]:
+                        diff_adj += 1
+                    elif at[a] in allow:
+                        allowed_adj += 1                    # a rule lets this paper sit side by side
+                    else:
+                        same_adj += 1
+            for x in v:
+                sittings[x["roll"]].append((s["day"], s["slot"]))
+    gaps, same_day, b2b = [], 0, 0
+    for seq in sittings.values():
+        seq.sort()
+        g = [d2 - d1 for (d1, _), (d2, _) in zip(seq, seq[1:])]
+        if g:
+            gaps.append(min(g))
+            same_day += any(x == 0 for x in g)
+            b2b += any(d1 == d2 and s2 == s1 + 1 for (d1, s1), (d2, s2) in zip(seq, seq[1:]))
+    hist = Counter(min(x, 4) for x in gaps)
+    return {
+        "seats": {"seated": seated, "usable": usable, "empty": usable - seated, "room_sessions": rs_count,
+                  "utilisation": round(seated / usable, 4) if usable else 0, "mixed_rooms": mixed},
+        "separation": {"neighbour_pairs": same_adj + diff_adj + allowed_adj, "same_exam_neighbours": same_adj,
+                       "allowed_same_exam_neighbours": allowed_adj},
+        "students": {"with_2plus": len(gaps), "same_day": same_day, "back_to_back": b2b,
+                     "mean_min_gap_days": round(sum(gaps) / len(gaps), 2) if gaps else None,
+                     "min_gap_hist": {("4+" if k == 4 else str(k)): hist[k] for k in sorted(hist)}},
+        "days": [{"date": d, "students": a, "seats": b} for d, (a, b) in sorted(by_day.items())],
+        "rooms": [{"room": r, "seated": a, "seats": b} for r, (a, b) in sorted(by_room.items())],
+    }
+
+
+def plan_diff(old, new):
+    """What a reschedule changed. A 'sitting' is one (student, exam); it is unchanged if date, session, room and
+    seat are all the same. stability = unchanged sittings / all sittings."""
+    def sit(r):
+        S = {s["id"]: s for s in r["slots"]}
+        return {(x["roll"], x["exam"]): (S[int(sid)]["date"], S[int(sid)]["slot"], rid, x["label"])
+                for sid, rs in r["seating"].items() for rid, v in rs.items() for x in v}
+    at = lambda r: {e: s for s in r["slots"] for e in s["exams"]}
+    oa, na, os_, ns = at(old), at(new), sit(old), sit(new)
+    moved = [{"exam": e, "name": new["exams"][e]["name"], "size": new["exams"][e]["size"],
+              "from": {"date": oa[e]["date"], "slot": oa[e]["slot"], "time": oa[e]["time"]},
+              "to": {"date": na[e]["date"], "slot": na[e]["slot"], "time": na[e]["time"]}}
+             for e in sorted(na) if e in oa and (oa[e]["date"], oa[e]["slot"]) != (na[e]["date"], na[e]["slot"])]
+    mv = {m["exam"] for m in moved}
+    room_ch = seat_ch = same = 0
+    touched = set()
+    for k, v in ns.items():
+        o = os_.get(k)
+        if o == v:
+            same += 1; continue
+        touched.add(k[0])
+        if k[1] in mv or o is None:
+            continue
+        room_ch += o[2] != v[2]; seat_ch += o[2] == v[2]
+    def sessions(r):
+        return {(s["date"], s["slot"]): r["seating"].get(str(s["id"]), {}) for s in r["slots"] if s["exams"]}
+    so, sn = sessions(old), sessions(new)
+    sess = {"kept": sum(1 for k, v in sn.items() if so.get(k) == v), "changed": sum(1 for k, v in sn.items() if so.get(k) != v)}
+    def duties(r):
+        S = {s["id"]: s for s in r["slots"]}
+        return {(S[int(k.split("|")[0])]["date"], S[int(k.split("|")[0])]["slot"], k.split("|", 1)[1], n)
+                for k, v in r.get("invigilators", {}).items() for n in v}
+    do, dn = duties(old), duties(new)
+    return {"moved": moved, "exams_moved": len(moved), "students_moved": sum(m["size"] for m in moved),
+            "students_affected": len(touched), "sittings": len(ns), "unchanged": same,
+            "stability": round(same / len(ns), 4) if ns else 1.0,
+            "room_changes": room_ch, "seat_changes": seat_ch, "sessions": sess,
+            "duties_added": len(dn - do), "duties_removed": len(do - dn)}

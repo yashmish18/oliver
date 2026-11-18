@@ -6,44 +6,77 @@
 <title>Exam Planner</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600&family=Fira+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">
 <style>
 :root{
-  --bg:#F8FAFC;--card:#FFFFFF;--ink:#0F172A;--head:#1E3A8A;--mute:#475569;--line:#DCE3EE;--soft:#EEF2F8;
-  --primary:#1E40AF;--primary-hover:#1E3A8A;--on-primary:#FFFFFF;--accent:#B45309;--accent-bg:#FEF3C7;
-  --ok:#15803D;--ok-bg:#DCFCE7;--bad:#B91C1C;--bad-bg:#FEE2E2;--warn:#92400E;--warn-bg:#FEF3C7;
-  --r:10px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;
-  --font:"Fira Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"Fira Code",ui-monospace,SFMono-Regular,monospace;
-  --shadow:0 1px 2px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.04);
+  color-scheme:light;
+  /* Researched palette: Airtable signature surfaces (forest, coral, cream) on IBM Carbon neutrals.
+     forest = the institution / the plan · coral = something to act on · pastels = which semester */
+  --bg:#F7F5F0;--card:#FFFFFF;--ink:#181D26;--head:#181D26;--body:#333840;--mute:#5F6670;--line:#E4E1DA;--soft:#F1EEE7;
+  --primary:#181D26;--primary-hover:#0D1218;--on-primary:#FFFFFF;--primary-soft:#EEF3EC;
+  --forest:#0A2E0E;--forest-2:#14421A;--on-forest:#F5E9D4;--on-forest-mute:#B5C4B0;
+  --accent:#AA2D00;--accent-hover:#8A2400;--on-accent:#FFFFFF;--accent-bg:#F5E9D4;--cream:#F5E9D4;--cream-line:#E8D7B4;--cream-ink:#4A3410;
+  --bar:#2F6B4A;--ring:#2F7D3B;
+  --ok:#1E7B34;--ok-bg:#E5F2E7;--bad:#B42318;--bad-bg:#FBEAE7;--warn:#8A4B00;--warn-bg:#FBF0DD;
+  --viz-surface:#FFFFFF;--viz-grid:#ECE9E2;--viz-axis:#D3CFC6;--viz-ink2:#5F6670;--viz-1:#2F6B4A;--viz-2:#AA2D00;
+  --r:6px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;
+  --font:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+  --shadow:none;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#0B1220;--card:#121A2B;--ink:#E5EAF3;--head:#C7D5FF;--mute:#9AA8BF;--line:#26324A;--soft:#18223A;
-  --primary:#7B9BFF;--primary-hover:#9DB4FF;--on-primary:#0B1220;--accent:#F5B04A;--accent-bg:#3A2A10;
-  --ok:#5FD39A;--ok-bg:#12301F;--bad:#FF8A80;--bad-bg:#3A1A1A;--warn:#F5B04A;--warn-bg:#3A2A10;--shadow:none}}
+  color-scheme:dark;
+  --bg:#0E1411;--card:#151C18;--ink:#ECE6DA;--head:#F5EFE3;--body:#D5D0C4;--mute:#A0A89F;--line:#28332C;--soft:#1B2420;
+  --primary:#ECE6DA;--primary-hover:#FFFFFF;--on-primary:#0E1411;--primary-soft:#1C2A20;
+  --forest:#0B2410;--forest-2:#13361A;--on-forest:#F5E9D4;--on-forest-mute:#A9BBA4;
+  --accent:#F08A5D;--accent-hover:#F5A27E;--on-accent:#1A0800;--accent-bg:#2B2417;--cream:#2B2417;--cream-line:#3F3522;--cream-ink:#F1DDB7;
+  --bar:#6FBF85;--ring:#8FD19E;
+  --ok:#6FCF87;--ok-bg:#12291A;--bad:#F2877B;--bad-bg:#351815;--warn:#F2B46B;--warn-bg:#33240F;
+  --viz-surface:#151C18;--viz-grid:#28332C;--viz-axis:#3A473F;--viz-ink2:#A0A89F;--viz-1:#6FBF85;--viz-2:#F08A5D}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{margin:0;font:16px/1.5 var(--font);background:var(--bg);color:var(--ink)}
 svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
-a{color:var(--primary)}
+a{color:var(--primary);text-underline-offset:3px}
 .skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;z-index:20;background:var(--card);padding:8px}
-/* top bar */
-header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
-.bar{max-width:1240px;margin:0 auto;padding:0 var(--s4);display:flex;align-items:center;gap:var(--s4);min-height:60px;flex-wrap:wrap}
-.brand{font-weight:700;font-size:18px;color:var(--head);display:flex;gap:8px;align-items:center;margin-right:auto}
-.brand .logo{width:30px;height:30px;border-radius:8px;background:var(--primary);color:var(--on-primary);display:grid;place-items:center}
-.mainnav{display:flex;gap:4px}
-.mainnav a{display:flex;gap:8px;align-items:center;padding:10px 14px;border-radius:8px;color:var(--mute);text-decoration:none;font-weight:500;min-height:44px}
-.mainnav a:hover{background:var(--soft);color:var(--ink)}
-.mainnav a.on{background:var(--soft);color:var(--primary)}
-main{max-width:1240px;margin:0 auto;padding:var(--s5) var(--s4) 80px}
+/* layout: forest band header + content */
+header{background:var(--forest);color:var(--on-forest)}
+.bar{max-width:1280px;margin:0 auto;padding:0 var(--s5);display:flex;align-items:stretch;gap:var(--s6);min-height:56px}
+.brand{font-weight:600;font-size:16px;color:#FFFFFF;display:flex;gap:10px;align-items:center}
+.brand .logo{width:26px;height:26px;border-radius:4px;background:var(--on-forest);color:var(--forest);display:grid;place-items:center}
+.brand .logo svg.i{width:15px;height:15px}
+.brand > div{display:flex;align-items:baseline}
+.brand small{font-weight:400;font-size:14px;color:var(--on-forest-mute);margin-left:8px}
+.mainnav{display:flex;gap:var(--s5);align-items:stretch}
+.mainnav a{display:flex;gap:8px;align-items:center;color:var(--on-forest-mute);text-decoration:none;font-weight:500;font-size:15px;min-height:44px;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.mainnav a svg.i{width:16px;height:16px}
+.mainnav a:hover{color:#FFFFFF}
+.mainnav a.on{color:#FFFFFF;border-bottom-color:var(--on-forest)}
+header :focus-visible{outline-color:var(--on-forest)!important}
+.sidefoot{display:none}
+#planBand{border-top:1px solid rgba(245,233,212,.12)}
+.bandin{max-width:1280px;margin:0 auto;padding:18px var(--s5) 22px;display:flex;gap:var(--s4);align-items:flex-end;flex-wrap:wrap}
+.bandin .bt{min-width:0;flex:1 1 420px}
+.bpick{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--on-forest-mute)}
+.bpick select{width:auto;max-width:100%;min-height:34px;padding:4px 30px 4px 8px;font-size:13px;background-color:transparent;color:var(--on-forest);border:1px solid rgba(245,233,212,.3);border-radius:4px}
+.bpick option{color:#181D26;background:#FFFFFF}
+.bandin h1{color:#FFFFFF;font-weight:300;font-size:34px;letter-spacing:-.01em;line-height:1.15;margin:8px 0 6px}
+.bmeta{color:var(--on-forest-mute);font-size:14px;margin:0;line-height:1.6}
+.bmeta .status{color:var(--on-forest)}
+.bmeta .status.ok::before{background:#6FCF87;opacity:1}.bmeta .status.todo::before{background:#F08A5D;opacity:1}.bmeta .status.bad::before{background:#F2877B;opacity:1}
+.bacts{display:flex;gap:8px;flex-wrap:wrap}
+.btn.ondark{background:transparent;color:var(--on-forest);border-color:rgba(245,233,212,.35)}
+.btn.ondark:hover{background:var(--forest-2)}
+.btn.sm{min-height:34px;padding:5px 12px;font-size:13.5px}
+main{width:100%;max-width:1280px;margin:0 auto;padding:var(--s5) var(--s5) 80px}
 .page{display:none}.page.on{display:block}
 h1{font-size:24px;line-height:1.25;margin:0 0 4px;color:var(--head)}
 h2{font-size:17px;margin:0 0 var(--s3)}
 h3{font-size:13px;margin:var(--s4) 0 var(--s2);color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
 .lead{color:var(--mute);margin:0 0 var(--s5);max-width:760px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:var(--s5);margin-bottom:var(--s4);box-shadow:var(--shadow)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:var(--s5);margin-bottom:var(--s4)}
+.card h2{letter-spacing:-.01em}
 .card>h2:first-child{margin-top:0}
 .muted{color:var(--mute)}.small{font-size:14px}.tiny{font-size:13px}
 .mono{font-family:var(--mono);font-size:14px}
@@ -51,17 +84,19 @@ h3{font-size:13px;margin:var(--s4) 0 var(--s2);color:var(--mute);text-transform:
 .spacer{flex:1}
 label.f{display:block;font-size:14px;font-weight:500;margin-bottom:6px}
 input,select,textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-height:42px}
-input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
 input[type=checkbox],input[type=radio]{width:20px;height:20px;min-height:0;padding:0;accent-color:var(--primary);flex:none;margin:2px 0 0;cursor:pointer}
 input.num{width:84px;display:inline-block;padding:6px 8px;min-height:38px}
 select.inline{width:auto;display:inline-block;padding:6px 8px;min-height:38px}
 textarea{min-height:120px;resize:vertical}
-.btn{font:inherit;font-size:15px;font-weight:500;border-radius:8px;padding:9px 16px;min-height:44px;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);display:inline-flex;gap:8px;align-items:center;justify-content:center;text-decoration:none;transition:background .15s,border-color .15s}
+.btn{font:inherit;font-size:15px;font-weight:500;border-radius:var(--r);padding:9px 16px;min-height:44px;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);display:inline-flex;gap:8px;align-items:center;justify-content:center;text-decoration:none;transition:background .15s,border-color .15s}
 .btn:hover{background:var(--soft)}
 .btn.primary{background:var(--primary);border-color:var(--primary);color:var(--on-primary);font-weight:600}
+.btn.accent{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.btn.accent:hover{background:var(--accent-hover)}
 .btn.primary:hover{background:var(--primary-hover)}
-.btn.link{border:0;background:none;color:var(--primary);padding:6px 8px;min-height:36px}
-.btn.link:hover{text-decoration:underline;background:none}
+.btn.link{border:0;background:none;color:var(--ink);padding:6px 8px;min-height:36px;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.btn.link:hover{text-decoration-color:currentColor;background:none}
 .btn.danger{color:var(--bad)}
 .btn:disabled{opacity:.55;cursor:progress}
 .nav{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s3);margin-top:var(--s2)}
@@ -70,7 +105,7 @@ textarea{min-height:120px;resize:vertical}
 .drop input{position:absolute;width:1px;height:1px;opacity:0}
 .drop:focus-within{outline:3px solid var(--primary);outline-offset:2px}
 .drop b{color:var(--primary)}
-.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:3px;font-size:12.5px;font-weight:600;white-space:nowrap}
 .pill.ok{background:var(--ok-bg);color:var(--ok)}.pill.bad{background:var(--bad-bg);color:var(--bad)}.pill.warn{background:var(--warn-bg);color:var(--warn)}.pill.n{background:var(--soft);color:var(--mute)}.pill.blue{background:var(--soft);color:var(--primary)}
 .note{border-radius:8px;padding:12px 14px;margin:var(--s2) 0;display:flex;gap:10px;align-items:flex-start}
 .note>div{flex:1}
@@ -87,7 +122,7 @@ textarea{min-height:120px;resize:vertical}
 .stepper{display:flex;gap:4px;margin:0 0 var(--s5);flex-wrap:wrap;counter-reset:st}
 .stepper a{flex:1;min-width:150px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--mute);border:1px solid var(--line);background:var(--card);min-height:52px}
 .stepper a .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;background:var(--soft);color:var(--mute);flex:none}
-.stepper a.on{border-color:var(--primary);color:var(--ink);font-weight:600}
+.stepper a.on{border-color:var(--ink);color:var(--ink);font-weight:600;background:var(--card);box-shadow:inset 0 -2px 0 var(--ink)}
 .stepper a.on .n{background:var(--primary);color:var(--on-primary)}
 .stepper a.done .n{background:var(--ok);color:#fff}
 .step{display:none}.step.on{display:block}
@@ -159,10 +194,6 @@ tr.daystart td{border-top:2px solid var(--line)}
 .roomcard h2{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
 /* dashboard */
 .plans{display:grid;gap:var(--s3)}
-.plan{display:grid;grid-template-columns:1fr auto;gap:var(--s3);align-items:center;border:1px solid var(--line);border-radius:var(--r);padding:var(--s4);background:var(--card);box-shadow:var(--shadow)}
-.plan.current{border-color:var(--primary);border-width:2px}
-.plan .meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--mute);font-size:14px;margin-top:4px}
-.plan .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .empty{text-align:center;padding:48px 16px;color:var(--mute)}
 .empty svg.i{width:40px;height:40px;stroke:var(--primary);margin-bottom:8px}
 .rv{display:grid;grid-template-columns:260px 1fr;gap:var(--s4);align-items:start}
@@ -171,9 +202,89 @@ tr.daystart td{border-top:2px solid var(--line)}
 .rvlist button{font:inherit;text-align:left;border:1px solid transparent;background:none;padding:10px 12px;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;gap:8px;min-height:44px;color:var(--ink)}
 .rvlist button:hover{background:var(--soft)}
 .rvlist button.on{background:var(--soft);border-color:var(--primary);font-weight:600}
+/* dashboard: date sheet + attention column (Cal.com: the product object is the hero; Carbon: flat panels, data tables) */
+.eyebrow{display:none}
+.pagehead{display:flex;gap:var(--s3);align-items:flex-end;flex-wrap:wrap;margin-bottom:var(--s4)}
+.pagehead h1{font-size:28px;font-weight:300;margin:0}
+.pagehead .lead{margin:6px 0 0;font-size:15px}
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:20px;min-width:0;overflow:hidden}
+.phead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.phead h2{font-size:15px;font-weight:600;margin:0}.phead p{margin:0;font-size:13px;color:var(--mute)}
+.sheet{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:1px;background:var(--line)}
+.sheet .wd{background:var(--soft);padding:7px 10px;font-size:12px;font-weight:600;color:var(--mute)}
+.day{background:var(--card);min-height:92px;padding:8px 10px 10px;min-width:0}
+.day .dn{display:flex;justify-content:space-between;align-items:baseline;font:500 13px var(--mono);color:var(--head)}
+.day .dn small{font:500 11px var(--font);color:var(--mute)}
+.day.off{background:var(--soft)}.day.off .dn{color:var(--mute)}
+.day.out{background:var(--bg)}.day.out .dn{opacity:.35}
+.ses{display:flex;gap:6px;align-items:flex-start;margin-top:7px}
+.ses .t{font:11px/22px var(--mono);color:var(--mute);width:38px;flex:none}
+.ses .xs{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+.ses .none{font-size:12px;line-height:22px;color:var(--mute)}
+.ex{all:unset;box-sizing:border-box;display:inline-flex;gap:5px;align-items:baseline;background:var(--c);color:#181D26;border-radius:4px;padding:1px 6px;font:600 12px/20px var(--mono);cursor:pointer}
+.ex span{font-weight:400;opacity:.7}
+.ex:hover{box-shadow:0 0 0 2px var(--ink)}
+.ex:focus-visible{outline:2px solid var(--ring);outline-offset:1px}
+.lg{display:flex;gap:14px;flex-wrap:wrap;padding:10px 16px;font-size:12.5px;color:var(--mute);border-top:1px solid var(--line)}
+.lg i{width:12px;height:12px;border-radius:3px;background:var(--c);display:inline-block;margin-right:6px;vertical-align:-1px}
+@media (prefers-color-scheme:dark){.ex{background:color-mix(in srgb,var(--c) 26%,var(--card));color:var(--ink);box-shadow:inset 3px 0 0 var(--c)}.ex:hover{box-shadow:inset 3px 0 0 var(--c),0 0 0 2px var(--ink)}}
+.attn{background:var(--cream);border-color:var(--cream-line);color:var(--cream-ink)}
+.attn .phead{border-color:var(--cream-line)}.attn .phead p{color:inherit;opacity:.75}
+.attn ul{list-style:none;margin:0;padding:0}
+.attn li{display:flex;gap:10px;align-items:flex-start;padding:10px 16px;border-top:1px solid var(--cream-line);font-size:13.5px;line-height:1.45}
+.attn li:first-child{border-top:0}
+.attn li::before{content:"";width:8px;height:8px;border-radius:50%;flex:none;margin-top:6px;background:currentColor;opacity:.5}
+.attn li.a-act::before,.attn li.a-bad::before{background:var(--accent);opacity:1}.attn li.a-warn::before{background:var(--warn);opacity:1}.attn li.a-ok::before{background:var(--ok);opacity:1}
+.attn li .go{margin-left:auto;flex:none}
+.kv{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--body)}
+.kv:first-child{border-top:0}
+.kv b{font:500 14px var(--mono);color:var(--head);white-space:nowrap}
+.kv.good b{color:var(--ok)}.kv.badk b{color:var(--bad)}
+.dt table td{font-size:13.5px;vertical-align:middle}.dt .num{font-family:var(--mono);font-size:13px;text-align:right;white-space:nowrap}.dt th.num{font-family:var(--font)}
+.fill{display:flex;gap:10px;align-items:center;justify-content:flex-end}
+.fill i{display:block;width:120px;height:8px;background:var(--soft);border-radius:2px;overflow:hidden}
+.fill i b{display:block;height:100%;background:var(--bar)}
+.plan.current td{background:var(--primary-soft)}
+.plan.current td:first-child{box-shadow:inset 3px 0 0 var(--forest)}
+.plan .pname{all:unset;cursor:pointer;font-weight:600;color:var(--head)}
+.plan .pname:hover{text-decoration:underline;text-underline-offset:3px}
+.plan .pname:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+.plan .lin{font-size:12.5px;color:var(--mute);margin-top:2px}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;white-space:nowrap}
+.status::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.6}
+.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}.status.todo::before{background:var(--accent);opacity:1}
+/* charts + diff tiles (results and reschedule pages) */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:var(--s4);margin-bottom:var(--s4)}
+.vizcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;min-width:0}
+.vizcard h2{font-size:15px;margin:0}.vizcard .sub{font-size:13px;color:var(--mute);margin:2px 0 12px}
+.viz{width:100%;height:auto;display:block;overflow:visible}
+.viz text{font:11px var(--font);fill:var(--viz-ink2)}
+.viz .grid{stroke:var(--viz-grid);stroke-width:1}.viz .axis{stroke:var(--viz-axis);stroke-width:1}
+.viz .bar{fill:var(--viz-1)}.viz .bar.alt{fill:var(--viz-2)}.viz .hit{fill:transparent;cursor:default}
+.hbars{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow:auto;padding:12px 16px}
+.hb{display:grid;grid-template-columns:72px 1fr 32px;gap:10px;align-items:center;font-size:13px}
+.hb .l{font-family:var(--mono);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hb .t{display:block;height:8px;background:var(--soft);border-radius:2px;overflow:hidden}
+.hb .f{display:block;height:100%;background:var(--bar)}
+.hb .n{text-align:right;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.diffgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin:var(--s3) 0}
+.diffgrid .kpi{background:var(--card);padding:14px 16px;min-width:0}
+.kpi .k{font-size:12.5px;color:var(--mute);font-weight:600}
+.kpi .v{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--head);margin-top:6px;line-height:1.15}
+.kpi .v small{font-family:var(--font);font-size:13px;color:var(--mute);margin-left:2px}
+.kpi .h{font-size:12.5px;color:var(--mute);margin-top:4px;line-height:1.4}
+.kpi.good .v{color:var(--ok)}.kpi.badk .v{color:var(--bad)}
+#tip{position:fixed;z-index:50;pointer-events:none;background:#181D26;color:#F5E9D4;border-radius:4px;padding:7px 10px;font-size:12.5px;box-shadow:0 6px 20px rgba(0,0,0,.2);max-width:300px;line-height:1.45}
+.ver{font-family:var(--mono);font-size:12px;color:var(--mute)}
+.bandin .ver{color:var(--on-forest-mute)}
+.arrow{color:var(--mute);padding:0 6px}
+.math{font-family:var(--mono);font-size:13px;background:var(--soft);border-radius:4px;padding:10px 12px;line-height:1.7;overflow-x:auto}
+@media (max-width:1060px){.dgrid{grid-template-columns:minmax(0,1fr)}.dside{display:contents}.dmain{display:contents}#dashAttention{order:-1}}
+@media (max-width:760px){.sheet{grid-template-columns:1fr}.sheet .wd,.day.out,.day.off{display:none}.day{min-height:0}.bandin h1{font-size:26px}.fill i{width:60px}}
 #printArea{display:none}
 @media print{
-  body{background:#fff;color:#000;font-size:12px}
+  body{background:#fff;color:#000;font-size:12px;display:block}
   header,main{display:none!important}
   #printArea{display:block}
   #printArea h1{font-size:17px;color:#000}#printArea h2{font-size:14px;margin-top:12px}
@@ -184,28 +295,41 @@ tr.daystart td{border-top:2px solid var(--line)}
   #printArea .roomcard{border:0;padding:0}
   .pb{page-break-before:always}
 }
-@media (max-width:760px){.mainnav a span{display:none}.rv{grid-template-columns:1fr}.rvlist{max-height:none;flex-direction:row;flex-wrap:wrap}.plan{grid-template-columns:1fr}.plan .acts{justify-content:flex-start}.stepper a{min-width:calc(50% - 4px)}}
+@media (max-width:900px){.bar{gap:var(--s3);padding:0 var(--s4)}.brand small{display:none}.mainnav{gap:var(--s3);margin-left:auto}.mainnav a span{display:none}.mainnav a{padding:0 6px}.bandin{padding:14px var(--s4) 18px}main{padding:var(--s4) var(--s4) 64px}}
+@media (max-width:760px){.rv{grid-template-columns:1fr}.rvlist{max-height:none;flex-direction:row;flex-wrap:wrap}.plan{grid-template-columns:1fr}.plan .acts{justify-content:flex-start}.stepper a{min-width:calc(50% - 4px)}}
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header><div class="bar">
-  <div class="brand"><span class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg></span>Exam Planner</div>
+  <div class="brand"><span class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg></span><div>Oliver<small>Exam office</small></div></div>
   <nav class="mainnav" aria-label="Main">
     <a href="#/dashboard" data-page="dashboard"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg><span>Dashboard</span></a>
     <a href="#/plan/1" data-page="plan"><svg class="i" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8M3 10h18M16 19h6M19 16v6"/></svg><span>New plan</span></a>
+    <a href="#/reschedule" data-page="reschedule"><svg class="i" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5M12 7v5l3 2"/></svg><span>Reschedule</span></a>
     <a href="#/rooms" data-page="roomview"><svg class="i" viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg><span>Room view</span></a>
   </nav>
-</div></header>
+  <div class="sidefoot">Runs entirely on this computer. CP-SAT solver · every plan re-checked by an independent validator.</div>
+</div><div id="planBand" hidden></div></header>
 
 <main id="main">
 <div id="fileWarning" class="note bad" hidden></div>
 
 <!-- ================= DASHBOARD ================= -->
 <section class="page" id="dashboard">
-  <div class="toolbar"><div><h1>Exam plans</h1><p class="lead" style="margin:0">Every plan you make is saved here. Open one to see its schedule and seating, or make a new one.</p></div>
-    <div class="spacer"></div><a class="btn primary" href="#/plan/1"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New exam plan</a></div>
-  <div id="planList" class="plans" style="margin-top:16px"></div>
+  <div id="dashEmpty"></div>
+  <div class="dgrid" id="dashGrid">
+    <div class="dmain">
+      <div class="panel" id="dashSheet"></div>
+      <div class="panel dt" id="dashRooms"></div>
+      <div class="panel dt" id="planList"></div>
+    </div>
+    <aside class="dside">
+      <div class="panel attn" id="dashAttention"></div>
+      <div class="panel" id="dashKpis"></div>
+      <div class="panel" id="dashInvig"></div>
+    </aside>
+  </div>
 </section>
 
 <!-- ================= NEW PLAN (wizard) ================= -->
@@ -358,6 +482,40 @@ tr.daystart td{border-top:2px solid var(--line)}
   <div class="step" data-step="4"><div id="resultBox"></div></div>
 </section>
 
+<!-- ================= RESCHEDULE ================= -->
+<section class="page" id="reschedule">
+  <div class="pagehead"><div><h1>Reschedule</h1>
+    <p class="lead" style="margin:0">Move or swap exams whenever you like, or tell the planner what changed. It repairs the plan with the <b>fewest possible changes</b>: exams that can stay keep their session, and students keep their room and seat unless the change forces a move. Every rule is re-checked before you save.</p></div></div>
+  <div class="card">
+    <div class="row">
+      <div style="min-width:260px"><label class="f" for="rsPlan">Plan to repair</label><select id="rsPlan"></select></div>
+      <div style="max-width:260px"><label class="f" for="rsFreeze">Already held before (optional)</label><input type="date" id="rsFreeze"></div>
+    </div>
+    <p class="tiny muted" style="margin:8px 0 0">Sessions before that date have already happened: they're kept exactly as they were, and nothing is moved into them.</p>
+  </div>
+  <div class="card">
+    <h2>What do you want to change?</h2>
+    <div class="row"><div><label class="f" for="rsType">Kind of change</label><select id="rsType"></select></div></div>
+    <div id="rsForm" style="margin-top:10px"></div>
+    <div id="rsList" style="margin-top:10px"></div>
+    <details style="margin-top:12px" id="rsEnglishBox"><summary>Describe the change in plain English</summary>
+      <p class="small muted">For example “EB2-105 is being painted on 3 December” or “No exams on 8 December”. Read by the model on this computer; tick what it found.</p>
+      <textarea id="rsEnglish" style="min-height:80px" placeholder="One change per line"></textarea>
+      <div style="margin-top:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn" id="rsInterpret">Read these changes</button><span id="rsInterpretMsg" class="small muted" aria-live="polite"></span></div>
+    </details>
+  </div>
+  <div class="nav"><span class="small muted" id="rsHint"></span><div style="text-align:right"><button class="btn primary" id="rsRun">Find the smallest change</button><div id="rsMsg" class="small" style="margin-top:8px" aria-live="polite"></div></div></div>
+  <div id="rsOut" style="margin-top:16px"></div>
+  <details class="card" style="margin-top:16px"><summary>How the planner decides what to move</summary>
+    <p class="small">The repair is a <b>minimal-perturbation</b> problem, solved with lexicographic optimisation in CP-SAT. Each objective is minimised while the ones before it are held at their best value:</p>
+    <div class="math">1. D₁ = Σₑ (nₑ + 10) · movedₑ &nbsp;&nbsp; people disturbed (nₑ = students in exam e)<br>
+      2. D₂ = Σₑ nₑ · |shiftₑ| (×2 if earlier) + student welfare &nbsp;&nbsp; how far, and how kindly, the moved exams travel<br>
+      3. Seating per session: unchanged ⇒ kept seat for seat; otherwise fewest rooms → most students in their old room → in their old seat<br>
+      4. Invigilation: shortfall → duties changed → busiest person's load → Σₚ |P·loadₚ − total|</div>
+    <p class="small muted">All hard rules (no clashes, daily limits, same-course separation, room capacity, your rules) are constraints, never traded off. If the change makes them impossible, the planner names the conflicting rules.</p>
+  </details>
+</section>
+
 <!-- ================= ROOM VIEW ================= -->
 <section class="page" id="roomview">
   <div class="toolbar"><div><h1>Room view</h1><p class="lead" style="margin:0">Each room's seating, session by session: who sits where.</p></div><div class="spacer"></div>
@@ -367,11 +525,13 @@ tr.daystart td{border-top:2px solid var(--line)}
 </section>
 </main>
 <div id="printArea"></div>
+<div id="tip" hidden></div>
 
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const PALETTE = ["#2563EB","#DC2626","#059669","#D97706","#7C3AED","#0891B2","#DB2777","#65A30D","#EA580C","#475569"];
+// categorical slots in fixed order (validated for colour-vision deficiency on adjacent pairs); every seat also prints its code
+const PALETTE = ["#2a78d6","#eb6834","#1baf7a","#eda100","#e87ba4","#008300","#6250d6","#e34948"];
 const KINDS = {midsem:{label:"Mid-semester examination", short:"Mid-sem", times:"10:00 AM, 2:30 PM", maxDay:"1", gap:false,
                  note:"Mid-sem defaults: sessions at 10:00 AM and 2:30 PM, one exam per student per day. You can change any of these in step 3."},
                endsem:{label:"End-semester examination", short:"End-sem", times:"10:00 AM, 2:30 PM", maxDay:"1", gap:true,
@@ -405,14 +565,16 @@ const roomUse = () => document.querySelector("input[name=roomuse]:checked").valu
 // ================= routing =================
 function route(){
   const h = location.hash || "#/dashboard", [, page, step] = h.split("/");
-  const pg = {dashboard:"dashboard", plan:"plan", rooms:"roomview"}[page] || "dashboard";
+  const pg = {dashboard:"dashboard", plan:"plan", rooms:"roomview", reschedule:"reschedule"}[page] || "dashboard";
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === pg));
   document.querySelectorAll(".mainnav a").forEach(a => a.classList.toggle("on", a.dataset.page === pg));
   if (pg === "plan"){ const n = String(Math.min(4, Math.max(1, +step || 1)));
     document.querySelectorAll(".step").forEach(s => s.classList.toggle("on", s.dataset.step === n));
     if (n === "4") renderResult(); markDone(n); }
+  $("#planBand").hidden = pg !== "dashboard";
   if (pg === "dashboard") renderDashboard();
   if (pg === "roomview") renderRoomView();
+  if (pg === "reschedule") renderReschedule();
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
@@ -423,24 +585,176 @@ function markDone(current = (location.hash.split("/")[2] || "1")){
 
 // ================= dashboard =================
 async function refreshPlans(){ try { S.plans = await api("/api/plans"); } catch (e) { S.plans = []; $("#planList").innerHTML = note("bad", esc(e.message)); throw e; } }
+// ---------- small charts (inline SVG, one series each, shared hover tooltip) ----------
+const tipEl = () => $("#tip");
+document.addEventListener("mouseover", e => { const t = e.target.closest("[data-tip]"); const el = tipEl(); if (!el) return;
+  if (!t){ el.hidden = true; return; } el.innerHTML = t.dataset.tip; el.hidden = false; });
+document.addEventListener("mousemove", e => { const el = tipEl(); if (!el || el.hidden) return;
+  const w = el.offsetWidth, x = Math.min(window.innerWidth - w - 8, e.clientX + 14); el.style.left = x + "px"; el.style.top = (e.clientY + 14) + "px"; });
+const niceMax = v => { if (v <= 0) return 1; const p = 10 ** Math.floor(Math.log10(v)), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; };
+function barChart(data, {h = 180, unit = "", alt = () => false} = {}){
+  const W = 560, L = 36, B = 22, T = 8, max = niceMax(Math.max(1, ...data.map(d => d.v))), n = Math.max(1, data.length);
+  const bw = (W - L) / n, y = v => T + (h - T - B) * (1 - v / max), ticks = [0, max / 2, max];
+  let g = ticks.map(t => `<line class="grid" x1="${L}" x2="${W}" y1="${y(t)}" y2="${y(t)}"/><text x="${L - 6}" y="${y(t) + 4}" text-anchor="end">${t.toLocaleString()}</text>`).join("");
+  const every = Math.ceil(n / 10);
+  data.forEach((d, i) => { const x = L + i * bw, w = Math.max(2, bw - 2), top = y(d.v), r = Math.min(4, w / 2, h - B - top);
+    const path = d.v > 0 ? `M${x + 1},${h - B} V${top + r} q0,-${r} ${r},-${r} H${x + 1 + w - r} q${r},0 ${r},${r} V${h - B} Z` : "";
+    g += `<g class="m" data-tip="${esc(d.tip || `${d.l}: ${d.v.toLocaleString()}${unit}`)}"><rect class="hit" x="${x}" y="${T}" width="${bw}" height="${h - T - B}"/>${path ? `<path class="bar ${alt(d) ? "alt" : ""}" d="${path}"/>` : ""}</g>`;
+    if (i % every === 0) g += `<text x="${x + bw / 2}" y="${h - 6}" text-anchor="middle">${esc(d.short ?? d.l)}</text>`; });
+  return `<svg class="viz" viewBox="0 0 ${W} ${h}" role="img" aria-label="bar chart">${g}<line class="axis" x1="${L}" x2="${W}" y1="${h - B}" y2="${h - B}"/></svg>`;
+}
+function hbars(rows){ const max = Math.max(1, ...rows.map(r => r.v));
+  return `<div class="hbars">${rows.map(r => `<div class="hb" data-tip="${esc(r.tip)}"><span class="l">${esc(r.l)}</span><span class="t"><span class="f" style="width:${(100 * r.v / max).toFixed(1)}%"></span></span><span class="n">${esc(r.n)}</span></div>`).join("")}</div>`; }
+const pct = (x, d = 0) => x == null ? "–" : (100 * x).toFixed(d) + "%";
+const shortDate = d => new Date(d + "T00:00").toLocaleDateString(undefined, {day:"numeric", month:"short"});
+
+// ---------- dashboard: the date sheet is the hero; attention + numbers on the side ----------
+// semester chips (Airtable/Notion pastel category tints, fixed order); identity is also printed (exam code), never colour alone
+const SEM_COLORS = ["#A8D8C4", "#FCAB79", "#F4D35E", "#B9D7F2", "#D4C5F0", "#F4B6C2", "#E3D3B5", "#C9D9A8"];
+function examGroups(R){
+  const key = e => R.exams[e]?.semester != null ? `Semester ${R.exams[e].semester}` : `${(e.match(/^[A-Za-z]+/) || ["Other"])[0]} papers`;
+  const keys = [...new Set(Object.keys(R.exams).map(key))].sort((a, b) => a.localeCompare(b, undefined, {numeric:true}));
+  const col = {}; keys.forEach((k, i) => col[k] = SEM_COLORS[i] || "#D9D6CF");
+  return {key, col, keys};
+}
+function period(a, b){ const A = new Date(a + "T00:00"), B = new Date((b || a) + "T00:00"), o = {day:"numeric", month:"short"};
+  return `${A.toLocaleDateString(undefined, A.getFullYear() === B.getFullYear() ? o : {...o, year:"numeric"})} – ${B.toLocaleDateString(undefined, {...o, year:"numeric"})}`; }
+const statusText = p => p.status === "approved" ? `<span class="status ok">Approved</span>` : p.ok ? `<span class="status todo">Draft, not approved</span>` : `<span class="status bad">Has problems</span>`;
+function shortTime(t){ const m = String(t || "").match(/(\d{1,2}):(\d{2})\s*([AP]M)?/i); if (!m) return t || "";
+  let h = +m[1]; if (m[3]){ const pm = m[3].toUpperCase() === "PM"; if (pm && h < 12) h += 12; if (!pm && h === 12) h = 0; }
+  return `${String(h).padStart(2, "0")}:${m[2]}`; }
+
+function dateSheet(R){
+  const g = examGroups(R), per = Math.max(1, ...R.slots.map(s => s.slot)), times = R.calendar.slot_times || [];
+  const at = {}; R.slots.forEach(s => at[`${s.date}|${s.slot}`] = s);
+  const iso = d => d.toLocaleDateString("en-CA"), start = new Date(R.calendar.start + "T00:00"), end = new Date(R.calendar.end + "T00:00");
+  const has = new Set(R.slots.map(s => s.date));
+  const cols = [...has].some(d => [0, 6].includes(new Date(d + "T00:00").getDay())) ? 7 : 5;
+  const names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const d = new Date(start); d.setDate(d.getDate() - (d.getDay() + 6) % 7);
+  let cells = names.slice(0, cols).map(n => `<div class="wd">${n}</div>`).join(""), shownMonth = -1, used = 0, total = 0;
+  while (d <= end){
+    for (let i = 0; i < 7; i++, d.setDate(d.getDate() + 1)){
+      if (i >= cols) continue;
+      const k = iso(d), inP = d >= start && d <= end;
+      if (!inP){ cells += `<div class="day out"><div class="dn">${d.getDate()}</div></div>`; continue; }
+      const mon = d.getMonth() !== shownMonth; shownMonth = d.getMonth();
+      const label = `<span>${d.getDate()}${mon ? ` ${d.toLocaleDateString(undefined, {month:"short"})}` : ""}</span>`;
+      if (!has.has(k)){ cells += `<div class="day off"><div class="dn">${label}<small>no exams</small></div></div>`; continue; }
+      let body = "";
+      for (let n = 1; n <= per; n++){
+        const s = at[`${k}|${n}`]; if (!s) continue;
+        total++; if (s.exams.length) used++;
+        const xs = s.exams.map(e => { const ex = R.exams[e], grp = g.key(e);
+          const tip = `<b>${esc(e)}</b> ${esc(ex.name)}<br>${ex.size} students · ${esc(grp)}<br>${esc(fmtDate(k))}, ${esc(s.time)} · click for seating`;
+          return `<button class="ex" style="--c:${g.col[grp]}" data-slot="${s.id}" data-tip="${esc(tip)}" aria-label="${esc(e)}, ${ex.size} students, ${esc(fmtDate(k))} ${esc(s.time)}">${esc(e)}<span>${ex.size}</span></button>`; }).join("");
+        body += `<div class="ses"><span class="t">${esc(shortTime(times[n - 1] || s.time))}</span><div class="xs">${xs || `<span class="none">—</span>`}</div></div>`;
+      }
+      cells += `<div class="day"><div class="dn">${label}<small>${names[i]}</small></div>${body}</div>`;
+    }
+  }
+  return `<div class="phead"><h2>Date sheet</h2><p>${used} of ${total} sessions used · click an exam to see where everyone sits</p></div>
+    <div class="sheet" style="--cols:${cols}">${cells}</div>
+    <div class="lg">${g.keys.map(k => `<span><i style="--c:${g.col[k]}"></i>${esc(k)}</span>`).join("")}</div>`;
+}
+
+function attention(R, P){
+  const it = [];
+  if (R.violations?.length) it.push(["a-bad", `${R.violations.length} rule violations. Don't publish this plan.`]);
+  if (P.ok && P.status !== "approved") it.push(["a-act", "Not approved yet. Check the date sheet, then approve.", `<button class="btn accent sm go" data-appr2>Approve</button>`]);
+  const W = R.warnings || [];
+  W.slice(0, 3).forEach(w => it.push(["a-warn", esc(w)]));
+  if (W.length > 3) it.push(["a-warn", `${W.length - 3} more notes on the schedule page`]);
+  (R.checks || []).forEach(c => it.push([c.level === "warn" ? "a-warn" : "", `${esc(c.title.split(/\. | \(/)[0])} <b>(${c.items.length})</b>`]));
+  if (!R.metrics) it.push(["", "Made before plan figures existed. Reschedule it once (no changes needed) to compute them."]);
+  if (!it.length) it.push(["a-ok", "Nothing needs attention."]);
+  return `<div class="phead"><h2>Needs attention</h2><p>${it.filter(x => x[0] !== "a-ok").length || "no"} item${it.length === 1 ? "" : "s"}</p></div>
+    <ul>${it.map(([c, t, go]) => `<li class="${c}"><span>${t}</span>${go || ""}</li>`).join("")}</ul>`;
+}
+
+function keyNumbers(R){
+  const m = R.metrics, st = R.stats, used = R.slots.filter(s => s.exams.length).length;
+  const row = (l, v, cls = "", tip = "") => `<div class="kv kpi ${cls}" ${tip ? `data-tip="${esc(tip)}"` : ""}><span>${l}</span><b>${v}</b></div>`;
+  let h = row("Students", st.students.toLocaleString()) + row("Exams", st.exams) + row("Sessions used", `${used} of ${st.slots}`);
+  if (m){
+    const inv = m.invigilation;
+    h += row("Seats filled", pct(m.seats.utilisation, 1), "", `${m.seats.seated.toLocaleString()} of ${m.seats.usable.toLocaleString()} usable seats in opened rooms`)
+      + row("Empty seats in open rooms", m.seats.empty.toLocaleString())
+      + row("Same-course neighbours", m.separation.same_exam_neighbours, m.separation.same_exam_neighbours ? "badk" : "good")
+      + row("Two exams on one day", `${m.students.same_day} students`, m.students.same_day ? "" : "good")
+      + row("Rest before next exam", m.students.mean_min_gap_days == null ? "–" : `${m.students.mean_min_gap_days} days`, "", "Average, per student, of the smallest gap between two of their exams")
+      + (inv ? row("Duties per invigilator", `${inv.min}–${inv.max}`) + row("Duty fairness (Gini)", inv.gini.toFixed(2), inv.gini <= 0.1 ? "good" : "", "0 = everyone does the same number of duties") : "");
+  }
+  return `<div class="phead"><h2>Key numbers</h2><p>checked on the finished plan</p></div>${h}`;
+}
+
+function invigPanel(R){
+  const inv = R.metrics?.invigilation; if (!inv) return "";
+  const rows = Object.entries(inv.load), max = Math.max(1, ...rows.map(r => r[1]));
+  return `<div class="phead"><h2>Invigilators</h2><p>duties each</p></div><div class="hbars">${rows.map(([n, v]) =>
+    `<div class="hb" data-tip="<b>${esc(esc(n))}</b>: ${v} duties"><span class="l">${esc(n)}</span><span class="t"><span class="f" style="width:${(100 * v / max).toFixed(1)}%"></span></span><span class="n">${v}</span></div>`).join("")}</div>`;
+}
+
+function roomsTable(R){
+  const ses = {}, seated = {};
+  Object.values(R.seating).forEach(rs => Object.entries(rs).forEach(([rid, v]) => { ses[rid] = (ses[rid] || 0) + 1; seated[rid] = (seated[rid] || 0) + v.length; }));
+  const cap = Object.fromEntries((R.metrics?.rooms || []).map(r => [r.room, r.seats]));
+  const rows = Object.keys(ses).map(rid => { const seats = cap[rid] ?? seatCount(R.rooms[rid].layout) * ses[rid]; return {rid, n:ses[rid], seated:seated[rid], f:seats ? seated[rid] / seats : 0}; })
+    .sort((a, b) => b.f - a.f);
+  return `<div class="phead"><h2>Rooms</h2><p>${rows.length} rooms opened · fullest first</p></div><div class="scroll"><table><thead><tr><th>Room</th><th class="num">Sessions</th><th class="num">Students seated</th><th class="num">Seats filled</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td class="code">${esc(r.rid)}</td><td class="num">${r.n}</td><td class="num">${r.seated.toLocaleString()}</td><td class="num"><span class="fill"><i><b style="width:${(100 * r.f).toFixed(1)}%"></b></i>${pct(r.f)}</span></td></tr>`).join("")}</tbody></table></div>`;
+}
+
+function plansTable(sel){
+  return `<div class="phead"><h2>All plans</h2><p>${S.plans.length} saved · click a name to switch</p></div><div class="scroll"><table><thead><tr><th>Plan</th><th>Period</th><th class="num">Students</th><th>Status</th></tr></thead><tbody>
+    ${S.plans.map(p => `<tr class="plan ${p.id === sel ? "current" : ""}"><td><button class="pname" data-focus="${p.id}">${esc(p.name)}</button> <span class="ver">v${p.version || 1}</span>${p.kind ? ` <span class="pill n">${esc(KINDS[p.kind]?.short || p.kind)}</span>` : ""}
+        ${p.parent ? `<div class="lin">Rescheduled from v${(S.plans.find(x => x.id === p.parent)?.version) ?? "?"}: ${esc((p.changes || []).join("; "))} · ${p.exams_moved ?? 0} exams moved</div>` : ""}</td>
+      <td style="white-space:nowrap">${p.start ? esc(period(p.start, p.end)) : "–"}</td><td class="num">${(p.students ?? 0).toLocaleString()}</td>
+      <td>${p.status === "approved" ? `<span class="pill ok">Approved</span>` : p.ok ? `<span class="status todo">Draft</span>` : `<span class="status bad">Problems</span>`}</td></tr>`).join("")}</tbody></table></div>`;
+}
+
 async function renderDashboard(){
   try { await refreshPlans(); } catch { return; }
-  const cur = load("currentPlan", null);
-  if (!S.plans.length){ $("#planList").innerHTML = `<div class="card empty">${ICON.cal}<h2 style="color:var(--ink)">No exam plans yet</h2><p>Make your first plan: upload students, pick rooms, set dates and rules.</p>
-    <a class="btn primary" href="#/plan/1">New exam plan</a> <button class="btn" id="dashSample">Try with sample data</button></div>`;
+  const band = $("#planBand");
+  if (!S.plans.length){
+    band.innerHTML = `<div class="bandin"><div class="bt"><h1>No exam plans yet</h1><p class="bmeta">Upload students, pick rooms, set dates and rules. Oliver builds the date sheet, seating and invigilation.</p></div>
+      <div class="bacts"><a class="btn accent" href="#/plan/1">New exam plan</a><button class="btn ondark" id="dashSample">Try with sample data</button></div></div>`;
+    $("#dashGrid").hidden = true;
     $("#dashSample").onclick = () => { location.hash = "#/plan/1"; setTimeout(() => $("#trySample").click(), 50); }; return; }
-  $("#planList").innerHTML = S.plans.map(p => `<div class="plan ${p.id === cur ? "current" : ""}">
-    <div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="margin:0">${esc(p.name)}</h2>
-      ${p.kind ? `<span class="pill blue">${esc(KINDS[p.kind]?.short || p.kind)}</span>` : ""}${p.id === cur ? `<span class="pill warn">Current</span>` : ""}
-      ${p.ok ? `<span class="pill ok">${ICON.check}All rules checked</span>` : `<span class="pill bad">Has problems</span>`}</div>
-      <div class="meta"><span>${esc(fmtDate(p.start))} – ${esc(fmtDate(p.end))}</span><span>${p.exams ?? "-"} exams</span><span>${(p.students ?? 0).toLocaleString()} students</span><span>${p.rooms} rooms</span><span>made ${esc(new Date(p.created).toLocaleString())}</span></div></div>
-    <div class="acts"><button class="btn primary" data-open="${p.id}">${ICON.eye}Schedule &amp; seating</button><button class="btn" data-rv="${p.id}">${ICON.door}Room view</button>
-      <button class="btn danger" data-del="${p.id}" aria-label="Delete ${esc(p.name)}">${ICON.trash}</button></div></div>`).join("");
-  $("#planList").querySelectorAll("[data-open]").forEach(b => b.onclick = async () => { await openPlan(b.dataset.open); location.hash = "#/plan/4"; });
-  $("#planList").querySelectorAll("[data-rv]").forEach(b => b.onclick = async () => { await openPlan(b.dataset.rv); location.hash = "#/rooms"; });
-  $("#planList").querySelectorAll("[data-del]").forEach(b => b.onclick = async () => { const p = S.plans.find(x => x.id === b.dataset.del);
-    if (!confirm(`Delete the plan “${p.name}”? This can't be undone.`)) return;
-    await api(`/api/plans/${p.id}`, null, "DELETE"); if (load("currentPlan") === p.id){ store("currentPlan", null); S.result = null; S.plan = null; } renderDashboard(); });
+  $("#dashGrid").hidden = false;
+  const cur = load("currentPlan", null), first = S.plans.find(p => p.id === cur) || S.plans[0];
+  if (S.plan?.id !== first.id){ try { await openPlan(first.id); } catch {} }
+  const sel = load("currentPlan", null), P = S.plans.find(p => p.id === sel) || first, R = S.result;
+  band.innerHTML = `<div class="bandin"><div class="bt">
+      <div class="bpick"><label for="planPick">Plan</label><select id="planPick">${S.plans.map(p => `<option value="${p.id}" ${p.id === P.id ? "selected" : ""}>${esc(p.name)} · v${p.version || 1}${p.status === "approved" ? " · approved" : ""}</option>`).join("")}</select></div>
+      <h1>${esc(P.name)}</h1>
+      <p class="bmeta">${[statusText(P), esc(KINDS[P.kind]?.label || "Examination"), P.start ? esc(period(P.start, P.end)) : "", `<span class="ver">v${P.version || 1}</span>`].filter(Boolean).join(" · ")}
+        ${P.parent ? `<br>Rescheduled: ${esc((P.changes || []).join("; "))} · ${pct(P.stability, 1)} of sittings unchanged` : ""}</p></div>
+    <div class="bacts" id="dashActs"><button class="btn ondark" data-open="${P.id}">${ICON.eye}Schedule &amp; seating</button><button class="btn ondark" data-rv="${P.id}">${ICON.door}Rooms</button>
+      <button class="btn ondark" data-rs="${P.id}">Reschedule</button>
+      ${P.ok ? `<button class="btn ${P.status === "approved" ? "ondark" : "accent"}" data-appr="${P.id}">${P.status === "approved" ? "Withdraw approval" : "Approve"}</button>` : ""}
+      <button class="btn ondark" data-del="${P.id}" aria-label="Delete ${esc(P.name)}">${ICON.trash}</button></div></div>`;
+  $("#planPick").onchange = async e => { await openPlan(e.target.value); renderDashboard(); };
+  const approve = async () => { try { await api(`/api/plans/${P.id}/${P.status === "approved" ? "unapprove" : "approve"}`, {}); if (S.plan) S.plan.status = P.status === "approved" ? "draft" : "approved"; renderDashboard(); } catch (e) { alert(e.message); } };
+  const A = $("#dashActs");
+  A.querySelector("[data-open]").onclick = () => { location.hash = "#/plan/4"; };
+  A.querySelector("[data-rv]").onclick = () => { location.hash = "#/rooms"; };
+  A.querySelector("[data-rs]").onclick = () => { location.hash = "#/reschedule"; };
+  if (A.querySelector("[data-appr]")) A.querySelector("[data-appr]").onclick = approve;
+  A.querySelector("[data-del]").onclick = async () => { if (!confirm(`Delete the plan “${P.name}”? This can't be undone.`)) return;
+    await api(`/api/plans/${P.id}`, null, "DELETE"); store("currentPlan", null); S.result = null; S.plan = null; renderDashboard(); };
+  if (!R?.ok){ $("#dashSheet").innerHTML = note("bad", "This plan has no valid schedule. Open it to see why."); ["#dashRooms", "#dashAttention", "#dashKpis", "#dashInvig"].forEach(x => $(x).innerHTML = ""); }
+  else {
+    $("#dashSheet").innerHTML = dateSheet(R);
+    $("#dashSheet").querySelectorAll(".ex").forEach(b => b.onclick = () => { S.tab = "seating"; S.slot = +b.dataset.slot; S.room = ""; S.find = ""; location.hash = "#/plan/4"; });
+    $("#dashAttention").innerHTML = attention(R, P);
+    const a2 = $("#dashAttention [data-appr2]"); if (a2) a2.onclick = approve;
+    $("#dashKpis").innerHTML = keyNumbers(R);
+    $("#dashInvig").innerHTML = invigPanel(R); $("#dashInvig").hidden = !R.metrics?.invigilation;
+    $("#dashRooms").innerHTML = roomsTable(R);
+  }
+  $("#planList").innerHTML = plansTable(P.id);
+  $("#planList").querySelectorAll("[data-focus]").forEach(b => b.onclick = async () => { await openPlan(b.dataset.focus); renderDashboard(); window.scrollTo(0, 0); });
 }
 async function openPlan(id){
   const p = await api(`/api/plans/${id}`); S.plan = p; S.result = p.result; S.slot = null; S.room = ""; S.find = ""; S.tab = "schedule"; S.rv.room = ""; store("currentPlan", id);
@@ -512,7 +826,7 @@ async function applyEnrollment(name, keepSelection){
     if (!keepSelection || !S.selected.size) S.selected = new Set(S.summary.exams.map(e => e.code));
     else S.selected = new Set(S.summary.exams.map(e => e.code).filter(c => S.selected.has(c)));
     $("#enrollInfo").innerHTML = note("ok", `${esc(name)} loaded. Check the table below, then choose which exams are in this plan.`) + `<div id="enrollStats"></div>`;
-    renderPicker();
+    renderPicker(); fillSemSlots();
   } catch (err) { S.summary = null; $("#enrollInfo").innerHTML = note("bad", esc(err.message)); }
   renderSpecific(); periodInfo(); markDone();
 }
@@ -524,7 +838,7 @@ async function loadEnrollmentFile(name, b64){
 $("#enrollFile").onchange = async e => { const f = e.target.files[0]; if (!f) return;
   try { await loadEnrollmentFile(f.name, await fileB64(f)); } catch (err) { $("#enrollInfo").innerHTML = note("bad", esc(err.message)); } e.target.value = ""; };
 async function refreshSummary(){ if (!S.enrollment) return;
-  S.summary = await api("/api/summary", {enrollment:S.enrollment, calendar:{start:$("#calStart").value}}); S.learned = S.summary.learned; renderLearned(); }
+  S.summary = await api("/api/summary", {enrollment:S.enrollment, calendar:{start:$("#calStart").value}}); S.learned = S.summary.learned; renderLearned(); fillSemSlots(); }
 
 // which exams are in this plan
 function selectedStats(){
@@ -555,7 +869,7 @@ function renderPicker(){
     <div class="stat"><b>${st.maxPer}</b><span>most exams for one student</span></div><div class="stat"><b>${st.big ? esc(st.big.code) : "-"}</b><span>largest exam (${st.big ? st.big.size : 0} students)</span></div></div>`);
 }
 let selTimer;
-function selectionChanged(){ renderPicker(); periodInfo(); markDone(); clearTimeout(selTimer); }
+function selectionChanged(){ renderPicker(); periodInfo(); fillSemSlots(); markDone(); clearTimeout(selTimer); }
 $("#courseFind").oninput = () => renderPicker();
 $("#selAll").onclick = () => { S.summary.exams.forEach(e => S.selected.add(e.code)); selectionChanged(); };
 $("#selNone").onclick = () => { S.selected.clear(); selectionChanged(); };
@@ -674,6 +988,9 @@ const RULES = {
     {k:"gap", on:false, t:"Days off between a student's exams", d:"Gives students time to prepare between papers.",
       o:`at least <input class="num" type="number" min="1" max="7" value="1" data-v="days" aria-label="days"> day(s) apart, <select class="inline" data-v="hard" aria-label="how strict"><option value="0">tries to</option><option value="1">always</option></select>`,
       c:v => ({type:"min_gap_days", params:{days:+v.days, hard:v.hard === "1"}, text:`${v.days} day(s) between exams`})},
+    {k:"semslot", on:false, t:"Semesters by session", d:"Use both sessions of the day: e.g. Semester 1 and 3 in the morning, the rest in the afternoon. Pre-filled from your past plans where they show a habit.",
+      o:`<span data-semslot class="chips" style="margin:0"></span><select class="inline" data-v="hard" aria-label="how strict"><option value="1">always</option><option value="0">tries to</option></select>`,
+      c:v => semSlotRules(v)},
     {k:"early", on:false, t:"Big exams early", d:"Puts the largest papers in the first days so marking can start.",
       o:`the <input class="num" type="number" min="1" max="30" value="5" data-v="n" aria-label="how many"> largest exams`,
       c:v => ({type:"prefer_early", params:{largest:+v.n, weight:3}, text:`Largest ${v.n} exams early`})},
@@ -707,7 +1024,26 @@ function renderRules(){
     row.querySelector(":scope > input").checked = s.on; row.classList.toggle("off", !s.on);
     row.querySelectorAll("[data-v]").forEach(el => { if (el.dataset.v in s.v){ if (el.type === "checkbox") el.checked = s.v[el.dataset.v]; else el.value = s.v[el.dataset.v]; } }); });
   document.querySelectorAll("#ruleCard .rule").forEach(row => row.addEventListener("change", () => { row.classList.toggle("off", !row.querySelector(":scope > input").checked); persistRules(); }));
-  renderTypes(); renderSpecific(); renderDays();
+  renderTypes(); renderSpecific(); renderDays(); fillSemSlots();
+}
+// "Semesters by session": one select per semester in the selected exams -> one prefer_slot rule per session
+function semesterOfExams(){ const by = {}; (S.summary?.exams || []).filter(e => S.selected.has(e.code) && e.semester != null).forEach(e => (by[e.semester] ||= []).push(e.code)); return by; }
+function learnedSemSlot(){ const out = {}, sem = Object.fromEntries((S.summary?.exams || []).map(e => [e.code, e.semester]));
+  (S.learned || []).filter(c => c.type === "prefer_slot").forEach(c => (c.params.exams || []).forEach(e => { if (sem[e] != null && out[sem[e]] == null) out[sem[e]] = c.params.slot; })); return out; }
+function fillSemSlots(){
+  const box = document.querySelector("[data-semslot]"); if (!box) return;
+  const row = box.closest(".rule"), saved = (load("rules", {}) || {}).semslot?.v || {}, prev = ruleValues(row), by = semesterOfExams(), learned = learnedSemSlot();
+  const times = calendar().slot_times, n = +$("#calSlots").value || 2;
+  const sems = Object.keys(by).map(Number).sort((a, b) => a - b);
+  if (!sems.length){ box.innerHTML = `<span class="small muted">Upload students with a semester column to use this.</span>`; return; }
+  box.innerHTML = sems.map(sm => { const k = "sem_" + sm, cur = prev[k] ?? saved[k] ?? String(learned[sm] ?? "");
+    return `<label class="togglechip" style="cursor:default">Sem ${sm} <select class="inline" data-v="${k}" aria-label="Session for semester ${sm}"><option value="">either</option>${Array.from({length:n}, (_, i) => `<option value="${i + 1}" ${String(i + 1) === cur ? "selected" : ""}>${esc(times[i] || "Session " + (i + 1))}</option>`).join("")}</select></label>`; }).join("");
+}
+function semSlotRules(v){
+  const by = semesterOfExams(), slots = {}, times = calendar().slot_times;
+  Object.entries(v).forEach(([k, val]) => { if (k.startsWith("sem_") && val && by[k.slice(4)]) (slots[val] ||= []).push(+k.slice(4)); });
+  return Object.entries(slots).map(([sl, sems]) => ({type:"prefer_slot", params:{exams:sems.flatMap(sm => by[sm]), slot:+sl, weight:50, hard:v.hard === "1"},
+    text:`Semester ${sems.sort((a, b) => a - b).join(", ")} ${v.hard === "1" ? "always" : "preferably"} in the ${times[sl - 1] || "session " + sl} session`}));
 }
 function ruleValues(row){ const v = {}; row.querySelectorAll("[data-v]").forEach(el => v[el.dataset.v] = el.type === "checkbox" ? el.checked : el.value); return v; }
 function persistRules(){ const s = {}; document.querySelectorAll("#ruleCard .rule").forEach(row => s[row.dataset.k] = {on:row.querySelector(":scope > input").checked, v:ruleValues(row)}); store("rules", s); }
@@ -741,7 +1077,7 @@ function periodInfo(){ const c = calendar(); store("cal", c); markDone(); const 
   else if (st && days.length * maxDay < st.maxPer) msg = note("warn", msg + ` With at most ${maxDay} exam(s) a day, a student with ${st.maxPer} exams needs ${Math.ceil(st.maxPer / maxDay)} days.`);
   box.innerHTML = msg;
 }
-["#calStart", "#calEnd", "#calSlots", "#calTimes", "#exSat", "#exSun"].forEach(id => $(id).addEventListener("change", () => { periodInfo(); if (id === "#calStart"){ applyKind(); refreshSummary().catch(() => {}); } }));
+["#calStart", "#calEnd", "#calSlots", "#calTimes", "#exSat", "#exSun"].forEach(id => $(id).addEventListener("change", () => { periodInfo(); if (id === "#calSlots" || id === "#calTimes") fillSemSlots(); if (id === "#calStart"){ applyKind(); refreshSummary().catch(() => {}); } }));
 
 const examLabel = c => { const e = S.summary?.exams.find(x => x.code === c); return e ? `${e.code} ${e.name}` : c; };
 const slotName = n => (calendar().slot_times[n - 1] || `session ${n}`);
@@ -834,7 +1170,7 @@ function renderEnglish(){
 function compile(){
   const out = [], inPlan = c => !S.summary || ruleExams(c).every(e => S.selected.has(e));
   document.querySelectorAll("#ruleCard .rule").forEach(row => { const r = ALL_RULES.find(x => x.k === row.dataset.k);
-    if (row.querySelector(":scope > input").checked) out.push(r.c(ruleValues(row))); else if (r.off) out.push(r.off()); });
+    if (row.querySelector(":scope > input").checked) out.push(...[].concat(r.c(ruleValues(row)))); else if (r.off) out.push(r.off()); });
   out.push({type:"room_use", params:{mode:roomUse()}, text:roomUse() === "spread" ? "Spread students evenly across all selected rooms" : "Fill each room completely before opening the next"});
   if (S.holidays.length) out.push({type:"holiday", params:{dates:[...S.holidays]}, text:"Holidays"});
   S.halfDays.forEach(d => out.push({type:"day_slots", params:{date:d, slots:1}, text:`Half day ${d}`}));
@@ -938,9 +1274,10 @@ function renderResult(){
   const worst = Math.max(...Object.keys(st.students_by_max_exams_per_day).map(Number));
   const title = S.plan?.name || "Exam plan";
   box.innerHTML = `<div class="toolbar"><div><h1>${esc(title)}</h1>
-      <div class="muted">${esc(KINDS[R.kind]?.label || "Examination")} · ${esc(fmtDate(R.calendar.start))} to ${esc(fmtDate(R.calendar.end))}${S.plan?.id ? ` · <span class="pill ok">${ICON.check}Saved to dashboard</span>` : ""}</div></div>
+      <div class="muted">${esc(KINDS[R.kind]?.label || "Examination")} · ${esc(fmtDate(R.calendar.start))} to ${esc(fmtDate(R.calendar.end))}${S.plan?.id ? ` · <span class="pill ok">${ICON.check}Saved to dashboard</span> <span class="ver">v${S.plan.version || 1}</span> ${S.plan.status === "approved" ? `<span class="pill ok">Approved</span>` : `<span class="pill n">Draft</span>`}` : ` · <span class="pill warn">Preview, not saved</span>`}</div></div>
       <div class="spacer"></div><button class="btn" id="printSchedule">${ICON.print}Print schedule</button><button class="btn" id="printSeating">${ICON.print}Print seating plan</button>
       <a class="btn" href="#/rooms">${ICON.door}Room view</a></div>
+    ${R.diff ? `<div class="card"><h2>What this reschedule changed</h2><p class="small muted" style="margin-top:-6px">${esc((R.changes || []).join(" · "))}</p>${diffPanel(R, true)}</div>` : ""}
     ${R.violations.length ? note("bad", `<b>${R.violations.length} problems found by the final check.</b> Don't publish this plan.${list(R.violations.slice(0, 20))}`)
       : note("ok", "Every rule checked on the final plan: no clashes, no one over the daily limit, every student has exactly one seat.")}
     <div class="stats"><div class="stat"><b>${st.exams}</b><span>exams</span></div><div class="stat"><b>${st.students.toLocaleString()}</b><span>students</span></div>
@@ -997,7 +1334,7 @@ function findStudent(q){
     S.slot = +sid; S.room = rid; S.find = roll; S.tab = "seating"; renderResult(); document.querySelector(".cs.hit")?.scrollIntoView({block:"center", inline:"center"}); });
 }
 function printOut(kindOf){
-  const R = S.result, color = colorMap(R), head = `<h1>${esc(KINDS[R.kind]?.label || "Examination")}: ${kindOf === "schedule" ? "Exam schedule" : "Seating plan"}</h1><p>${esc(S.plan?.name || "")} · ${esc(fmtDate(R.calendar.start))} to ${esc(fmtDate(R.calendar.end))}</p>`;
+  const R = S.result, color = colorMap(R), head = `<h1>${esc(KINDS[R.kind]?.label || "Examination")}: ${kindOf === "schedule" ? "Exam schedule" : "Seating plan"}</h1><p>${esc(S.plan?.name || "")} · ${esc(fmtDate(R.calendar.start))} to ${esc(fmtDate(R.calendar.end))}${S.plan?.status === "approved" ? "" : " · <b>DRAFT, not yet approved</b>"}</p>`;
   $("#printArea").innerHTML = head + (kindOf === "schedule" ? scheduleTable(R)
     : slotsWithExams(R).map((s, i) => `<div class="${i ? "pb" : ""}"><h2>${esc(fmtDate(s.date))}, ${esc(s.time)}</h2>${slotTable(R, s)}</div>`
         + Object.keys(R.seating[String(s.id)] || {}).map(rid => `<div class="pb">${roomCard(R, s, rid, color)}</div>`).join("")).join(""));
@@ -1006,6 +1343,111 @@ function printOut(kindOf){
 function download(name, rows){
   const q = v => `"${String(v).replace(/"/g, '""')}"`, a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob(["﻿" + rows.map(r => r.map(q).join(",")).join("\r\n")], {type:"text/csv"})); a.download = `${name}.csv`; a.click();
+}
+
+// ================= reschedule =================
+const RS = {changes:[], english:[], out:null};
+const RS_TYPES = {
+  move:{label:"Move an exam", f:["exam", "date?", "slot?"], hint:"Pick a new date (and session if you like), or leave both empty to let the planner choose the least disruptive new slot. No reason needed.",
+    make:(p, R) => { const at = R.slots.find(s => s.exams.includes(p.exam));
+      return p.date ? {type:"fix_exam", params:{exam:p.exam, date:p.date, ...(p.slot ? {slot:p.slot} : {})}, text:`Move ${p.exam} to ${fmtDate(p.date)}${p.slot ? ", " + rsSlot(p.slot) : ""}`}
+        : {type:"forbid_exam", params:{exam:p.exam, date:at.date, slot:at.slot}, text:`Move ${p.exam} out of ${fmtDate(at.date)}, ${at.time}`}; }},
+  swap:{label:"Swap two exams", f:["exam", "exam2"], hint:"Each exam takes the other's date and session. If that would clash for some student, the planner says which rules collide.",
+    make:(p, R) => { const a = R.slots.find(s => s.exams.includes(p.exam)), b = R.slots.find(s => s.exams.includes(p.exam2));
+      return [{type:"fix_exam", params:{exam:p.exam, date:b.date, slot:b.slot}, text:`Swap: ${p.exam} to ${fmtDate(b.date)}, ${b.time}`},
+              {type:"fix_exam", params:{exam:p.exam2, date:a.date, slot:a.slot}, text:`Swap: ${p.exam2} to ${fmtDate(a.date)}, ${a.time}`}]; }},
+  room:{label:"A room is unavailable", f:["room", "date?", "slot?"], make:p => ({type:"room_unavailable", params:p, text:`${p.room} unavailable${p.date ? " on " + fmtDate(p.date) : ""}${p.slot ? ", " + rsSlot(p.slot) : ""}`})},
+  closed:{label:"Campus closed / holiday declared", f:["date"], make:p => ({type:"holiday", params:{dates:[p.date]}, text:`No exams on ${fmtDate(p.date)}`})},
+  half:{label:"A day becomes a half day", f:["date"], make:p => ({type:"day_slots", params:{date:p.date, slots:1}, text:`Only one session on ${fmtDate(p.date)}`})},
+  inv:{label:"An invigilator is unavailable", f:["person", "date?"], hint:"Leave the date empty for the whole period.",
+    make:(p, R) => ({type:"invigilator_unavailable", params:{name:p.person, dates:p.date ? [p.date] : [...new Set(R.slots.map(s => s.date))]}, text:`${p.person} unavailable${p.date ? " on " + fmtDate(p.date) : " for the whole period"}`})},
+  apart:{label:"Two exams must now be on different days", f:["exams"], make:p => ({type:"different_day", params:{exams:p.exams}, text:`Different days: ${p.exams.join(", ")}`})},
+};
+const rsSlot = n => S.result?.calendar?.slot_times?.[n - 1] || `session ${n}`;
+async function renderReschedule(){
+  try { await refreshPlans(); } catch { return; }
+  const ok = S.plans.filter(p => p.ok);
+  if (!ok.length){ $("#rsPlan").innerHTML = ""; $("#rsOut").innerHTML = `<div class="card empty">${ICON.cal}<h2 style="color:var(--ink)">No verified plan to repair</h2><p>Make a plan first.</p><a class="btn primary" href="#/plan/1">New exam plan</a></div>`; return; }
+  const cur = S.plan?.id && ok.some(p => p.id === S.plan.id) ? S.plan.id : ok[0].id;
+  if (S.plan?.id !== cur) await openPlan(cur);
+  $("#rsPlan").innerHTML = ok.map(p => `<option value="${p.id}" ${p.id === cur ? "selected" : ""}>${esc(p.name)} · v${p.version || 1}${p.status === "approved" ? " · approved" : ""}</option>`).join("");
+  $("#rsPlan").onchange = async e => { await openPlan(e.target.value); RS.changes = []; RS.english = []; RS.out = null; renderReschedule(); };
+  $("#rsType").innerHTML = `<option value="">Choose…</option>` + Object.entries(RS_TYPES).map(([k, t]) => `<option value="${k}">${t.label}</option>`).join("");
+  $("#rsType").onchange = () => rsForm($("#rsType").value);
+  rsForm($("#rsType").value); rsList(); rsResult();
+}
+function rsForm(type){
+  const R = S.result, box = $("#rsForm"); if (!type || !R){ box.innerHTML = ""; return; }
+  const exOpts = Object.entries(R.exams).sort().map(([c, e]) => `<option value="${esc(c)}">${esc(c)} · ${esc(e.name)} (${e.size})</option>`).join("");
+  const rooms = Object.keys(R.rooms).sort((a, b) => a.localeCompare(b, undefined, {numeric:true})).map(r => `<option>${esc(r)}</option>`).join("");
+  const people = [...new Set(Object.values(R.invigilators || {}).flat().concat(Object.keys(R.metrics?.invigilation?.load || {})))].sort().map(n => `<option>${esc(n)}</option>`).join("");
+  const slots = (R.calendar.slot_times || ["Slot 1", "Slot 2"]).map((t, i) => `<option value="${i + 1}">${esc(t)}</option>`).join("");
+  const field = f => { const opt = f.endsWith("?"), k = f.replace("?", ""), lab = {exam:"Exam", exam2:"Swap with", exams:"Exams", date:"Date", slot:"Session", room:"Room", person:"Invigilator"}[k] + (opt ? " (optional)" : "");
+    const inner = {exam:`<select data-f="exam"><option value=""></option>${exOpts}</select>`, exam2:`<select data-f="exam2"><option value=""></option>${exOpts}</select>`, date:`<input type="date" data-f="date" min="${R.calendar.start}" max="${R.calendar.end}">`,
+      slot:`<select data-f="slot">${opt ? `<option value="">any</option>` : ""}${slots}</select>`, room:`<select data-f="room">${rooms}</select>`,
+      person:people ? `<select data-f="person">${people}</select>` : `<input data-f="person" placeholder="Name as on the list">`,
+      exams:`<select data-f="exams" multiple size="5">${exOpts}</select>`}[k];
+    return `<div><label class="f">${lab}</label>${inner}</div>`; };
+  box.innerHTML = `<div class="row">${RS_TYPES[type].f.map(field).join("")}</div>${RS_TYPES[type].hint ? `<p class="tiny muted" style="margin:6px 0 0">${RS_TYPES[type].hint}</p>` : ""}
+    <div style="margin-top:10px;display:flex;gap:10px;align-items:center"><button class="btn primary" id="rsAdd">Add change</button><span id="rsAddMsg" class="small"></span></div>`;
+  $("#rsAdd").onclick = () => { const p = {};
+    for (const f of RS_TYPES[type].f){ const k = f.replace("?", ""), el = box.querySelector(`[data-f="${k}"]`);
+      const v = k === "exams" ? [...el.selectedOptions].map(o => o.value) : el.value;
+      if (k === "slot"){ if (v) p.slot = +v; } else if (Array.isArray(v) ? v.length : v) p[k] = v;
+      if (!f.endsWith("?") && !p[k]) return $("#rsAddMsg").innerHTML = `<span style="color:var(--bad)">Fill in every field that isn't optional.</span>`; }
+    if (type === "swap" && p.exam === p.exam2) return $("#rsAddMsg").innerHTML = `<span style="color:var(--bad)">Pick two different exams.</span>`;
+    if (type === "apart" && p.exams.length < 2) return $("#rsAddMsg").innerHTML = `<span style="color:var(--bad)">Pick at least two exams (Ctrl/Cmd-click).</span>`;
+    RS.changes.push(...[RS_TYPES[type].make(p, S.result)].flat()); RS.out = null; rsList(); rsResult(); };
+}
+function rsList(){
+  const all = [...RS.changes.map((c, i) => ({c, i, src:"form"})), ...RS.english.map((c, i) => ({c, i, src:"en"}))];
+  $("#rsList").innerHTML = all.map(({c, i, src}) => src === "en" && c.type === "unsupported" ? `<div class="added bad"><span class="s"><b>Not understood:</b> “${esc(c.text)}”</span></div>`
+    : `<div class="added">${src === "en" ? `<input type="checkbox" data-rse="${i}" ${c.use ? "checked" : ""} aria-label="Use this change">` : ""}<span class="s">${esc(src === "en" ? describe(c) : c.text)}${src === "en" ? `<br><span class="tiny muted">from “${esc(c.text)}”</span>` : ""}</span>${src === "form" ? `<button class="btn link" data-rsx="${i}">Remove</button>` : ""}</div>`).join("");
+  $("#rsList").querySelectorAll("[data-rsx]").forEach(b => b.onclick = () => { RS.changes.splice(+b.dataset.rsx, 1); RS.out = null; rsList(); rsResult(); });
+  $("#rsList").querySelectorAll("[data-rse]").forEach(b => b.onchange = () => { RS.english[+b.dataset.rse].use = b.checked; RS.out = null; rsResult(); });
+  const n = rsChanges().length; $("#rsHint").textContent = n ? `${n} change${n > 1 ? "s" : ""} to apply` : "Add at least one change. (With none, the plan comes back unchanged.)";
+}
+const rsChanges = () => [...RS.changes, ...RS.english.filter(c => c.use && c.type !== "unsupported").map(({use, ...c}) => c)];
+$("#rsInterpret").onclick = async () => {
+  if (!$("#rsEnglish").value.trim()) return $("#rsInterpretMsg").textContent = "Write at least one change.";
+  $("#rsInterpret").disabled = true; $("#rsInterpretMsg").textContent = "Reading…";
+  try { const rules = await api("/api/interpret", {text:$("#rsEnglish").value, plan_id:S.plan.id});
+    RS.english = rules.map(r => ({...r, use:r.type !== "unsupported"})); RS.out = null; rsList(); rsResult();
+    $("#rsInterpretMsg").textContent = `Found ${rules.length} change(s). Check them below.`; }
+  catch (e) { $("#rsInterpretMsg").textContent = "Couldn't read: " + e.message; }
+  $("#rsInterpret").disabled = false;
+};
+$("#rsRun").onclick = async () => {
+  const msg = m => $("#rsMsg").innerHTML = m; $("#rsRun").disabled = true; const t0 = Date.now();
+  const tick = setInterval(() => msg(`Repairing… ${Math.round((Date.now() - t0) / 1000)}s`), 500);
+  try { RS.out = await api("/api/reschedule", {plan_id:S.plan.id, changes:rsChanges(), freeze_before:$("#rsFreeze").value, time_limit:+($("#timeLimit")?.value || 60)}); msg(""); }
+  catch (e) { msg(`<span style="color:var(--bad)">${esc(e.message)}</span>`); }
+  clearInterval(tick); $("#rsRun").disabled = false; rsResult();
+};
+function diffPanel(R, compact){
+  const d = R.diff; if (!d) return "";
+  const k = (label, v, h, cls = "") => `<div class="kpi ${cls}"><div class="k">${label}</div><div class="v">${v}</div><div class="h">${h}</div></div>`;
+  return `<div class="diffgrid">
+      ${k("Exams moved", d.exams_moved, `${d.students_moved.toLocaleString()} students' exam times change`, d.exams_moved ? "" : "good")}
+      ${k("Sittings unchanged", pct(d.stability, 1), `${d.unchanged.toLocaleString()} of ${d.sittings.toLocaleString()}: same time, room and seat`, d.stability >= 0.9 ? "good" : "")}
+      ${k("Students affected", d.students_affected.toLocaleString(), "anything about one of their exams changed")}
+      ${k("Sessions untouched", `${d.sessions.kept}<small> / ${d.sessions.kept + d.sessions.changed}</small>`, `${d.room_changes} room and ${d.seat_changes} seat changes in exams that stayed`)}
+      ${k("Invigilation", `${d.duties_removed}<small> duties</small>`, `reassigned (${d.duties_added} new assignments)`)}
+    </div>
+    ${d.moved.length ? `<div class="scroll"><table><thead><tr><th>Exam</th><th>Students</th><th>Was</th><th></th><th>Now</th></tr></thead><tbody>${d.moved.map(m => `<tr><td><span class="code">${esc(m.exam)}</span> ${esc(m.name)}</td><td>${m.size}</td><td>${esc(fmtDate(m.from.date))}, ${esc(m.from.time)}</td><td class="arrow">→</td><td><b>${esc(fmtDate(m.to.date))}, ${esc(m.to.time)}</b></td></tr>`).join("")}</tbody></table></div>`
+      : compact ? "" : note("ok", "No exam had to change its date or session.")}`;
+}
+function rsResult(){
+  const R = RS.out, box = $("#rsOut"); if (!R){ box.innerHTML = ""; return; }
+  if (!R.ok){ box.innerHTML = note("bad", `<b>This change can't be absorbed:</b><ul>${R.errors.map(e => `<li>${esc(e)}</li>`).join("")}</ul>`); return; }
+  box.innerHTML = `<div class="card"><div class="toolbar"><div><h2 style="margin:0">Proposed repair</h2><div class="small muted">${R.changes.length ? esc(R.changes.join(" · ")) : "No changes given"}</div></div><div class="spacer"></div>
+      <button class="btn" id="rsPreview">${ICON.eye}Preview full plan</button><button class="btn primary" id="rsSave">Save as v${(S.plan.version || 1) + 1}</button></div>
+    ${R.violations.length ? note("bad", `<b>${R.violations.length} problems found by the final check.</b>`) : note("ok", "Every rule re-checked on the repaired plan: no clashes, no one over the daily limit, every student has exactly one seat, same-course students kept apart.")}
+    ${diffPanel(R)}
+    ${R.warnings?.length ? note("warn", `<b>Please note:</b><ul>${R.warnings.map(w => `<li>${esc(w)}</li>`).join("")}</ul>`) : ""}</div>`;
+  $("#rsPreview").onclick = () => { S.result = R; S.plan = {...S.plan, id:null, result:R, status:"draft"}; S.tab = "schedule"; S.slot = null; location.hash = "#/plan/4"; };
+  $("#rsSave").onclick = async () => { const parent = S.plan;
+    const meta = await api("/api/plans", {result:R, parent:parent.id}); await openPlan(meta.id); RS.changes = []; RS.english = []; RS.out = null; location.hash = "#/plan/4"; };
 }
 
 // ================= room view =================

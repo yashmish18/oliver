@@ -12,10 +12,19 @@ PLAN_ID = re.compile(r"^[0-9a-z-]{6,40}$")
 
 def plan_meta(p):
     r = p.get("result", {})
-    return {k: p.get(k) for k in ("id", "name", "kind", "created")} | {
+    met, d = r.get("metrics") or {}, r.get("diff") or {}
+    return {k: p.get(k) for k in ("id", "name", "kind", "created", "parent", "approved")} | {
+        "status": p.get("status", "draft"), "version": p.get("version", 1),
         "start": r.get("calendar", {}).get("start"), "end": r.get("calendar", {}).get("end"),
         "exams": r.get("stats", {}).get("exams"), "students": r.get("stats", {}).get("students"),
-        "rooms": len({rid for v in r.get("seating", {}).values() for rid in v}), "ok": r.get("ok") and not r.get("violations")}
+        "rooms": len({rid for v in r.get("seating", {}).values() for rid in v}), "ok": r.get("ok") and not r.get("violations"),
+        "utilisation": (met.get("seats") or {}).get("utilisation"), "gini": (met.get("invigilation") or {}).get("gini"),
+        "changes": r.get("changes"), "stability": d.get("stability"), "exams_moved": d.get("exams_moved")}
+
+
+def load_plan(pid):
+    f = PLANS / f"{pid}.json"
+    return json.loads(f.read_text()) if PLAN_ID.match(pid or "") and f.exists() else None
 
 
 HEADER_WORDS = re.compile(r"roll|subject|course|code|student|name", re.I)
@@ -73,9 +82,8 @@ class Handler(BaseHTTPRequestHandler):
             plans = [plan_meta(json.loads(f.read_text())) for f in PLANS.glob("*.json")]
             self.send(200, sorted(plans, key=lambda x: x["created"] or "", reverse=True))
         elif self.path.startswith("/api/plans/"):
-            pid = self.path.rsplit("/", 1)[1]
-            f = PLANS / f"{pid}.json"
-            self.send(200, json.loads(f.read_text())) if PLAN_ID.match(pid) and f.exists() else self.send(404, {"error": "plan not found"})
+            plan = load_plan(self.path.rsplit("/", 1)[1])
+            self.send(200, plan) if plan else self.send(404, {"error": "plan not found"})
         elif self.path.startswith("/samples/"):                # sample files for trying the system
             f = (ROOT / "samples" / Path(self.path).name)
             if f.is_file():
@@ -96,14 +104,23 @@ class Handler(BaseHTTPRequestHandler):
                 self.send(200, {"saved": len(body)})
             elif self.path == "/api/interpret":
                 import rule_model
+                if body.get("plan_id"):                    # rescheduling: read rules against the saved plan's own data
+                    plan = load_plan(body["plan_id"])
+                    if not plan:
+                        return self.send(404, {"error": "plan not found"})
+                    inp = plan["result"].get("inputs") or scheduler._inputs_from_result(plan)
+                    body.update(enrollment=inp["enrollment"], rooms=inp["rooms"], calendar=inp["calendar"])
                 exams, _ = scheduler.load_enrollment(body["enrollment"])
                 self.send(200, rule_model.interpret(body["text"], exams, body["rooms"], body["calendar"]))
             elif self.path == "/api/plans":                # save a finished plan for the dashboard
                 import datetime as dt
                 now = dt.datetime.now()
                 pid = now.strftime("%Y%m%d-%H%M%S") + "-" + format(now.microsecond, "06d")[:3]
-                plan = {"id": pid, "name": str(body.get("name") or "Exam plan")[:120], "kind": body.get("kind", ""),
-                        "created": now.isoformat(timespec="seconds"), "result": body["result"], "rules": body.get("rules", [])}
+                parent = load_plan(body.get("parent")) if body.get("parent") else None
+                plan = {"id": pid, "name": str(body.get("name") or (parent or {}).get("name") or "Exam plan")[:120],
+                        "kind": body.get("kind", (parent or {}).get("kind", "")), "created": now.isoformat(timespec="seconds"),
+                        "result": body["result"], "rules": body.get("rules", (parent or {}).get("rules", [])), "status": "draft",
+                        "parent": parent and parent["id"], "version": (parent or {}).get("version", 0) + 1}
                 PLANS.mkdir(parents=True, exist_ok=True)
                 (PLANS / f"{pid}.json").write_text(json.dumps(plan))
                 self.send(200, plan_meta(plan))
@@ -140,6 +157,24 @@ class Handler(BaseHTTPRequestHandler):
                     for c in body:
                         f.write(json.dumps({"text": c["text"], "rules": c["rules"]}) + "\n")
                 self.send(200, {"saved": len(body)})
+            elif self.path == "/api/reschedule":           # repair a saved plan with the fewest changes
+                plan = load_plan(body.get("plan_id"))
+                if not plan:
+                    return self.send(404, {"error": "plan not found"})
+                self.send(200, scheduler.reschedule(plan, body.get("changes", []), body.get("freeze_before") or None,
+                                                    int(body.get("time_limit", 60)), log=lambda *_: None))
+            elif re.fullmatch(r"/api/plans/[0-9a-z-]+/(approve|unapprove)", self.path):   # admin approval gates publishing
+                _, _, _, pid, act = self.path.split("/")
+                plan = load_plan(pid)
+                if not plan:
+                    return self.send(404, {"error": "plan not found"})
+                if act == "approve" and (not plan["result"].get("ok") or plan["result"].get("violations")):
+                    return self.send(400, {"error": "A plan with problems can't be approved."})
+                import datetime as dt
+                plan["status"] = "approved" if act == "approve" else "draft"
+                plan["approved"] = dt.datetime.now().isoformat(timespec="seconds") if act == "approve" else None
+                (PLANS / f"{pid}.json").write_text(json.dumps(plan))
+                self.send(200, plan_meta(plan))
             elif self.path == "/api/solve":
                 prof = ROOT / "data" / "profile.json"
                 profile = json.loads(prof.read_text()) if body.get("use_profile", True) and prof.exists() else None

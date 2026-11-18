@@ -142,7 +142,7 @@ def main():
             assert "UI test plan" in pg.inner_text(".plan.current") and "End-sem" in pg.inner_text(".plan.current")
             pg.screenshot(path=str(SHOTS / "6-dashboard.png"), full_page=True)
             pg.reload(); pg.wait_for_selector(".plan.current")
-            pg.locator(".plan.current [data-open]").click()
+            pg.locator("#dashActs [data-open]").click()
             pg.wait_for_selector("#resultBox h1")
             assert "UI test plan" in pg.inner_text("#resultBox h1")
 
@@ -224,6 +224,54 @@ def uploads():
     print("uploads ok: end-term CSV, Excel, Windows ;-CSV, unusual headings, semester filter, old .xls message, sample button, file:// warning")
 
 
+def rescheduling():
+    """Reschedule page: repair a saved plan, save it as v2, approve it; dashboard shows figures and lineage."""
+    before = plan_ids()
+    enr, rooms, codes = ts.uni(random.Random(7), students=120, exams=8, cohorts=2, rooms=5)
+    post = lambda path, body: json.load(urllib.request.urlopen(urllib.request.Request(URL + path, json.dumps(body).encode(), {"Content-Type": "application/json"})))
+    r = post("api/solve", {"enrollment": enr, "rooms": rooms, "constraints": [], "calendar": ts.CAL, "time_limit": 10, "use_profile": False,
+                           "invigilators": "name,unavailable\n" + "\n".join(f"P{k}," for k in range(8))})
+    meta = post("api/plans", {"name": "Reschedule test", "kind": "endsem", "result": dict(r, calendar=ts.CAL)})
+    errors = []
+    try:
+        with sync_playwright() as p:
+            b, pg = page(p, errors)
+            pg.evaluate(f"localStorage.setItem('ep.currentPlan', JSON.stringify('{meta['id']}'))")
+            pg.goto(URL + "#/reschedule"); pg.reload()
+            pg.wait_for_selector(f"#rsPlan option[value='{meta['id']}']", state="attached")
+            pg.select_option("#rsType", "move"); pg.select_option("#rsForm [data-f=exam]", codes[0]); pg.click("#rsAdd")
+            assert "Move " + codes[0] in pg.inner_text("#rsList")
+            pg.click("#rsRun"); pg.wait_for_selector("#rsOut .card", timeout=120000)
+            out = pg.inner_text("#rsOut")
+            assert "Every rule re-checked" in out and codes[0] in out and "Exams moved" in out, out[:500]
+            pg.screenshot(path=str(SHOTS / "9-reschedule.png"), full_page=True)
+            # swap two exams, no reason given: both trade sessions, or the clash is named
+            pg.click("#rsList [data-rsx]")
+            pg.select_option("#rsType", "swap"); pg.select_option("#rsForm [data-f=exam]", codes[0]); pg.select_option("#rsForm [data-f=exam2]", codes[1]); pg.click("#rsAdd")
+            assert pg.locator("#rsList .added").count() == 2
+            pg.click("#rsRun"); pg.wait_for_function("document.querySelector('#rsOut').innerText.length > 0", timeout=120000)
+            out = pg.inner_text("#rsOut")
+            assert ("Exams moved" in out and codes[0] in out and codes[1] in out) or "can't be absorbed" in out, out[:500]
+            pg.click("#rsList [data-rsx]"); pg.click("#rsList [data-rsx]")
+            pg.select_option("#rsType", "move"); pg.select_option("#rsForm [data-f=exam]", codes[0]); pg.click("#rsAdd")
+            pg.click("#rsRun"); pg.wait_for_selector("#rsOut .card", timeout=120000)
+            pg.click("#rsSave"); pg.wait_for_selector("#resultBox h1")
+            assert "What this reschedule changed" in pg.inner_text("#resultBox") and "v2" in pg.inner_text("#resultBox")
+            pg.click(".mainnav a[data-page=dashboard]"); pg.wait_for_selector("#dashKpis .kpi")
+            cur = pg.inner_text(".plan.current")
+            assert "v2" in cur and "Rescheduled from v1" in cur, cur
+            assert pg.locator("#dashSheet .ex").count() > 0
+            pg.click("#dashActs [data-appr]"); pg.wait_for_selector(".plan.current .pill.ok >> text=Approved")
+            assert "Approved" in pg.inner_text("#planBand")
+            assert pg.locator("#dashSheet .ex").count() > 0
+            b.close()
+    finally:
+        cleanup(before)
+    assert not errors, errors
+    print("reschedule ok: minimal repair, diff shown, saved as v2 with lineage, approval")
+
+
 if __name__ == "__main__":
     uploads()
     main()
+    rescheduling()

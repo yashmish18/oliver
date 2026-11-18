@@ -38,12 +38,12 @@ Status is stated honestly: ✅ done, ⚠️ partly done (the gap is described).
 | # | Deliverable (PS-05) | Status | Where it lives | What it does |
 | :-: | :--- | :-: | :--- | :--- |
 | 1 | **Timetable generation agent** | ✅ | `scheduler.py` → `solve_timetable`, `run` | CP-SAT model over (exam × slot). Hard: one exam per student per slot, room capacity, user rules. Soft: spread each student's exams, use the whole period, keep the busiest day light, fill rooms completely. Re-solves with *seating cuts* until every session can be seated. |
-| 2 | **Invigilation allocation engine** | ✅ | `scheduler.py` → `assign_invigilators` | Staffs every room in every session (1 per N students, a minimum per room). Respects leave dates and a per-day duty cap, and gives each duty to the least-loaded free invigilator, so totals stay balanced. Shortfalls are reported, never hidden. |
+| 2 | **Invigilation allocation engine** | ✅ | `scheduler.py` → `assign_invigilators` | Staffs every room in every session (1 per N students, a minimum per room) as a CP-SAT assignment problem. Respects leave dates and a per-day duty cap; lexicographically minimises shortfall, then the busiest person's load, then the mean absolute deviation of loads. Fairness is reported as a Gini coefficient. Shortfalls are reported, never hidden. |
 | 3 | **Venue allocation module** | ✅ | `scheduler.py` → `allocate_rooms`, `room_capacity` | Decides how many students of each paper go to each room. Opens the **fewest rooms** (fewer invigilators). `compact` fills rooms one after another; `spread` shares students evenly. Handles fill limits, rooms out of use, papers tied to rooms, students pinned to rooms, and a cap on papers per room. |
 | 4 | **Seat-level seating planner** | ✅ | `scheduler.py` → `place_in_room`, `assign_rolls`, `_seat_joint` | Exact seat for every student on the room's real 2D grid. No two same-course students are adjacent; front rows fill first; roll numbers run in order within each room, as in the office's printed plans. |
 | 5 | **Conflict detection and explanation** | ✅ | `scheduler.py` → `minimal_core`, `validate`, `validate_rules`, `room_checks` | Pre-checks ("CS1139 has 370 students but only 360 spaced seats exist"), minimal unsatisfiable core of contradicting rules, an independent verifier on every plan, and room-use findings. |
-| 6 | **Natural-language editing interface** | ✅ | `rule_model.py`, `index.html` (step 3), `POST /api/interpret` | A fine-tuned Qwen2.5-0.5B LoRA reads English into one of 23 rule types. Course names, rooms and dates resolve to exact codes, and the admin ticks which parsed rules to apply. A last-minute change is a new sentence followed by **Generate** again. ⚠️ Regenerating re-solves the whole plan; it does not yet keep the unchanged parts of a published plan fixed. |
-| 7 | **Approval dashboard** | ⚠️ | `index.html` (Dashboard, Room view), `/api/plans` | Saved plans with a verified / has-problems badge, a full schedule, seating and invigilation view per plan, and a per-room view for building coordinators. ⚠️ **Not built yet:** an explicit *Approve → Publish* step that locks a plan and gates exports on approval. |
+| 6 | **Natural-language editing interface** | ✅ | `rule_model.py`, `index.html` (step 3), `POST /api/interpret` | A fine-tuned Qwen2.5-0.5B LoRA reads English into one of 23 rule types. Course names, rooms and dates resolve to exact codes, and the admin ticks which parsed rules to apply. Last-minute changes go through **Reschedule** (`scheduler.reschedule`, `POST /api/reschedule`), which repairs a saved plan with the fewest possible changes (see [Rescheduling](#rescheduling-minimal-change-repair)). |
+| 7 | **Approval dashboard** | ✅ | `index.html` (Dashboard, Reschedule, Room view), `/api/plans` | KPI tiles and charts per plan (seat utilisation, same-course neighbours, rest between exams, room utilisation, duty fairness), versioned plans (a reschedule saves v2, v3 … linked to its parent), and an **Approve** step: only verified plans can be approved, and printouts of unapproved plans are marked DRAFT. |
 | 8 | **PDF / Excel exports** | ✅ | `index.html` → `printOut`, `download` | Print-ready **PDF** of the schedule, every session's seating and each room's door chart (browser print to PDF). **Excel-ready CSV** (UTF-8 with BOM, opens directly in Excel) for the schedule, seat-by-seat plan and invigilation roster. |
 
 ### Stack: suggested vs used
@@ -70,6 +70,8 @@ Measured on the **real end-term data in this repo**: `End Term Date Sheet Draft.
 | **Seating that keeps same-course students apart** | 0 same-course neighbours in any room (checked seat by seat by `validate`) |
 | **Efficient venue utilisation** | Empty seats in opened rooms cut from **1,771 to 215**. Room-sessions cut from **161 to 127** (see [Room Filling Guarantees](#room-filling-guarantees)) |
 | **Balanced invigilation** | Least-loaded assignment under daily caps and leave dates. Any shortfall is reported per room and session. |
+| **Last-minute changes** | Three disruptions on the same data, each repaired with 0 violations. **Room closed for one session**: no exam moved, 99.0% of sittings unchanged, 21 of 22 sessions untouched. **Campus closed for a day**: only that day's 3 exams moved, 91.0% of sittings unchanged. **Invigilator on leave**: only their 7 duties reassigned, 100% of sittings unchanged. Each took 4–20 s. |
+| **Exact maths** | Spaced capacity is an exact maximum independent set, not a greedy estimate. Same data and rules as the committed solver: empty seats in opened rooms 179 → 136, room-sessions 140 → 138, 0 violations either way. Invigilation stays at the optimal 6–7 duties per person (Gini 0.036). |
 | **Robustness** | 200 random universities with irregular rooms and random rules: every solved plan had 0 violations, and every impossible case got a plain-English reason (`test_scenarios.py`) |
 
 ---
@@ -231,6 +233,51 @@ The remaining empty seats are tiny sessions, such as one backlog student in a 32
 
 Every plan also lists its room findings in the UI (`room_checks`): rooms that aren't full because only one paper is in them, sessions with more than one partly-filled room, and a last room that is less than half full.
 
+### Exact spaced capacity
+
+A room's *spaced* capacity is the most seats one paper can use when its students may not be neighbours. That is the **maximum independent set** α(G) of the room's seat-adjacency graph G. With side-only adjacency G is a union of paths, so α = Σ⌈k/2⌉ and greedy in seat order is exact. With front/back adjacency, a bench spanning two seats creates odd cycles, so `spaced_capacity` solves α exactly with CP-SAT (milliseconds per room, cached per layout). Stage 1's capacity bounds and the pre-checks use this exact figure, not an estimate.
+
+### Invigilation (`assign_invigilators`)
+
+Variables y₍p,k₎ ∈ {0,1}: person p staffs room-session k. Each room-session needs nₖ = max(min_per_room, ⌈studentsₖ / per_students⌉).
+
+- Hard constraints: at most one room per person per session; at most `max_per_day` duties per person per day; no duties on leave dates; Σₚ y₍p,k₎ ≤ nₖ.
+- Objectives, minimised lexicographically (each is optimised while the earlier ones are held at their optimum):
+  1. shortfall Σₖ (nₖ − Σₚ y₍p,k₎)
+  2. *(rescheduling only)* duties taken away from the previous plan
+  3. L_max = maxₚ loadₚ
+  4. Σₚ |P·loadₚ − total|, the mean absolute deviation from the mean load, scaled to integers
+
+The dashboard reports the outcome as a Gini coefficient G = Σᵢ Σⱼ |xᵢ − xⱼ| / (2n²μ). On the sample data it reaches 0.09: every invigilator gets 2 or 3 duties.
+
+### Rescheduling: minimal-change repair
+
+A published plan meets a disruption: a room closes, the campus shuts for a day, an exam can't run in its session, an invigilator goes on leave. Re-solving from scratch would reshuffle hundreds of students who were never affected. `reschedule(plan, changes, freeze_before)` instead solves a **minimal-perturbation** problem. The old plan's rules plus the new changes are all hard constraints. The objective measures distance from the published plan:
+
+| Phase | Minimised (with all earlier phases held at their optimum) | Meaning |
+| :-: | :--- | :--- |
+| 1 | D₁ = Σₑ (nₑ + K) · [e moved], K = 10 | people disturbed: moving a 527-student paper costs far more than moving a 3-student backlog paper |
+| 2 | D₂ = Σₑ nₑ · \|shiftₑ\| (×2 when earlier) + the usual welfare objective | moved exams travel as little as possible, and moving earlier is costlier because students lose preparation time |
+
+Sessions are then handled one by one:
+
+- **Unchanged session** (same exams, every room still valid): kept seat for seat.
+- **Changed session**: re-seated with a lexicographic objective. First the fewest rooms open, so rooms stay full. Then the most students left in their old room (kept₍r,e₎ ≤ min(n₍r,e₎, previous₍r,e₎)). Then each seat keeps its paper, and each student keeps their exact seat, else their room, else roll order.
+- **Invigilation**: keeps every duty it can (objective 2 above).
+
+Sessions before `freeze_before` have already happened. They are fixed, and nothing moves into them. If the change is impossible, the same minimal unsatisfiable core names the conflicting rules.
+
+Every repaired plan carries a `diff`: exams moved (from → to), students affected, room and seat changes in exams that stayed, sessions untouched, duties reassigned, and **stability**, the share of sittings (student × exam) with the same date, session, room and seat. It is re-checked by the same independent validator as a fresh plan. In the UI: **Reschedule** → choose the plan → add changes (form or plain English) → *Find the smallest change* → review the diff → *Save as v2*.
+
+Tests (`test_scenarios.py`, `t_reschedule_*`):
+- no changes returns an identical plan;
+- a forbidden session moves only that exam, and every session it didn't touch keeps every seat;
+- a closed room moves no exam;
+- a holiday moves exactly that day's exams;
+- frozen sessions never change;
+- invigilator leave reassigns exactly that person's duties;
+- contradictions are named.
+
 ### Feedback Loops and Infeasible Cuts
 If Stage 1 schedules a combination of exams in slot $t$ that cannot physically fit into the available rooms under spacing constraints (even though the sum of student counts is theoretically smaller than total raw seats), Stage 2 raises an infeasibility cut:
 $$\sum_{e \in S} x_{e, t} \le |S| - 1$$
@@ -288,7 +335,7 @@ By default, **students sitting the same exam paper are strictly forbidden from s
 
 ## Constraint Vocabulary (VOCAB)
 
-The solver understands 23 formal constraint types. All natural language rules or web form toggles map directly into this vocabulary:
+The solver understands 24 formal constraint types. All natural language rules or web form toggles map directly into this vocabulary:
 
 | Constraint Type | Parameters | Nature | Description |
 | :--- | :--- | :---: | :--- |
@@ -304,7 +351,7 @@ The solver understands 23 formal constraint types. All natural language rules or
 | `order` | `first: code, then: code` | Hard | Enforces that `first` must be held in an earlier slot than `then`. |
 | `prefer_early` | `exams?: [code], largest?: int, weight?: int` | Soft | Optimizes the schedule to place these exams (or the $N$ largest) early in the period. |
 | `prefer_late` | `exams?: [code], weight?: int` | Soft | Optimizes the schedule to place these exams toward the end of the period. |
-| `prefer_slot` | `exams: [code], slot: int, weight?: int` | Soft | Biases exams toward a specific slot of the day (e.g., slot 1 for morning). |
+| `prefer_slot` | `exams: [code], slot: int, weight?: int, hard?: bool` | Soft / Hard | Holds exams in a given session of the day (slot 1 = morning). With `hard: true` it is always kept and named in conflicts. The wizard's **Semesters by session** rule ("Sem 1 & 3 at 10:00, the rest at 14:30") compiles to these. |
 | `max_exams_per_room`| `n: int` | Hard | Limits the maximum number of distinct exam courses placed in any single room. |
 | `room_use` | `mode: "spread" \| "compact"` | Optimization | Both open the fewest rooms needed; `compact` (default) fills them one after another, `spread` shares students evenly among them. |
 | `adjacent_when_needed` | none | Learned | Papers too big to space out in any session may sit side by side, as in past plans. |
@@ -315,6 +362,7 @@ The solver understands 23 formal constraint types. All natural language rules or
 | `exam_rooms` | `exam: code, rooms: [id]` | Hard | Restricts an exam to run only in specified designated rooms. |
 | `student_rooms` | `students: [roll], rooms: [id]` | Hard | Assigns specific students to designated rooms (e.g., accessibility needs). |
 | `invigilation` | `per_students: int, min_per_room: int, max_per_day: int` | Hard | Defines proctor staffing rules per room and session. |
+| `invigilator_unavailable` | `name: str, dates: [YYYY-MM-DD]` | Hard | This invigilator takes no duties on these dates (typically added while rescheduling). |
 
 ---
 
@@ -409,6 +457,7 @@ Start the local server (`./start.sh`) and navigate to `http://localhost:8000`.
   - **Compact**: Fills the minimum number of rooms required.
 
 ### Step 3: Calendar, Rules & Learned Habits
+- **Semesters by session** uses both sessions of each day, e.g. Semesters 1 and 3 at 10:00 and the rest at 14:30, as *always* (hard) or *tries to* (soft). It is pre-filled from the habits found in past plans. Without it, the solver tends to put cohorts that share no students into the same session, because mixing papers fills rooms completely; separating them by session trades some seat fill for less crowded sessions. On the 260-student sample, seats filled went from about 96% to 88%.
 - Set exam start date, end date, and slot times (e.g., `09:30 - 12:30`, `14:00 - 17:00`).
 - Mark holidays and weekend exclusions.
 - Type free-form plain English rules into the AI prompt box and press **Interpret**.
@@ -422,8 +471,12 @@ Start the local server (`./start.sh`) and navigate to `http://localhost:8000`.
 - **Invigilator Roster**: Assigned proctors per room and slot.
 - **Export**: One-click **Print to PDF** (notice-board format) and **Download CSV**.
 
-### Room View & Plan Dashboard
-- **Dashboard**: Access, re-open, compare, or delete previously solved plans stored in `data/plans/`.
+### Dashboard, Reschedule & Room View
+- **Dashboard**: designed from real systems (Cal.com: the product's own object is the hero; IBM Carbon: flat panels and data tables; Airtable's forest / coral / cream signature surfaces).
+  - A forest-green band holds the plan switcher, status and actions, with **Approve** in coral, the colour reserved for things to act on.
+  - The **date sheet** is the centrepiece: the exam period as a calendar, every session's exams as chips coloured by semester. Clicking a chip opens that session's seating.
+  - A cream **Needs attention** column, **Key numbers** (seats filled, same-course neighbours, rest between exams, duty fairness), a rooms table, invigilator duties, and every saved plan with its version and lineage. Plans live in `data/plans/`.
+- **Reschedule**: pick a plan, add what changed (an exam can't run, a room is out, a closure, a half day, an invigilator on leave, two exams now on different days, or plain English), optionally say which sessions have already been held, then *Find the smallest change*. The diff shows exactly what moved before you save it as the next version.
 - **Room View**: Dedicated view designed for building coordinators to inspect a single room across all sessions and print its physical door charts.
 
 ---
@@ -535,8 +588,11 @@ The built-in Python HTTP server (`server.py`) provides a clean JSON API:
 | `/api/plans/{id}` | `DELETE`| None | Deletes a plan from storage. |
 | `/api/table` | `POST` | `{ name: str, data: base64 }` | Parses an uploaded spreadsheet (`.xlsx` or `.csv`) into preview rows. |
 | `/api/summary` | `POST` | `{ enrollment: str, calendar: obj }`| Analyzes enrollment: student count, exams, cohorts, and applicable habits. |
-| `/api/interpret` | `POST` | `{ text: str, enrollment: str, rooms: list, calendar: obj }` | Translates natural language rules into structured constraint JSON. |
-| `/api/solve` | `POST` | `{ enrollment, rooms, constraints, calendar, invigilators, time_limit }` | Triggers the Stage 1 & Stage 2 CP-SAT solver pipeline. |
+| `/api/interpret` | `POST` | `{ text: str, enrollment: str, rooms: list, calendar: obj }` or `{ text, plan_id }` | Translates natural language rules into structured constraint JSON (with `plan_id`, against that saved plan's own data). |
+| `/api/solve` | `POST` | `{ enrollment, rooms, constraints, calendar, invigilators, time_limit }` | Triggers the Stage 1 & Stage 2 CP-SAT solver pipeline. The result includes `metrics` and the `inputs` needed to repair it later. |
+| `/api/reschedule` | `POST` | `{ plan_id, changes: [constraint], freeze_before?, time_limit? }` | Minimal-change repair of a saved plan. Returns the repaired plan with a `diff` against the original. |
+| `/api/plans` | `POST` | `{ result, name?, kind?, rules?, parent? }` | Saves a plan. With `parent`, it becomes the next version of that plan. |
+| `/api/plans/{id}/approve` | `POST` | None | Approves a verified plan (refused if it has violations). `/unapprove` withdraws approval. |
 | `/api/import` | `POST` | `{ files: [{ name, data }] }` | Ingests Word `.docx` seat maps or past PDFs into `data/past/`. |
 | `/api/corrections` | `POST` | `[{ text, rules }]` | Records admin corrections to `corrections.jsonl` for model retraining. |
 | `/samples/{file}` | `GET` | None | Serves bundled sample files (`enrollment_sample.csv`, rules, etc.). |

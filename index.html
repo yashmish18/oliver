@@ -887,7 +887,9 @@ $("#invigFile").onchange = async e => { const f = e.target.files[0]; if (!f) ret
 $("#trySample").onclick = async () => {
   const get = async n => { const r = await fetch("/samples/" + n); if (!r.ok) throw new Error("sample missing: " + n); const b = new Uint8Array(await r.arrayBuffer());
     let s = ""; b.forEach(x => s += String.fromCharCode(x)); return btoa(s); };
-  try { if (!$("#calStart").value){ $("#calStart").value = "2026-12-14"; $("#calEnd").value = "2026-12-21"; periodInfo(); }
+  try { if (!$("#calStart").value){                       // sample period: the next Monday, for six weekdays
+      const d = new Date(); d.setDate(d.getDate() + ((8 - d.getDay()) % 7 || 7)); const e = new Date(d); e.setDate(d.getDate() + 7);
+      $("#calStart").value = d.toLocaleDateString("en-CA"); $("#calEnd").value = e.toLocaleDateString("en-CA"); periodInfo(); }
     await loadEnrollmentFile("enrollment_sample.csv", await get("enrollment_sample.csv")); await loadInvigilators("invigilators_sample.csv", await get("invigilators_sample.csv"));
     if (!$("#english").value) $("#english").value = await (await fetch("/samples/rules_sample.txt")).text();
     applyKind();
